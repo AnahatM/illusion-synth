@@ -40,15 +40,15 @@
           onchange={(e) => onChange(param.key, (e.target as HTMLInputElement).checked)}
         />
       {:else if param.type === 'select'}
-        <select
-          id={param.key}
-          value={values[param.key]}
-          onchange={(e) => onChange(param.key, (e.target as HTMLSelectElement).value)}
-        >
+        <div class="segmented" id={param.key}>
           {#each param.options ?? [] as opt}
-            <option value={opt}>{opt}</option>
+            <button
+              class="seg-btn"
+              class:active={values[param.key] === opt}
+              onclick={() => onChange(param.key, opt)}
+            >{opt}</button>
           {/each}
-        </select>
+        </div>
       {/if}
     </div>
   {/each}
@@ -123,13 +123,40 @@
     height: 1.2rem;
   }
 
-  select {
-    background: var(--surface);
-    color: var(--text);
+  .segmented {
+    display: flex;
+    flex: 1;
     border: 1px solid var(--border);
-    border-radius: 0;
-    padding: 0.3rem 0.5rem;
-    font-size: 0.85rem;
+    overflow: hidden;
+  }
+
+  .seg-btn {
+    flex: 1;
+    padding: 0.3rem 0.4rem;
+    background: var(--surface);
+    color: var(--text-secondary);
+    border: none;
+    border-right: 1px solid var(--border);
+    font-family: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+
+  .seg-btn:last-child {
+    border-right: none;
+  }
+
+  .seg-btn.active {
+    background: var(--accent, #00ff41);
+    color: #000;
+    font-weight: 600;
+  }
+
+  .seg-btn:hover:not(.active) {
+    background: var(--border);
+    color: var(--text);
   }
 
   .value {

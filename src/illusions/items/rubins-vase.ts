@@ -29,8 +29,8 @@ const rubinsVase: IllusionConfig = {
       max: 2,
       step: 0.1,
     },
-    { key: "color1", label: "Vase Color", type: "color", default: "#00ff41" },
-    { key: "color2", label: "Face Color", type: "color", default: "#003310" },
+    { key: "color1", label: "Vase Color", type: "color", default: "#ddd5a0" },
+    { key: "color2", label: "Face Color", type: "color", default: "#000000" },
   ],
 
   setup(scene, _camera, params) {
