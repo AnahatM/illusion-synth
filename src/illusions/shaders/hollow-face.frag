@@ -25,10 +25,18 @@ void main() {
   vec3 skin = uColor;
 
   // Lighting that creates convex appearance even for concave surface
+  // depth controls how much the face surface curves inward
   float depth = uDepth;
   float lightAngle = uTime * uSpeed * 0.5;
   vec2 lightDir = vec2(cos(lightAngle), sin(lightAngle));
-  float lighting = dot(normalize(uv), lightDir) * 0.3 + 0.7;
+
+  // Compute surface normal for a concave (hollow) face
+  // Higher depth = more curvature = stronger shading gradient
+  float faceFalloff = 1.0 - (faceDist / faceR);
+  vec2 surfNormal = normalize(uv) * faceFalloff * depth;
+  float lighting = dot(surfNormal, lightDir) * 0.4 + 0.6;
+  // Add depth-dependent rim darkening
+  lighting *= mix(1.0, faceFalloff, depth * 0.3);
 
   vec3 faceCol = skin * lighting;
 

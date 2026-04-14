@@ -12,6 +12,7 @@ const hollowFace: IllusionConfig = {
   id: "hollow-face",
   name: "Hollow Face Illusion",
   category: "Depth/Ambiguity",
+  tintThumbnail: true,
   description:
     "A concave (hollow) face lit from a rotating source still appears convex — your brain's strong prior for convex faces overrides the actual depth information.",
   howTo:

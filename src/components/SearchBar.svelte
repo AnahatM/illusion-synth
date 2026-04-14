@@ -81,7 +81,7 @@
 
   .chip.active {
     background: var(--accent);
-    color: #fff;
+    color: var(--bg);
     border-color: var(--accent);
   }
 </style>
