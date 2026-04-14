@@ -2,6 +2,7 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/poggendorff.frag";
+import { resolvePalette } from "../lib/palettes";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -46,6 +47,20 @@ const poggendorffIllusion: IllusionConfig = {
       default: "#595959",
     },
     {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
+    {
       key: "hideRect",
       label: "Hide Rectangle",
       type: "toggle",
@@ -73,8 +88,13 @@ const poggendorffIllusion: IllusionConfig = {
     if (!material) return;
     material.uniforms.uRectWidth.value = params.rectWidth;
     material.uniforms.uLineOffset.value = params.lineOffset;
-    material.uniforms.uLineColor.value.set(params.lineColor);
-    material.uniforms.uRectColor.value.set(params.rectColor);
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.lineColor,
+      params.rectColor,
+    );
+    material.uniforms.uLineColor.value.set(c1);
+    material.uniforms.uRectColor.value.set(c2);
     material.uniforms.uHideRect.value = params.hideRect ? 1.0 : 0.0;
   },
 

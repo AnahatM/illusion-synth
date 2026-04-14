@@ -9,7 +9,7 @@ varying vec2 vUv;
 
 void main() {
   vec2 uv = vUv;
-  vec3 col = vec3(0.15);
+  vec3 col = vec3(0.0);
 
   // Perspective grid: converging lines to a vanishing point
   vec2 vp = vec2(0.5, 0.55); // vanishing point

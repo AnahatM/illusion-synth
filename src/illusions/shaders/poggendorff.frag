@@ -9,7 +9,7 @@ varying vec2 vUv;
 
 void main() {
   vec2 uv = vUv;
-  vec3 col = vec3(0.15); // dark bg
+  vec3 col = vec3(0.0); // dark bg
 
   // Central rectangle
   float rectW = uRectWidth * 0.1;

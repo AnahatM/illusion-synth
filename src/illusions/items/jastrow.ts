@@ -12,6 +12,7 @@ const jastrowIllusion: IllusionConfig = {
   id: "jastrow",
   name: "Jastrow Illusion",
   category: "Geometric",
+  tintThumbnail: true,
   description:
     "Two identical curved shapes (annular sectors) are stacked — the bottom one always appears larger than the top one due to the contrast between the long and short edges.",
   howTo:

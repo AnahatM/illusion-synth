@@ -13,7 +13,7 @@ void main() {
   float r = length(uv);
   float a = atan(uv.y, uv.x);
 
-  vec3 col = vec3(0.15);
+  vec3 col = vec3(0.0);
 
   float rings = uRings;
   float cordTwist = uTiltDensity;

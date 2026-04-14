@@ -2,6 +2,7 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/perspective-size.frag";
+import { resolvePalette } from "../lib/palettes";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -47,6 +48,20 @@ const perspectiveSize: IllusionConfig = {
       default: "#4d99d9",
     },
     {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
+    {
       key: "showProof",
       label: "Show Proof",
       type: "toggle",
@@ -75,8 +90,13 @@ const perspectiveSize: IllusionConfig = {
     material.uniforms.uGridSize.value = params.gridSize;
     material.uniforms.uObjPos.value = params.objPos;
     material.uniforms.uShowProof.value = params.showProof ? 1.0 : 0.0;
-    material.uniforms.uNearColor.value.set(params.nearColor);
-    material.uniforms.uFarColor.value.set(params.farColor);
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.nearColor,
+      params.farColor,
+    );
+    material.uniforms.uNearColor.value.set(c1);
+    material.uniforms.uFarColor.value.set(c2);
   },
 
   dispose() {

@@ -3,16 +3,12 @@ import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/spinning-dots.frag";
 import { setupMouseRotation, type MouseRotation } from "../lib/mouse-rotation";
+import { resolvePalette } from "../lib/palettes";
+import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
 let mouseRot: MouseRotation | null = null;
-
-function hexToVec3(hex: string): THREE.Vector3 {
-  const c = new THREE.Color(hex);
-  return new THREE.Vector3(c.r, c.g, c.b);
-}
-
 const spinningDots: IllusionConfig = {
   id: "spinning-dots",
   name: "Ambiguous Spinning Dots",
@@ -32,6 +28,20 @@ const spinningDots: IllusionConfig = {
       step: 0.1,
     },
     { key: "color", label: "Dot Color", type: "color", default: "#ffffff" },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
     {
       key: "dotCount",
       label: "Dot Count",
@@ -84,7 +94,8 @@ const spinningDots: IllusionConfig = {
     if (!material) return;
     material.uniforms.uTime.value = time;
     material.uniforms.uSpeed.value = params.speed;
-    material.uniforms.uColor.value = hexToVec3(params.color);
+    const [c1] = resolvePalette(params.palette, params.color, params.color);
+    material.uniforms.uColor.value = hexToVec3(c1);
     material.uniforms.uDotCount.value = params.dotCount;
     material.uniforms.uDotSize.value = params.dotSize;
     const manual = params.manualRotation ? 1 : 0;

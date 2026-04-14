@@ -7,7 +7,7 @@ varying vec2 vUv;
 
 void main() {
   vec2 uv = vUv - 0.5;
-  vec3 col = vec3(0.15); // dark bg
+  vec3 col = vec3(0.0); // dark bg
 
   // Draw radiating lines from center
   float angle = atan(uv.y, uv.x);

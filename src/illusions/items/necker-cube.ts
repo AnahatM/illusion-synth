@@ -3,16 +3,12 @@ import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/necker-cube.frag";
 import { setupMouseRotation, type MouseRotation } from "../lib/mouse-rotation";
+import { resolvePalette } from "../lib/palettes";
+import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
 let mouseRot: MouseRotation | null = null;
-
-function hexToVec3(hex: string): THREE.Vector3 {
-  const c = new THREE.Color(hex);
-  return new THREE.Vector3(c.r, c.g, c.b);
-}
-
 const neckerCube: IllusionConfig = {
   id: "necker-cube",
   name: "Necker Cube",
@@ -32,6 +28,20 @@ const neckerCube: IllusionConfig = {
       step: 0.1,
     },
     { key: "color", label: "Color", type: "color", default: "#ffffff" },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
     {
       key: "size",
       label: "Size",
@@ -74,7 +84,8 @@ const neckerCube: IllusionConfig = {
     if (!material) return;
     material.uniforms.uTime.value = time;
     material.uniforms.uSpeed.value = params.speed;
-    material.uniforms.uColor.value = hexToVec3(params.color);
+    const [c1] = resolvePalette(params.palette, params.color, params.color);
+    material.uniforms.uColor.value = hexToVec3(c1);
     material.uniforms.uSize.value = params.size;
     const manual = params.manualRotation ? 1 : 0;
     material.uniforms.uManual.value = manual;

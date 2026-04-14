@@ -7,10 +7,12 @@ varying vec2 vUv;
 
 void main() {
   vec2 uv = vUv - 0.5;
-  float r = length(uv);
+  // Squash vertically to make rings into ellipses (wider than tall)
+  vec2 euv = uv * vec2(1.0, 1.4);
+  float r = length(euv);
   float a = atan(uv.y, uv.x);
 
-  vec3 col = vec3(0.12);
+  vec3 col = vec3(0.0);
 
   // Kitaoka-style peripheral drift: concentric rings of asymmetric luminance
   // Pattern: dark → medium-dark → light → medium-light (sawtooth) creates drift
@@ -54,7 +56,7 @@ void main() {
   }
 
   // Center dot (fixation)
-  float dot = smoothstep(0.012, 0.008, r);
+  float dot = smoothstep(0.012, 0.008, length(euv));
   col = mix(col, vec3(0.9, 0.2, 0.2), dot);
 
   gl_FragColor = vec4(col, 1.0);

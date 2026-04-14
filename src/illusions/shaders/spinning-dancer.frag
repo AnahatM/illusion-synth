@@ -1,6 +1,7 @@
 uniform float uTime;
 uniform float uSpeed;
 uniform float uDetail;
+uniform vec3 uColor;
 varying vec2 vUv;
 
 #define PI 3.14159265359
@@ -22,7 +23,7 @@ float sdSegment(vec2 p, vec2 a, vec2 b) {
 
 void main() {
   vec2 uv = vUv - 0.5;
-  vec3 col = vec3(0.12);
+  vec3 col = vec3(0.0);
 
   float t = uTime * uSpeed;
 
@@ -91,7 +92,7 @@ void main() {
 
   // Render as silhouette
   float silhouette = smoothstep(w, w * 0.3, d);
-  col = mix(col, vec3(0.85), silhouette);
+  col = mix(col, uColor, silhouette);
 
   // Joint dots
   float jointR = 0.008;
@@ -102,7 +103,7 @@ void main() {
   joints = max(joints, smoothstep(jointR, jointR * 0.3, length(uv - pRElbow)));
   joints = max(joints, smoothstep(jointR, jointR * 0.3, length(uv - pLKnee)));
   joints = max(joints, smoothstep(jointR, jointR * 0.3, length(uv - pRKnee)));
-  col = mix(col, vec3(0.85), joints);
+  col = mix(col, uColor, joints);
 
   gl_FragColor = vec4(col, 1.0);
 }

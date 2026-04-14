@@ -2,6 +2,7 @@ uniform float uTime;
 uniform float uSpeed;
 uniform float uDepth;
 uniform float uShowFeatures;
+uniform vec3 uColor;
 varying vec2 vUv;
 
 #define PI 3.14159265359
@@ -11,7 +12,7 @@ void main() {
   float r = length(uv);
   float a = atan(uv.y, uv.x);
 
-  vec3 col = vec3(0.3);
+  vec3 col = vec3(0.0);
 
   // Simple face using SDF-like shapes
   float faceR = 0.3;
@@ -21,7 +22,7 @@ void main() {
   float faceMask = smoothstep(faceR + 0.01, faceR - 0.01, faceDist);
 
   // Skin color
-  vec3 skin = vec3(0.85, 0.72, 0.58);
+  vec3 skin = uColor;
 
   // Lighting that creates convex appearance even for concave surface
   float depth = uDepth;

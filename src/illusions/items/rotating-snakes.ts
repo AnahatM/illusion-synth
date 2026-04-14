@@ -2,14 +2,11 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/rotating-snakes.frag";
+import { resolvePalette } from "../lib/palettes";
+import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
-
-function hexToVec3(hex: string): THREE.Vector3 {
-  const c = new THREE.Color(hex);
-  return new THREE.Vector3(c.r, c.g, c.b);
-}
 
 const rotatingSnakes: IllusionConfig = {
   id: "rotating-snakes",
@@ -41,6 +38,20 @@ const rotatingSnakes: IllusionConfig = {
     { key: "color1", label: "Bright Color", type: "color", default: "#ffdd00" },
     { key: "color2", label: "Dark Color", type: "color", default: "#2244aa" },
     { key: "bgColor", label: "Background", type: "color", default: "#e8e8e8" },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -65,8 +76,13 @@ const rotatingSnakes: IllusionConfig = {
     if (!material) return;
     material.uniforms.uRingCount.value = params.ringCount;
     material.uniforms.uDensity.value = params.density;
-    material.uniforms.uColor1.value = hexToVec3(params.color1);
-    material.uniforms.uColor2.value = hexToVec3(params.color2);
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.color1,
+      params.color2,
+    );
+    material.uniforms.uColor1.value = hexToVec3(c1);
+    material.uniforms.uColor2.value = hexToVec3(c2);
     material.uniforms.uColor3.value = hexToVec3(params.bgColor);
   },
 

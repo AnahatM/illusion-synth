@@ -8,7 +8,7 @@ let material: THREE.ShaderMaterial;
 
 const driftRings: IllusionConfig = {
   id: "drift-rings",
-  name: "Peripheral Drift Rings",
+  name: "Drift Rings (Kitaoka)",
   category: "Motion",
   description:
     "Concentric rings with asymmetric luminance ramps appear to rotate slowly — some clockwise, some counter-clockwise — even though the image is completely static.",

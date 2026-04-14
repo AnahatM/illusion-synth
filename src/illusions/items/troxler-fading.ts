@@ -2,14 +2,11 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/troxler-fading.frag";
+import { resolvePalette } from "../lib/palettes";
+import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
-
-function hexToVec3(hex: string): THREE.Vector3 {
-  const c = new THREE.Color(hex);
-  return new THREE.Vector3(c.r, c.g, c.b);
-}
 
 const troxlerFading: IllusionConfig = {
   id: "troxler-fading",
@@ -53,6 +50,20 @@ const troxlerFading: IllusionConfig = {
       type: "color",
       default: "#aa44cc",
     },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -75,7 +86,8 @@ const troxlerFading: IllusionConfig = {
     material.uniforms.uRingRadius.value = params.ringRadius;
     material.uniforms.uDotCount.value = params.dotCount;
     material.uniforms.uSoftness.value = params.softness;
-    material.uniforms.uColor.value = hexToVec3(params.color as string);
+    const [c1] = resolvePalette(params.palette, params.color, params.color);
+    material.uniforms.uColor.value = hexToVec3(c1 as string);
   },
 
   dispose() {

@@ -3,6 +3,7 @@ import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/moire-circles.frag";
 import { hexToVec3 } from "../lib/color-utils";
+import { resolvePalette } from "../lib/palettes";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -44,6 +45,20 @@ const concentricMoire: IllusionConfig = {
     },
     { key: "color", label: "Color", type: "color", default: "#ffffff" },
     {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
+    {
       key: "scale",
       label: "Scale",
       type: "slider",
@@ -79,7 +94,8 @@ const concentricMoire: IllusionConfig = {
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uOffset.value = params.offset;
     material.uniforms.uThickness.value = params.thickness;
-    material.uniforms.uColor.value = hexToVec3(params.color);
+    const [c1] = resolvePalette(params.palette, params.color, params.color);
+    material.uniforms.uColor.value = hexToVec3(c1);
     material.uniforms.uScale.value = params.scale;
   },
 

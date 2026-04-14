@@ -2,14 +2,11 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/grid-moire.frag";
+import { resolvePalette } from "../lib/palettes";
+import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
-
-function hexToVec3(hex: string): THREE.Vector3 {
-  const c = new THREE.Color(hex);
-  return new THREE.Vector3(c.r, c.g, c.b);
-}
 
 const gridMoire: IllusionConfig = {
   id: "grid-moire",
@@ -39,6 +36,20 @@ const gridMoire: IllusionConfig = {
       step: 0.1,
     },
     { key: "color", label: "Color", type: "color", default: "#ffffff" },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -62,7 +73,8 @@ const gridMoire: IllusionConfig = {
     material.uniforms.uTime.value = time;
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uDensity.value = params.density;
-    material.uniforms.uColor.value = hexToVec3(params.color);
+    const [c1] = resolvePalette(params.palette, params.color, params.color);
+    material.uniforms.uColor.value = hexToVec3(c1);
   },
 
   dispose() {

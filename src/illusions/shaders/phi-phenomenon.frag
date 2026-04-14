@@ -2,13 +2,14 @@ uniform float uTime;
 uniform float uSpeed;
 uniform float uDotCount;
 uniform float uSpacing;
+uniform vec3 uColor;
 varying vec2 vUv;
 
 #define PI 3.14159265359
 
 void main() {
   vec2 uv = vUv - 0.5;
-  vec3 col = vec3(0.1);
+  vec3 col = vec3(0.0);
 
   int count = int(uDotCount);
   float spacing = uSpacing * 0.08;
@@ -42,14 +43,14 @@ void main() {
       if (i == rowActive) {
         float bright = smoothstep(radius, radius * 0.3, dist);
         float fade = 1.0 - frac * 0.3; // slight fade toward end
-        col = mix(col, vec3(1.0), bright * fade);
+        col = mix(col, uColor, bright * fade);
       }
 
       // Next dot: fading in
       int nextIdx = int(mod(float(rowActive) + 1.0, uDotCount));
       if (i == nextIdx) {
         float bright = smoothstep(radius, radius * 0.3, dist);
-        col = mix(col, vec3(1.0), bright * frac * 0.5);
+        col = mix(col, uColor, bright * frac * 0.5);
       }
     }
   }

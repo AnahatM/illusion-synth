@@ -3,6 +3,7 @@ import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/ebbinghaus.frag";
 import { hexToVec3 } from "../lib/color-utils";
+import { resolvePalette } from "../lib/palettes";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -45,6 +46,20 @@ const ebbinghausIllusion: IllusionConfig = {
       type: "color",
       default: "#4488ff",
     },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -66,12 +81,13 @@ const ebbinghausIllusion: IllusionConfig = {
     if (!material) return;
     material.uniforms.uSurroundSize.value = params.surroundSize;
     material.uniforms.uSurroundCount.value = params.surroundCount;
-    material.uniforms.uCenterColor.value = hexToVec3(
-      params.centerColor as string,
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.centerColor,
+      params.surroundColor,
     );
-    material.uniforms.uSurroundColor.value = hexToVec3(
-      params.surroundColor as string,
-    );
+    material.uniforms.uCenterColor.value = hexToVec3(c1);
+    material.uniforms.uSurroundColor.value = hexToVec3(c2);
   },
 
   dispose() {

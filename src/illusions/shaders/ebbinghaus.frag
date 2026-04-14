@@ -8,7 +8,7 @@ varying vec2 vUv;
 
 void main() {
   vec2 uv = vUv - 0.5;
-  vec3 bg = vec3(0.15);
+  vec3 bg = vec3(0.0);
   vec3 col = bg;
 
   float centerR = 0.04;

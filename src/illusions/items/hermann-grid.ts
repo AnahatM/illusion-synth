@@ -2,6 +2,7 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/hermann-grid.frag";
+import { resolvePalette } from "../lib/palettes";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -45,6 +46,20 @@ const hermannGrid: IllusionConfig = {
       type: "color",
       default: "#0d0d0d",
     },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -66,8 +81,13 @@ const hermannGrid: IllusionConfig = {
     if (!material) return;
     material.uniforms.uGridSize.value = params.gridSize;
     material.uniforms.uLineWidth.value = params.lineWidth;
-    material.uniforms.uLineColor.value.set(params.lineColor);
-    material.uniforms.uBgColor.value.set(params.bgColor);
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.lineColor,
+      params.bgColor,
+    );
+    material.uniforms.uLineColor.value.set(c1);
+    material.uniforms.uBgColor.value.set(c2);
   },
 
   dispose() {

@@ -9,7 +9,7 @@ varying vec2 vUv;
 
 void main() {
   vec2 uv = vUv;
-  vec3 col = vec3(0.15);
+  vec3 col = vec3(0.0);
 
   float lineCount = uLineCount;
   float lineSpacing = 1.0 / lineCount;

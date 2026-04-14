@@ -1,6 +1,7 @@
 uniform float uRadius;
 uniform float uGap;
 uniform float uRotation;
+uniform vec3 uColor;
 varying vec2 vUv;
 
 #define PI 3.14159265359
@@ -13,7 +14,7 @@ void main() {
 
   // Three pac-man positions forming a triangle
   float triR = 0.22;
-  vec3 bg = vec3(0.15);
+  vec3 bg = vec3(0.0);
   vec3 col = bg;
 
   for (int i = 0; i < 3; i++) {
@@ -32,7 +33,7 @@ void main() {
 
     // Draw circle with mouth cut out
     if (dist < r && abs(angleDiff) > gapAngle * 0.5) {
-      col = vec3(0.85);
+      col = uColor;
     }
   }
 

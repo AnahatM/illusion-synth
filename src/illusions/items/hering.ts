@@ -2,6 +2,7 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/hering.frag";
+import { resolvePalette } from "../lib/palettes";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -30,6 +31,20 @@ const heringIllusion: IllusionConfig = {
       type: "color",
       default: "#ffffff",
     },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -49,7 +64,12 @@ const heringIllusion: IllusionConfig = {
   update(_time, params) {
     if (!material) return;
     material.uniforms.uRayCount.value = params.rayCount;
-    material.uniforms.uLineColor.value.set(params.lineColor);
+    const [c1] = resolvePalette(
+      params.palette,
+      params.lineColor,
+      params.lineColor,
+    );
+    material.uniforms.uLineColor.value.set(c1);
   },
 
   dispose() {

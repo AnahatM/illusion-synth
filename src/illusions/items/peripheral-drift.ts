@@ -10,7 +10,7 @@ let material: THREE.ShaderMaterial;
 
 const peripheralDrift: IllusionConfig = {
   id: "peripheral-drift",
-  name: "Peripheral Drift",
+  name: "Peripheral Drift Grid",
   category: "Motion",
   description:
     "Patterns with asymmetric luminance that appear to move in your peripheral vision.",
