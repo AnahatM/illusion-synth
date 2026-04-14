@@ -10,6 +10,7 @@ const perspectiveSize: IllusionConfig = {
   id: "perspective-size",
   name: "Ponzo / Perspective Grid",
   category: "Geometric",
+  tintThumbnail: true,
   description:
     "Two identical objects placed on a perspective grid appear to be very different sizes — the one near the vanishing point looks much larger even though both are the same.",
   howTo:

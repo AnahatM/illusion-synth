@@ -8,29 +8,30 @@ void main() {
   vec2 uv = vUv - 0.5;
   vec3 col = vec3(0.15);
 
-  // Jastrow illusion: two identical arc segments (annular sectors)
-  // Very flat / obtuse arcs — like slightly curved planks
+  // Jastrow illusion: two identical flat arc segments
   float innerR = 0.25;
   float outerR = 0.32;
-  float halfArc = 1.1; // half angular span in radians (~63 deg each side)
+  float halfArc = 1.1; // half angular span (~63° each side)
 
-  // Separation control
-  float sep = uOffset * 0.08;
+  float sep = uOffset * 0.04;
 
-  // Both arcs open downward (centred on -PI/2) so they look like
-  // curved tracks viewed from above.
-  // Shape A (upper): centre of curvature above, arc curves down
-  vec2 centreA = vec2(-0.02, 0.30 + sep);
+  // Arcs open downward (centred on -PI/2).
+  // At the midpoint of the arc, points lie at y = centre.y - r.
+  // Inner edge (top of shape): centre.y - innerR
+  // Outer edge (bottom of shape): centre.y - outerR
+
+  // Shape A (upper arc)
+  vec2 centreA = vec2(0.0, 0.22);
   vec2 pA = uv - centreA;
   float rA = length(pA);
   float aA = atan(pA.y, pA.x);
-  // Arc spans from (-PI/2 - halfArc) to (-PI/2 + halfArc)
   float inA = step(innerR, rA) * step(rA, outerR)
             * step(-PI * 0.5 - halfArc, aA) * step(aA, -PI * 0.5 + halfArc);
 
-  // Shape B (lower): identical arc, shifted so its top (outer) edge
-  // aligns exactly with A's bottom (inner) edge at the centre
-  vec2 centreB = vec2(0.02, 0.30 + sep + (innerR + outerR));
+  // Shape B (lower arc): inner edge aligns with A's outer edge, plus separation.
+  // B's inner edge at midpoint: centreB.y - innerR = centreA.y - outerR - sep
+  // => centreB.y = centreA.y - (outerR - innerR) - sep
+  vec2 centreB = vec2(0.0, centreA.y - (outerR - innerR) - sep);
   vec2 pB = uv - centreB;
   float rB = length(pB);
   float aB = atan(pB.y, pB.x);
@@ -41,7 +42,7 @@ void main() {
   vec3 colA = vec3(0.3, 0.6, 0.85);
   vec3 colB = vec3(0.85, 0.45, 0.3);
 
-  // Soft borders via slight expansion
+  // Soft borders
   float bw = 0.004;
   float ba = 0.025;
   float borderA = step(innerR - bw, rA) * step(rA, outerR + bw)

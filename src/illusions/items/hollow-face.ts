@@ -13,7 +13,7 @@ const hollowFace: IllusionConfig = {
   description:
     "A concave (hollow) face lit from a rotating source still appears convex — your brain's strong prior for convex faces overrides the actual depth information.",
   howTo:
-    "Watch the face as the light rotates around it. Even though the shading is computed for a concave (inverted) surface, the face stubbornly appears to be a normal convex face. This demonstrates the power of face-specific processing in the visual cortex.",
+    "Watch the face as the light rotates around it. The shading is computed for a concave (hollow) surface, yet it stubbornly appears convex — that IS the illusion. Your brain's face-specific processing is so strong that it's nearly impossible to perceive the concavity. Try toggling off 'Show Face Features' to see if shading alone still looks convex.",
   params: [
     {
       key: "speed",

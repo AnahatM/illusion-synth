@@ -22,16 +22,10 @@ void main() {
 
   float brightness = sq - shadow;
 
-  // Square A: dark square outside shadow — cell (1, 1) bottom-left area
-  // Square B: light square inside shadow — near shadow center
-  // We pick cells so that dark_no_shadow ≈ light_in_shadow
-  // dark = 0.3, light = 0.6, shadow ≈ 0.3 at center → light_in_shadow ≈ 0.3
-
-  // Target squares for the illusion
+  // Target squares
   vec2 cellA = vec2(5.5 / checkSize, 1.5 / checkSize); // dark square, no shadow
   vec2 cellB = vec2(2.5 / checkSize, 5.5 / checkSize); // light square, in shadow
 
-  // Mark squares A and B with subtle borders
   float sqSize = 1.0 / checkSize;
   float cellAx = floor(cellA.x * checkSize);
   float cellAy = floor(cellA.y * checkSize);
@@ -43,43 +37,57 @@ void main() {
 
   vec3 col = vec3(brightness);
 
-  // Subtle markers for A and B
-  float edgeDist = min(
-    min(fract(uv.x * checkSize), 1.0 - fract(uv.x * checkSize)),
-    min(fract(uv.y * checkSize), 1.0 - fract(uv.y * checkSize))
-  );
-  float border = smoothstep(0.08, 0.04, edgeDist);
-  col = mix(col, vec3(1.0, 0.3, 0.3), border * inCellA * 0.8);
-  col = mix(col, vec3(0.3, 0.5, 1.0), border * inCellB * 0.8);
+  // Subtle corner markers — small triangles in corners of target squares
+  vec2 localUv = fract(uv * checkSize);
+  float cornerSize = 0.18;
+  // Top-left corner triangle
+  float tl = step(localUv.x + (1.0 - localUv.y), cornerSize);
+  // All four corners
+  float tr = step((1.0 - localUv.x) + (1.0 - localUv.y), cornerSize);
+  float bl = step(localUv.x + localUv.y, cornerSize);
+  float br = step((1.0 - localUv.x) + localUv.y, cornerSize);
+  float corners = clamp(tl + tr + bl + br, 0.0, 1.0);
 
-  // Show proof: constant color strip connecting A and B
+  // Mark with subtle white dots at center of each target square
+  vec2 centerA = (vec2(cellAx, cellAy) + 0.5) / checkSize;
+  vec2 centerB = (vec2(cellBx, cellBy) + 0.5) / checkSize;
+  float dotA = smoothstep(0.012, 0.008, length(uv - centerA));
+  float dotB = smoothstep(0.012, 0.008, length(uv - centerB));
+
+  // Small "A" and "B" labels — use dot as marker, very subtle
+  float markerA = dotA * 0.7;
+  float markerB = dotB * 0.7;
+  // Use brightness-adaptive color: white dot on dark, dark dot on light
+  float adaptA = step(brightness, 0.4);
+  float adaptB = step(brightness, 0.4);
+  col = mix(col, vec3(mix(0.1, 0.95, adaptA)), markerA);
+  col = mix(col, vec3(mix(0.1, 0.95, adaptB)), markerB);
+
+  // Show proof: solid strip connecting A and B showing equal brightness
   if (uShowProof > 0.5) {
-    // Compute what brightness A and B actually have
-    // A: dark square (0.3) with no shadow
-    float brightA = dark; // 0.3
-    // B: light square (0.6) with shadow (~0.3 at that point)
+    float brightA = dark;
     float shadowAtB = smoothstep(0.35, 0.08, length((cellB - shadowCenter) * vec2(1.2, 1.0))) * 0.35;
     float brightB = light - shadowAtB;
     float proofColor = (brightA + brightB) * 0.5;
 
-    // Horizontal strip from A to B
-    float stripY1 = min(cellA.y, cellB.y);
-    float stripY2 = max(cellA.y, cellB.y) + sqSize;
-    float stripMidY = (cellA.y + cellB.y) * 0.5 + sqSize * 0.5;
-    float stripH = 0.02;
+    // Straight diagonal strip from center of A to center of B
+    vec2 pA = centerA;
+    vec2 pB = centerB;
+    vec2 dir = normalize(pB - pA);
+    vec2 perp = vec2(-dir.y, dir.x);
 
-    // Vertical strip connecting A and B
-    float stripMidX = (cellA.x + cellB.x) * 0.5;
-    float vertStrip = step(stripMidX - 0.015, uv.x) * step(uv.x, stripMidX + 0.015) *
-                      step(cellA.y, uv.y) * step(uv.y, cellB.y + sqSize);
+    vec2 d = uv - pA;
+    float along = dot(d, dir);
+    float across = abs(dot(d, perp));
+    float totalLen = length(pB - pA);
 
-    // Horizontal bars at A and B
-    float hBarA = step(cellA.x - sqSize * 0.3, uv.x) * step(uv.x, cellA.x + sqSize * 1.3) *
-                  step(cellA.y + sqSize * 0.4, uv.y) * step(uv.y, cellA.y + sqSize * 0.6);
-    float hBarB = step(cellB.x - sqSize * 0.3, uv.x) * step(uv.x, cellB.x + sqSize * 1.3) *
-                  step(cellB.y + sqSize * 0.4, uv.y) * step(uv.y, cellB.y + sqSize * 0.6);
+    float inStrip = step(0.0, along) * step(along, totalLen) * step(across, 0.015);
 
-    float proofMask = clamp(vertStrip + hBarA + hBarB, 0.0, 1.0);
+    // Also small squares at A and B positions
+    float padA = step(abs(uv.x - pA.x), sqSize * 0.35) * step(abs(uv.y - pA.y), sqSize * 0.35);
+    float padB = step(abs(uv.x - pB.x), sqSize * 0.35) * step(abs(uv.y - pB.y), sqSize * 0.35);
+
+    float proofMask = clamp(inStrip + padA + padB, 0.0, 1.0);
     col = mix(col, vec3(proofColor), proofMask);
   }
 

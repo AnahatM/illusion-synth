@@ -15,6 +15,7 @@ const mccolloughEffect: IllusionConfig = {
   id: "mccollough-effect",
   name: "McCollough Effect",
   category: "Color",
+  tintThumbnail: true,
   description:
     "A color aftereffect: stare at colored gratings, then see phantom colors on black-and-white test patterns. The effect can persist for hours.",
   howTo:
