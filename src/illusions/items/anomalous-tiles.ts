@@ -10,13 +10,13 @@ let material: THREE.ShaderMaterial;
 
 const anomalousTiles: IllusionConfig = {
   id: "anomalous-tiles",
-  name: "Anomalous Motion Tiles",
-  category: "Motion",
+  name: "Checkerboard Eyefall",
+  category: "Geometric",
   tintThumbnail: true,
   description:
-    "A checkerboard of coloured tiles, each with two small corner squares of the opposite colour, makes you perceive diagonal lines that aren't there.",
+    "A checkerboard of coloured tiles with small inset corner squares creates the illusion that perfectly straight rows are slanting diagonally.",
   howTo:
-    "Look at the grid — the small corner squares are placed on the same side of each row, alternating left/right between rows. This asymmetric placement tricks your visual system into perceiving slanted diagonal lines across the straight grid.",
+    "Look at the grid — each tile has two small squares of the opposite colour inset near the corners on one side. The side alternates per row, tricking your visual system into seeing diagonal slant across a perfectly square grid.",
   params: [
     {
       key: "gridSize",
