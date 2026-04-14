@@ -17,6 +17,8 @@ const fibonacciSpiral: IllusionConfig = {
   category: "Spiral",
   description:
     "A golden-ratio spiral with a pulsing effect inspired by the Fibonacci sequence.",
+  howTo:
+    "Focus on the center and let your peripheral vision absorb the pulsing pattern. The golden ratio creates naturally pleasing proportions that enhance the hypnotic effect.",
   params: [
     {
       key: "speed",

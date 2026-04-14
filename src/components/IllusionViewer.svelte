@@ -17,17 +17,22 @@
   let isFullscreen = $state(false);
   let params = $state<Record<string, any>>({});
 
-  // Initialize params from defaults + any provided initial params
+  // Use a mutable ref so the animation loop always reads current params
+  // without triggering Svelte's reactivity / re-running $effect
+  let paramsRef: Record<string, any> = {};
+
   function initParams() {
     const p: Record<string, any> = {};
     for (const def of illusion.params) {
       p[def.key] = initialParams?.[def.key] ?? def.default;
     }
     params = p;
+    paramsRef = p;
   }
 
   function handleParamChange(key: string, value: any) {
     params = { ...params, [key]: value };
+    paramsRef = params;
     window.history.replaceState(null, '', encodeState(illusion, params));
   }
 
@@ -49,15 +54,20 @@
     }
   }
 
+  // This effect runs ONCE per illusion (only depends on container + illusion identity).
+  // Params are read via paramsRef to avoid re-triggering.
   $effect(() => {
+    if (!container) return;
+
+    // Capture the illusion in a local variable for safe closure
+    const currentIllusion = illusion;
     initParams();
 
     const ctx = createRenderer(container);
-
-    illusion.setup(ctx.scene, ctx.camera, params);
+    currentIllusion.setup(ctx.scene, ctx.camera, paramsRef);
 
     const stopLoop = startAnimationLoop(ctx, (time) => {
-      illusion.update(time, params);
+      currentIllusion.update(time, paramsRef);
     });
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -65,7 +75,7 @@
 
     return () => {
       stopLoop();
-      illusion.dispose();
+      currentIllusion.dispose();
       ctx.destroy();
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('keydown', handleKeydown);
@@ -88,6 +98,10 @@
     <div class="controls-sidebar">
       <h3>{illusion.name}</h3>
       <p class="description">{illusion.description}</p>
+      <div class="how-to">
+        <strong>How to experience:</strong>
+        <p>{illusion.howTo}</p>
+      </div>
       <ControlPanel paramDefs={illusion.params} values={params} onChange={handleParamChange} />
     </div>
   {/if}
@@ -157,7 +171,30 @@
   .description {
     font-size: 0.8rem;
     opacity: 0.7;
+    margin: 0 0 0.75rem;
+  }
+
+  .how-to {
+    font-size: 0.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 0.6rem 0.75rem;
     margin: 0 0 1rem;
+    line-height: 1.5;
+  }
+
+  .how-to strong {
+    color: var(--accent, #7c3aed);
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .how-to p {
+    margin: 0;
+    opacity: 0.8;
   }
 
   @media (max-width: 600px) {

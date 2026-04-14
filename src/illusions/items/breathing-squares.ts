@@ -17,6 +17,8 @@ const breathingSquares: IllusionConfig = {
   category: "Op-Art",
   description:
     "Concentric squares alternating in color that appear to pulse and breathe.",
+  howTo:
+    "Stare at the center. The alternating contrast between rings tricks your visual system into perceiving expansion and contraction — the squares appear to pulse even though they move at a constant rate.",
   params: [
     {
       key: "speed",

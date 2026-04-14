@@ -55,6 +55,8 @@ const impossibleStaircase: IllusionConfig = {
   category: "Impossible",
   description:
     "An Escher-inspired looping staircase that appears to ascend endlessly.",
+  howTo:
+    "Follow the steps around the loop — they appear to continuously ascend yet return to where they started. This is a 3D version of the Penrose stairs, famously depicted by M.C. Escher.",
   params: [
     {
       key: "speed",

@@ -17,6 +17,8 @@ const vortexWarp: IllusionConfig = {
   category: "Tunnel",
   description:
     "A twisting distortion field that warps space into a hypnotic vortex.",
+  howTo:
+    "Focus on the center and let the twisted spiral arms draw your eye inward. After 30 seconds, look at a flat surface — you should see a strong warping aftereffect.",
   params: [
     {
       key: "speed",

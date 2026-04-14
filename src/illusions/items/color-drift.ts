@@ -12,6 +12,8 @@ const colorDrift: IllusionConfig = {
   category: "Color",
   description:
     "Slowly shifting hue gradients that create an immersive, flowing color experience.",
+  howTo:
+    "Relax your gaze and let the colors wash over you. The smooth hue transitions can create a meditative, calming effect. Try adjusting saturation for different moods.",
   params: [
     {
       key: "hueSpeed",

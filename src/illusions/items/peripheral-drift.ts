@@ -12,6 +12,8 @@ const peripheralDrift: IllusionConfig = {
   category: "Motion",
   description:
     "Patterns with asymmetric luminance that appear to move in your peripheral vision.",
+  howTo:
+    "Focus on any single element — the surrounding elements will appear to drift and shimmer. Move your eyes to a different element and the previously drifting ones will settle. This exploits how your brain processes peripheral motion.",
   params: [
     {
       key: "count",

@@ -17,6 +17,8 @@ const concentricMoire: IllusionConfig = {
   category: "Moiré",
   description:
     "Two overlapping sets of concentric circles creating shifting moiré interference patterns.",
+  howTo:
+    "Watch the pattern as the circles overlap. The shimmering interference fringes are not actually in the image — your brain creates them from the interaction of the two grids.",
   params: [
     {
       key: "speed",

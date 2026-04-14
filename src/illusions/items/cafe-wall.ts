@@ -12,6 +12,8 @@ const cafeWall: IllusionConfig = {
   category: "Op-Art",
   description:
     "Offset rows of alternating tiles that create the illusion of non-parallel lines.",
+  howTo:
+    "Look at the horizontal mortar lines between tile rows. Despite being perfectly parallel, they appear to converge and diverge. This effect is caused by the contrast and offset of adjacent tiles.",
   params: [
     {
       key: "offset",

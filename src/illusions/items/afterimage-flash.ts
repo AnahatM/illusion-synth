@@ -17,6 +17,8 @@ const afterimageFlash: IllusionConfig = {
   category: "Color",
   description:
     "Stare at the colored shape, then see its complementary afterimage when it fades.",
+  howTo:
+    "Fix your eyes on the small dot in the center without blinking for the full stare phase. When the image switches to white, keep looking at the dot — you'll see a ghostly shape in the complementary color.",
   params: [
     { key: "color", label: "Color", type: "color", default: "#ff0000" },
     {

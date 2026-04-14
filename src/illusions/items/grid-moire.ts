@@ -17,6 +17,8 @@ const gridMoire: IllusionConfig = {
   category: "Moiré",
   description:
     "Two overlapping line grids rotating relative to each other, creating dynamic moiré patterns.",
+  howTo:
+    "Watch the center as the grids rotate. Large-scale flowing shapes will emerge from the fine line patterns — these shapes exist only in your perception.",
   params: [
     {
       key: "speed",

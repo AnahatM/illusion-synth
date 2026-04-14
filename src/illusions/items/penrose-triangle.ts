@@ -58,6 +58,8 @@ const penroseTriangle: IllusionConfig = {
   category: "Impossible",
   description:
     "An animated impossible triangle that shifts perspective to reveal its paradoxical geometry.",
+  howTo:
+    "Watch as the triangle rotates. From certain angles it appears to be a solid, connected object — but as it turns, the impossible connection becomes apparent. Try wireframe mode to see the trick.",
   params: [
     {
       key: "speed",

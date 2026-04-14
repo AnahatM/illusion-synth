@@ -17,6 +17,8 @@ const infiniteTunnel: IllusionConfig = {
   category: "Tunnel",
   description:
     "Zooming concentric rings that create an endless depth illusion.",
+  howTo:
+    "Stare at the center for 20+ seconds, then look away at a wall or your hand. You should experience a strong motion aftereffect where static objects appear to expand or shrink.",
   params: [
     {
       key: "speed",

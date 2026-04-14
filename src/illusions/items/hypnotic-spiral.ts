@@ -17,6 +17,8 @@ const hypnoticSpiral: IllusionConfig = {
   category: "Spiral",
   description:
     "A continuously rotating Archimedes spiral that creates a hypnotic tunnel effect.",
+  howTo:
+    "Stare at the center of the spiral for 20-30 seconds, then look at a nearby surface. You should see the surroundings appear to warp and breathe.",
   params: [
     {
       key: "speed",

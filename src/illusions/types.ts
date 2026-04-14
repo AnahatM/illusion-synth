@@ -16,6 +16,7 @@ export interface IllusionConfig {
   name: string;
   category: string;
   description: string;
+  howTo: string;
   params: ParamDef[];
   setup: (
     scene: THREE.Scene,

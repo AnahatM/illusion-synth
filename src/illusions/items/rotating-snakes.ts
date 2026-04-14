@@ -17,6 +17,8 @@ const rotatingSnakes: IllusionConfig = {
   category: "Motion",
   description:
     "Circular arrays that appear to rotate when viewed peripherally, inspired by Akiyoshi Kitaoka.",
+  howTo:
+    "Don't stare at one spot — let your eyes wander across the pattern. The rings should appear to rotate in your peripheral vision. The effect is stronger when you blink or shift your gaze.",
   params: [
     {
       key: "ringCount",
