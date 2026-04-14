@@ -2,6 +2,8 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/kitaoka-drift.frag";
+import { resolvePalette } from "../lib/palettes";
+import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -42,6 +44,22 @@ const kitaokaDrift: IllusionConfig = {
       max: 1.2,
       step: 0.05,
     },
+    { key: "color1", label: "Color 1", type: "color", default: "#000000" },
+    { key: "color2", label: "Color 2", type: "color", default: "#ffffff" },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -52,6 +70,8 @@ const kitaokaDrift: IllusionConfig = {
         uScale: { value: params.scale },
         uDensity: { value: params.density },
         uContrast: { value: params.contrast },
+        uColor1: { value: hexToVec3(params.color1) },
+        uColor2: { value: hexToVec3(params.color2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -63,6 +83,13 @@ const kitaokaDrift: IllusionConfig = {
     material.uniforms.uScale.value = params.scale;
     material.uniforms.uDensity.value = params.density;
     material.uniforms.uContrast.value = params.contrast;
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.color1,
+      params.color2,
+    );
+    material.uniforms.uColor1.value = hexToVec3(c1);
+    material.uniforms.uColor2.value = hexToVec3(c2);
   },
 
   dispose() {

@@ -2,6 +2,8 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/scintillating-grid.frag";
+import { resolvePalette } from "../lib/palettes";
+import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -42,6 +44,22 @@ const scintillatingGrid: IllusionConfig = {
       max: 2,
       step: 0.1,
     },
+    { key: "color1", label: "Background", type: "color", default: "#0d0d0d" },
+    { key: "color2", label: "Lines / Dots", type: "color", default: "#ffffff" },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -53,6 +71,8 @@ const scintillatingGrid: IllusionConfig = {
         uLineWidth: { value: params.lineWidth },
         uDotSize: { value: params.dotSize },
         uTime: { value: 0 },
+        uColor1: { value: hexToVec3(params.color1) },
+        uColor2: { value: hexToVec3(params.color2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -65,6 +85,13 @@ const scintillatingGrid: IllusionConfig = {
     material.uniforms.uLineWidth.value = params.lineWidth;
     material.uniforms.uDotSize.value = params.dotSize;
     material.uniforms.uTime.value = time;
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.color1,
+      params.color2,
+    );
+    material.uniforms.uColor1.value = hexToVec3(c1);
+    material.uniforms.uColor2.value = hexToVec3(c2);
   },
 
   dispose() {

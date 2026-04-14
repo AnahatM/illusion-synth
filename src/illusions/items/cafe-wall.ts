@@ -2,6 +2,8 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/cafe-wall.frag";
+import { resolvePalette } from "../lib/palettes";
+import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -51,6 +53,22 @@ const cafeWall: IllusionConfig = {
       max: 3,
       step: 0.1,
     },
+    { key: "color1", label: "Color 1", type: "color", default: "#000000" },
+    { key: "color2", label: "Color 2", type: "color", default: "#ffffff" },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -62,6 +80,8 @@ const cafeWall: IllusionConfig = {
         uRows: { value: params.rows },
         uTilesPerRow: { value: params.tilesPerRow },
         uMortarWidth: { value: params.mortarWidth },
+        uColor1: { value: hexToVec3(params.color1) },
+        uColor2: { value: hexToVec3(params.color2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -74,6 +94,13 @@ const cafeWall: IllusionConfig = {
     material.uniforms.uRows.value = params.rows;
     material.uniforms.uTilesPerRow.value = params.tilesPerRow;
     material.uniforms.uMortarWidth.value = params.mortarWidth;
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.color1,
+      params.color2,
+    );
+    material.uniforms.uColor1.value = hexToVec3(c1);
+    material.uniforms.uColor2.value = hexToVec3(c2);
   },
 
   dispose() {

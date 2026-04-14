@@ -65,10 +65,8 @@ void main() {
 
   // Show proof: solid strip connecting A and B showing equal brightness
   if (uShowProof > 0.5) {
-    float brightA = dark;
-    float shadowAtB = smoothstep(0.35, 0.08, length((cellB - shadowCenter) * vec2(1.2, 1.0))) * 0.35;
-    float brightB = light - shadowAtB;
-    float proofColor = (brightA + brightB) * 0.5;
+    // Use the actual sampled matching brightness (#4C4C4C ≈ 0.298)
+    float proofColor = 0.298;
 
     // Straight diagonal strip from center of A to center of B
     vec2 pA = centerA;

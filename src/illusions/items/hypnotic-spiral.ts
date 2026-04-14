@@ -2,14 +2,11 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/spiral.frag";
+import { resolvePalette } from "../lib/palettes";
+import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
-
-function hexToVec3(hex: string): THREE.Vector3 {
-  const c = new THREE.Color(hex);
-  return new THREE.Vector3(c.r, c.g, c.b);
-}
 
 const hypnoticSpiral: IllusionConfig = {
   id: "hypnotic-spiral",
@@ -48,6 +45,20 @@ const hypnoticSpiral: IllusionConfig = {
     { key: "color1", label: "Color 1", type: "color", default: "#000000" },
     { key: "color2", label: "Color 2", type: "color", default: "#ffffff" },
     {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
+    {
       key: "scale",
       label: "Scale",
       type: "slider",
@@ -84,8 +95,13 @@ const hypnoticSpiral: IllusionConfig = {
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uDirection.value = params.direction === "CW" ? 1.0 : -1.0;
     material.uniforms.uArmCount.value = params.armCount;
-    material.uniforms.uColor1.value = hexToVec3(params.color1);
-    material.uniforms.uColor2.value = hexToVec3(params.color2);
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.color1,
+      params.color2,
+    );
+    material.uniforms.uColor1.value = hexToVec3(c1);
+    material.uniforms.uColor2.value = hexToVec3(c2);
     material.uniforms.uScale.value = params.scale;
   },
 

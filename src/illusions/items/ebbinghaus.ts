@@ -2,15 +2,10 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/ebbinghaus.frag";
+import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
-
-function hexToVec3(hex: string): THREE.Vector3 {
-  const c = new THREE.Color(hex);
-  return new THREE.Vector3(c.r, c.g, c.b);
-}
-
 const ebbinghausIllusion: IllusionConfig = {
   id: "ebbinghaus",
   name: "Ebbinghaus Illusion",

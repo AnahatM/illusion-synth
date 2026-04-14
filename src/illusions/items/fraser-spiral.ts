@@ -2,6 +2,8 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/fraser-spiral.frag";
+import { resolvePalette } from "../lib/palettes";
+import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -37,10 +39,26 @@ const fraserSpiral: IllusionConfig = {
       key: "speed",
       label: "Anim Speed",
       type: "slider",
-      default: 0.5,
+      default: 1.5,
       min: 0,
       max: 3,
       step: 0.1,
+    },
+    { key: "color1", label: "Color 1", type: "color", default: "#d9d9d9" },
+    { key: "color2", label: "Color 2", type: "color", default: "#262626" },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
     },
   ],
 
@@ -53,6 +71,8 @@ const fraserSpiral: IllusionConfig = {
         uRings: { value: params.rings },
         uTiltDensity: { value: params.tiltDensity },
         uSpeed: { value: params.speed },
+        uColor1: { value: hexToVec3(params.color1) },
+        uColor2: { value: hexToVec3(params.color2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -65,6 +85,13 @@ const fraserSpiral: IllusionConfig = {
     material.uniforms.uRings.value = params.rings;
     material.uniforms.uTiltDensity.value = params.tiltDensity;
     material.uniforms.uSpeed.value = params.speed;
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.color1,
+      params.color2,
+    );
+    material.uniforms.uColor1.value = hexToVec3(c1);
+    material.uniforms.uColor2.value = hexToVec3(c2);
   },
 
   dispose() {

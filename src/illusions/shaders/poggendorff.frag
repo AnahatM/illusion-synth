@@ -2,6 +2,7 @@ uniform float uRectWidth;
 uniform float uLineOffset;
 uniform vec3 uLineColor;
 uniform vec3 uRectColor;
+uniform float uHideRect;
 varying vec2 vUv;
 
 #define PI 3.14159265359
@@ -18,8 +19,9 @@ void main() {
   float inRect = step(center.x - rectW, uv.x) * (1.0 - step(center.x + rectW, uv.x)) *
                  step(center.y - rectH, uv.y) * (1.0 - step(center.y + rectH, uv.y));
 
-  // Gray rectangle
-  col = mix(col, uRectColor, inRect);
+  // Gray rectangle (hide when toggled)
+  float rectVisible = 1.0 - uHideRect;
+  col = mix(col, uRectColor, inRect * rectVisible);
 
   // Diagonal line behind the rectangle — from bottom-left to top-right
   float lineAngle = 0.6;
@@ -40,9 +42,13 @@ void main() {
   float rightLine = smoothstep(lineW, lineW * 0.3, abs(uv.y - rightY));
   float rightMask = step(center.x + rectW, uv.x) * (1.0 - step(0.9, uv.x));
 
-  // Actually both lines are perfectly aligned (offset=0), but the rectangle makes them look misaligned
-  col = mix(col, uLineColor, leftLine * leftMask);
-  col = mix(col, uLineColor, rightLine * rightMask);
+  // When rect hidden, show lines through the rect area too
+  float leftMaskFull = step(0.1, uv.x) * (1.0 - step(0.9, uv.x));
+  float rightMaskFull = leftMaskFull;
+  float useFull = uHideRect;
+
+  col = mix(col, uLineColor, leftLine * mix(leftMask, leftMaskFull, useFull));
+  col = mix(col, uLineColor, rightLine * mix(rightMask, rightMaskFull, useFull));
 
   // Draw rectangle border
   float borderW = 0.003;
@@ -51,7 +57,7 @@ void main() {
   float onBorderH = step(abs(uv.y - (center.y - rectH)), borderW) + step(abs(uv.y - (center.y + rectH)), borderW);
   onBorderH *= step(center.x - rectW, uv.x) * (1.0 - step(center.x + rectW, uv.x));
 
-  col = mix(col, vec3(0.5), clamp(onBorder + onBorderH, 0.0, 1.0));
+  col = mix(col, vec3(0.5), clamp(onBorder + onBorderH, 0.0, 1.0) * rectVisible);
 
   gl_FragColor = vec4(col, 1.0);
 }

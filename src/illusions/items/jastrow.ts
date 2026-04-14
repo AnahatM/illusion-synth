@@ -2,6 +2,8 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/jastrow.frag";
+import { resolvePalette } from "../lib/palettes";
+import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -30,6 +32,22 @@ const jastrowIllusion: IllusionConfig = {
       type: "toggle",
       default: false,
     },
+    { key: "color1", label: "Arc A Color", type: "color", default: "#4d99d9" },
+    { key: "color2", label: "Arc B Color", type: "color", default: "#d9734d" },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -39,6 +57,8 @@ const jastrowIllusion: IllusionConfig = {
       uniforms: {
         uOffset: { value: params.offset },
         uShowProof: { value: params.showProof ? 1.0 : 0.0 },
+        uColor1: { value: hexToVec3(params.color1) },
+        uColor2: { value: hexToVec3(params.color2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -49,6 +69,13 @@ const jastrowIllusion: IllusionConfig = {
     if (!material) return;
     material.uniforms.uOffset.value = params.offset;
     material.uniforms.uShowProof.value = params.showProof ? 1.0 : 0.0;
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.color1,
+      params.color2,
+    );
+    material.uniforms.uColor1.value = hexToVec3(c1);
+    material.uniforms.uColor2.value = hexToVec3(c2);
   },
 
   dispose() {

@@ -2,6 +2,8 @@ uniform float uGridSize;
 uniform float uLineWidth;
 uniform float uDotSize;
 uniform float uTime;
+uniform vec3 uColor1;
+uniform vec3 uColor2;
 varying vec2 vUv;
 
 void main() {
@@ -15,23 +17,16 @@ void main() {
   float onLineY = step(cell.y, lineW) + step(cellSize - lineW, cell.y);
   float isLine = clamp(onLineX + onLineY, 0.0, 1.0);
 
-  // Find nearest intersection
-  vec2 nearest = (floor(uv / cellSize) + 0.5) * cellSize;
-  // Snap to corners, not centers
   vec2 corner = round(uv / cellSize) * cellSize;
   float distToCorner = length(uv - corner);
 
   float dotR = uDotSize * 0.012;
   float dot = smoothstep(dotR, dotR * 0.4, distToCorner);
 
-  // White dots at intersections
   float isDot = 1.0 - dot;
 
-  // Background dark, lines gray
-  vec3 color = mix(vec3(0.05), vec3(0.6), isLine);
-
-  // White dots at intersections
-  color = mix(color, vec3(1.0), isDot * isLine);
+  vec3 color = mix(uColor1, mix(uColor1, uColor2, 0.6), isLine);
+  color = mix(color, uColor2, isDot * isLine);
 
   gl_FragColor = vec4(color, 1.0);
 }

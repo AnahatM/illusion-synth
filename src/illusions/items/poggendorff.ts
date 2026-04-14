@@ -45,6 +45,12 @@ const poggendorffIllusion: IllusionConfig = {
       type: "color",
       default: "#595959",
     },
+    {
+      key: "hideRect",
+      label: "Hide Rectangle",
+      type: "toggle",
+      default: false,
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -56,6 +62,7 @@ const poggendorffIllusion: IllusionConfig = {
         uLineOffset: { value: params.lineOffset },
         uLineColor: { value: new THREE.Color(params.lineColor) },
         uRectColor: { value: new THREE.Color(params.rectColor) },
+        uHideRect: { value: params.hideRect ? 1.0 : 0.0 },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -68,6 +75,7 @@ const poggendorffIllusion: IllusionConfig = {
     material.uniforms.uLineOffset.value = params.lineOffset;
     material.uniforms.uLineColor.value.set(params.lineColor);
     material.uniforms.uRectColor.value.set(params.rectColor);
+    material.uniforms.uHideRect.value = params.hideRect ? 1.0 : 0.0;
   },
 
   dispose() {

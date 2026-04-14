@@ -1,6 +1,8 @@
 uniform float uTime;
 uniform float uCount;
 uniform float uContrast;
+uniform vec3 uColor1;
+uniform vec3 uColor2;
 varying vec2 vUv;
 
 #define PI 3.14159265359
@@ -13,9 +15,10 @@ void main() {
   vec2 cell = floor(grid);
   vec2 local = fract(grid) - 0.5;
 
-  // Each cell has a small circular element with asymmetric luminance gradient
-  float dist = length(local);
-  float circle = smoothstep(0.35, 0.3, dist);
+  // Each cell has an elliptical element with asymmetric luminance gradient
+  vec2 ellipseLocal = local * vec2(1.0, 1.6); // stretch vertically → horizontal ellipse
+  float dist = length(ellipseLocal);
+  float circle = smoothstep(0.38, 0.33, dist);
 
   // Asymmetric luminance pattern that creates peripheral drift
   float angle = atan(local.y, local.x);
@@ -27,7 +30,8 @@ void main() {
   luminance += 0.02 * sin(uTime * 0.5 + cell.x * 2.0 + cell.y * 3.0);
 
   float bg = 0.3;
-  float result = mix(bg, luminance, circle);
+  float t = mix(bg, luminance, circle);
+  vec3 result = mix(uColor1, uColor2, t);
 
-  gl_FragColor = vec4(vec3(result), 1.0);
+  gl_FragColor = vec4(result, 1.0);
 }

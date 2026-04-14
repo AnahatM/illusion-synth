@@ -2,6 +2,8 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/zollner.frag";
+import { resolvePalette } from "../lib/palettes";
+import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -42,6 +44,22 @@ const zollnerIllusion: IllusionConfig = {
       max: 3,
       step: 0.1,
     },
+    { key: "color1", label: "Line Color", type: "color", default: "#cccccc" },
+    { key: "color2", label: "Hatch Color", type: "color", default: "#999999" },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -52,6 +70,8 @@ const zollnerIllusion: IllusionConfig = {
         uLineCount: { value: params.lineCount },
         uHatchAngle: { value: params.hatchAngle },
         uHatchDensity: { value: params.hatchDensity },
+        uColor1: { value: hexToVec3(params.color1) },
+        uColor2: { value: hexToVec3(params.color2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -63,6 +83,13 @@ const zollnerIllusion: IllusionConfig = {
     material.uniforms.uLineCount.value = params.lineCount;
     material.uniforms.uHatchAngle.value = params.hatchAngle;
     material.uniforms.uHatchDensity.value = params.hatchDensity;
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.color1,
+      params.color2,
+    );
+    material.uniforms.uColor1.value = hexToVec3(c1);
+    material.uniforms.uColor2.value = hexToVec3(c2);
   },
 
   dispose() {
