@@ -21,9 +21,9 @@ void main() {
   vec3 col = vec3(0.0); // black background
   float mortar = 0.02;
 
-  // Check 4 candidate lattice cells (floor/ceil of n,m)
-  for (int dn = 0; dn <= 1; dn++) {
-    for (int dm = 0; dm <= 1; dm++) {
+  // Check 9 candidate lattice cells
+  for (int dn = -1; dn <= 1; dn++) {
+    for (int dm = -1; dm <= 1; dm++) {
       float ni = n0 + float(dn);
       float mi = m0 + float(dm);
 
