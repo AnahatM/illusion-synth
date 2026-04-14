@@ -5,70 +5,104 @@ varying vec2 vUv;
 
 #define PI 3.14159265359
 
+// Rotate point around Y axis
+vec2 rotY(vec3 p, float angle) {
+  float c = cos(angle);
+  float s = sin(angle);
+  // Orthographic projection: discard Z (the ambiguity source)
+  return vec2(p.x * c - p.z * s, p.y);
+}
+
+// SDF for a line segment in 2D
+float sdSegment(vec2 p, vec2 a, vec2 b) {
+  vec2 pa = p - a, ba = b - a;
+  float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+  return length(pa - ba * h);
+}
+
 void main() {
   vec2 uv = vUv - 0.5;
-  vec3 col = vec3(0.85);
+  vec3 col = vec3(0.12);
 
   float t = uTime * uSpeed;
 
-  // Silhouette of a figure (simplified as an articulated stick figure / ellipse composite)
-  // Body center
-  float bodyX = 0.0;
-  float bodyY = 0.05;
+  // Define a human figure as 3D joints
+  // Standing with one leg raised, arms out (ballet pose)
+  float legSwing = sin(t * 0.5) * 0.3;
 
-  // Head
-  vec2 headPos = vec2(bodyX, bodyY + 0.15);
-  float head = smoothstep(0.04, 0.035, length(uv - headPos));
+  // Body joints in 3D (x, y, z)
+  vec3 head     = vec3(0.0, 0.22, 0.0);
+  vec3 neck     = vec3(0.0, 0.18, 0.0);
+  vec3 shoulder = vec3(0.0, 0.15, 0.0);
+  vec3 hip      = vec3(0.0, 0.02, 0.0);
 
-  // Torso
-  float torsoH = 0.12;
-  float torsoW = 0.03;
-  float torso = smoothstep(torsoW, torsoW * 0.7, abs(uv.x - bodyX)) *
-                step(bodyY, uv.y) * step(uv.y, bodyY + torsoH);
+  // Arms extended
+  vec3 lHand = vec3(-0.14, 0.18, 0.06);
+  vec3 rHand = vec3(0.14, 0.18, -0.06);
+  vec3 lElbow = vec3(-0.08, 0.17, 0.03);
+  vec3 rElbow = vec3(0.08, 0.17, -0.03);
 
-  // Legs — rotating
-  float legLen = 0.14;
-  float legW = 0.015;
-  float legAngle1 = sin(t) * 0.4;
-  float legAngle2 = sin(t + PI) * 0.4;
+  // Standing leg straight down
+  vec3 lFoot = vec3(-0.02, -0.16, 0.0);
+  vec3 lKnee = vec3(-0.01, -0.07, 0.0);
 
-  vec2 hipPos = vec2(bodyX, bodyY);
+  // Raised leg (to the side/back for ballet pose)
+  vec3 rKnee = vec3(0.06, 0.0, -0.08);
+  vec3 rFoot = vec3(0.12, 0.04, -0.14);
 
-  // Leg 1
-  vec2 leg1Dir = vec2(sin(legAngle1), -cos(legAngle1));
-  vec2 leg1End = hipPos + leg1Dir * legLen;
-  // Point-to-line distance
-  vec2 d1 = uv - hipPos;
-  float t1 = clamp(dot(d1, leg1Dir), 0.0, legLen);
-  float dist1 = length(d1 - leg1Dir * t1);
-  float leg1 = smoothstep(legW, legW * 0.5, dist1) * step(uv.y, hipPos.y + 0.01);
+  // Project all joints with rotation
+  vec2 pHead = rotY(head, t);
+  vec2 pNeck = rotY(neck, t);
+  vec2 pShoulder = rotY(shoulder, t);
+  vec2 pHip = rotY(hip, t);
+  vec2 pLHand = rotY(lHand, t);
+  vec2 pRHand = rotY(rHand, t);
+  vec2 pLElbow = rotY(lElbow, t);
+  vec2 pRElbow = rotY(rElbow, t);
+  vec2 pLFoot = rotY(lFoot, t);
+  vec2 pLKnee = rotY(lKnee, t);
+  vec2 pRKnee = rotY(rKnee, t);
+  vec2 pRFoot = rotY(rFoot, t);
 
-  // Leg 2
-  vec2 leg2Dir = vec2(sin(legAngle2), -cos(legAngle2));
-  float t2 = clamp(dot(uv - hipPos, leg2Dir), 0.0, legLen);
-  float dist2 = length((uv - hipPos) - leg2Dir * t2);
-  float leg2 = smoothstep(legW, legW * 0.5, dist2) * step(uv.y, hipPos.y + 0.01);
+  // Draw segments
+  float d = 1.0;
+  float w = 0.005 * uDetail;
 
-  // Arms — rotating opposite to legs
-  float armLen = 0.1;
-  float armW = 0.012;
-  vec2 shoulderPos = vec2(bodyX, bodyY + 0.11);
-  float armAngle1 = sin(t + PI) * 0.5;
-  float armAngle2 = sin(t) * 0.5;
+  // Spine
+  d = min(d, sdSegment(uv, pHead, pNeck));
+  d = min(d, sdSegment(uv, pNeck, pShoulder));
+  d = min(d, sdSegment(uv, pShoulder, pHip));
 
-  vec2 arm1Dir = vec2(sin(armAngle1), -cos(armAngle1) * 0.3 - 0.7);
-  float ta1 = clamp(dot(uv - shoulderPos, normalize(arm1Dir)), 0.0, armLen);
-  float dista1 = length((uv - shoulderPos) - normalize(arm1Dir) * ta1);
-  float arm1 = smoothstep(armW, armW * 0.5, dista1);
+  // Arms
+  d = min(d, sdSegment(uv, pShoulder, pLElbow));
+  d = min(d, sdSegment(uv, pLElbow, pLHand));
+  d = min(d, sdSegment(uv, pShoulder, pRElbow));
+  d = min(d, sdSegment(uv, pRElbow, pRHand));
 
-  vec2 arm2Dir = vec2(sin(armAngle2), -cos(armAngle2) * 0.3 - 0.7);
-  float ta2 = clamp(dot(uv - shoulderPos, normalize(arm2Dir)), 0.0, armLen);
-  float dista2 = length((uv - shoulderPos) - normalize(arm2Dir) * ta2);
-  float arm2 = smoothstep(armW, armW * 0.5, dista2);
+  // Legs
+  d = min(d, sdSegment(uv, pHip, pLKnee));
+  d = min(d, sdSegment(uv, pLKnee, pLFoot));
+  d = min(d, sdSegment(uv, pHip, pRKnee));
+  d = min(d, sdSegment(uv, pRKnee, pRFoot));
 
-  // Composite silhouette
-  float figure = max(max(max(head, torso), max(leg1, leg2)), max(arm1, arm2));
-  col = mix(col, vec3(0.05), figure);
+  // Head circle
+  float headR = 0.025;
+  d = min(d, length(uv - pHead) - headR);
+
+  // Render as silhouette
+  float silhouette = smoothstep(w, w * 0.3, d);
+  col = mix(col, vec3(0.85), silhouette);
+
+  // Joint dots
+  float jointR = 0.008;
+  float joints = 0.0;
+  joints = max(joints, smoothstep(jointR, jointR * 0.3, length(uv - pShoulder)));
+  joints = max(joints, smoothstep(jointR, jointR * 0.3, length(uv - pHip)));
+  joints = max(joints, smoothstep(jointR, jointR * 0.3, length(uv - pLElbow)));
+  joints = max(joints, smoothstep(jointR, jointR * 0.3, length(uv - pRElbow)));
+  joints = max(joints, smoothstep(jointR, jointR * 0.3, length(uv - pLKnee)));
+  joints = max(joints, smoothstep(jointR, jointR * 0.3, length(uv - pRKnee)));
+  col = mix(col, vec3(0.85), joints);
 
   gl_FragColor = vec4(col, 1.0);
 }

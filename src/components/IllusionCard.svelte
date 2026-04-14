@@ -18,7 +18,7 @@
     if (!canvas) return;
 
     const width = 320;
-    const height = 200;
+    const height = 320;
 
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
     renderer.setSize(width, height);
@@ -53,6 +53,7 @@
   </div>
   <div class="info">
     <h3>{illusion.name}</h3>
+    <p class="desc">{illusion.description}</p>
     <span class="category">{illusion.category}</span>
   </div>
 </button>
@@ -77,7 +78,7 @@
   }
 
   .thumbnail {
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 1 / 1;
     background: var(--surface-hover);
     display: flex;
     align-items: center;
@@ -94,7 +95,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(0, 255, 65, 0.25);
+    background: rgba(255, 255, 255, 0.15);
     mix-blend-mode: multiply;
     pointer-events: none;
   }
@@ -113,6 +114,17 @@
   h3 {
     margin: 0 0 0.25rem;
     font-size: 0.95rem;
+  }
+
+  .desc {
+    margin: 0 0 0.5rem;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .category {

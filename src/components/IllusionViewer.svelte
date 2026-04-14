@@ -190,7 +190,7 @@
     font-family: var(--font-sans);
     font-size: 0.85rem;
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(0, 255, 65, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 0;
     padding: 0.6rem 0.75rem;
     margin: 0 0 1rem;
@@ -198,7 +198,7 @@
   }
 
   .how-to strong {
-    color: var(--accent, #00ff41);
+    color: var(--accent, #ffffff);
     display: block;
     margin-bottom: 0.25rem;
     font-size: 0.75rem;

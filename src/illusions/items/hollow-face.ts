@@ -19,9 +19,9 @@ const hollowFace: IllusionConfig = {
       key: "speed",
       label: "Light Speed",
       type: "slider",
-      default: 0.5,
+      default: 1.5,
       min: 0.1,
-      max: 2,
+      max: 3,
       step: 0.1,
     },
     {
@@ -33,6 +33,12 @@ const hollowFace: IllusionConfig = {
       max: 2,
       step: 0.1,
     },
+    {
+      key: "showFeatures",
+      label: "Show Face Features",
+      type: "toggle",
+      default: true,
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -43,6 +49,7 @@ const hollowFace: IllusionConfig = {
         uTime: { value: 0 },
         uSpeed: { value: params.speed },
         uDepth: { value: params.depth },
+        uShowFeatures: { value: params.showFeatures ? 1.0 : 0.0 },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -54,6 +61,7 @@ const hollowFace: IllusionConfig = {
     material.uniforms.uTime.value = time;
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uDepth.value = params.depth;
+    material.uniforms.uShowFeatures.value = params.showFeatures ? 1.0 : 0.0;
   },
 
   dispose() {

@@ -33,6 +33,18 @@ const poggendorffIllusion: IllusionConfig = {
       max: 2,
       step: 0.1,
     },
+    {
+      key: "lineColor",
+      label: "Line Color",
+      type: "color",
+      default: "#d9d9d9",
+    },
+    {
+      key: "rectColor",
+      label: "Rectangle Color",
+      type: "color",
+      default: "#595959",
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -42,6 +54,8 @@ const poggendorffIllusion: IllusionConfig = {
       uniforms: {
         uRectWidth: { value: params.rectWidth },
         uLineOffset: { value: params.lineOffset },
+        uLineColor: { value: new THREE.Color(params.lineColor) },
+        uRectColor: { value: new THREE.Color(params.rectColor) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -52,6 +66,8 @@ const poggendorffIllusion: IllusionConfig = {
     if (!material) return;
     material.uniforms.uRectWidth.value = params.rectWidth;
     material.uniforms.uLineOffset.value = params.lineOffset;
+    material.uniforms.uLineColor.value.set(params.lineColor);
+    material.uniforms.uRectColor.value.set(params.rectColor);
   },
 
   dispose() {

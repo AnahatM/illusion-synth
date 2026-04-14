@@ -7,7 +7,7 @@ varying vec2 vUv;
 
 void main() {
   vec2 uv = vUv;
-  vec3 col = vec3(1.0); // white background
+  vec3 col = vec3(0.15); // dark background
 
   float lineCount = uLineCount;
   float lineSpacing = 1.0 / lineCount;
@@ -19,7 +19,7 @@ void main() {
     float y = (i + 0.5) * lineSpacing;
     float dist = abs(uv.y - y);
     if (dist < lineW) {
-      col = vec3(0.0);
+      col = vec3(0.8);
     }
   }
 
@@ -50,7 +50,7 @@ void main() {
       );
 
       if (abs(rd.x) < 0.002 && abs(rd.y) < hatchLen) {
-        col = vec3(0.0);
+        col = vec3(0.6);
       }
     }
   }

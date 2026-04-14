@@ -47,7 +47,7 @@ const concentricMoire: IllusionConfig = {
       max: 3,
       step: 0.1,
     },
-    { key: "color", label: "Color", type: "color", default: "#00ff41" },
+    { key: "color", label: "Color", type: "color", default: "#ffffff" },
     {
       key: "scale",
       label: "Scale",

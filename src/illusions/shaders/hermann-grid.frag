@@ -1,5 +1,7 @@
 uniform float uGridSize;
 uniform float uLineWidth;
+uniform vec3 uLineColor;
+uniform vec3 uBgColor;
 varying vec2 vUv;
 
 void main() {
@@ -15,8 +17,7 @@ void main() {
 
   float isLine = clamp(onLineX + onLineY, 0.0, 1.0);
 
-  // Background is dark, lines are light gray
-  vec3 color = mix(vec3(0.05), vec3(0.85), isLine);
+  vec3 color = mix(uBgColor, uLineColor, isLine);
 
   gl_FragColor = vec4(color, 1.0);
 }

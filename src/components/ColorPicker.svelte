@@ -195,7 +195,7 @@
   .hex-label {
     font-size: 0.75rem;
     font-family: monospace;
-    color: var(--text-secondary, #00aa2a);
+    color: var(--text-secondary, #888888);
     min-width: 4rem;
   }
 

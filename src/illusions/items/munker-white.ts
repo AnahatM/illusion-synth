@@ -33,6 +33,12 @@ const munkerWhite: IllusionConfig = {
       max: 3,
       step: 0.1,
     },
+    {
+      key: "showProof",
+      label: "Show Proof",
+      type: "toggle",
+      default: false,
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -42,6 +48,7 @@ const munkerWhite: IllusionConfig = {
       uniforms: {
         uStripeFreq: { value: params.stripeFreq },
         uBarWidth: { value: params.barWidth },
+        uShowProof: { value: params.showProof ? 1.0 : 0.0 },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -52,6 +59,7 @@ const munkerWhite: IllusionConfig = {
     if (!material) return;
     material.uniforms.uStripeFreq.value = params.stripeFreq;
     material.uniforms.uBarWidth.value = params.barWidth;
+    material.uniforms.uShowProof.value = params.showProof ? 1.0 : 0.0;
   },
 
   dispose() {

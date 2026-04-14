@@ -33,6 +33,18 @@ const hermannGrid: IllusionConfig = {
       max: 5,
       step: 0.1,
     },
+    {
+      key: "lineColor",
+      label: "Line Color",
+      type: "color",
+      default: "#d9d9d9",
+    },
+    {
+      key: "bgColor",
+      label: "Background Color",
+      type: "color",
+      default: "#0d0d0d",
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -42,6 +54,8 @@ const hermannGrid: IllusionConfig = {
       uniforms: {
         uGridSize: { value: params.gridSize },
         uLineWidth: { value: params.lineWidth },
+        uLineColor: { value: new THREE.Color(params.lineColor) },
+        uBgColor: { value: new THREE.Color(params.bgColor) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -52,6 +66,8 @@ const hermannGrid: IllusionConfig = {
     if (!material) return;
     material.uniforms.uGridSize.value = params.gridSize;
     material.uniforms.uLineWidth.value = params.lineWidth;
+    material.uniforms.uLineColor.value.set(params.lineColor);
+    material.uniforms.uBgColor.value.set(params.bgColor);
   },
 
   dispose() {

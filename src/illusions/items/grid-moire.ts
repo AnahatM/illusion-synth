@@ -38,7 +38,7 @@ const gridMoire: IllusionConfig = {
       max: 5,
       step: 0.1,
     },
-    { key: "color", label: "Color", type: "color", default: "#00ff41" },
+    { key: "color", label: "Color", type: "color", default: "#ffffff" },
   ],
 
   setup(scene, _camera, params) {

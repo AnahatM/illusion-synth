@@ -13,7 +13,7 @@ void main() {
 
   // Three pac-man positions forming a triangle
   float triR = 0.22;
-  vec3 bg = vec3(0.95);
+  vec3 bg = vec3(0.15);
   vec3 col = bg;
 
   for (int i = 0; i < 3; i++) {
@@ -32,7 +32,7 @@ void main() {
 
     // Draw circle with mouth cut out
     if (dist < r && abs(angleDiff) > gapAngle * 0.5) {
-      col = vec3(0.0);
+      col = vec3(0.85);
     }
   }
 

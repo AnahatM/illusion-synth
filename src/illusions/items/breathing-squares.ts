@@ -39,7 +39,7 @@ const breathingSquares: IllusionConfig = {
       step: 1,
     },
     { key: "color1", label: "Color 1", type: "color", default: "#000000" },
-    { key: "color2", label: "Color 2", type: "color", default: "#00ff41" },
+    { key: "color2", label: "Color 2", type: "color", default: "#ffffff" },
   ],
 
   setup(scene, _camera, params) {

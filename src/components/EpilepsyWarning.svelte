@@ -63,7 +63,7 @@
   }
 
   button {
-    background: var(--accent, #00ff41);
+    background: var(--accent, #ffffff);
     color: #000;
     border: none;
     border-radius: 0;

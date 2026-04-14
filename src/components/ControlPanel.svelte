@@ -95,20 +95,20 @@
     appearance: none;
     width: 14px;
     height: 14px;
-    background: var(--accent, #00ff41);
+    background: var(--accent, #ffffff);
     border: none;
     cursor: pointer;
-    box-shadow: 0 0 6px rgba(0, 255, 65, 0.5);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
   }
 
   input[type='range']::-moz-range-thumb {
     width: 14px;
     height: 14px;
-    background: var(--accent, #00ff41);
+    background: var(--accent, #ffffff);
     border: none;
     border-radius: 0;
     cursor: pointer;
-    box-shadow: 0 0 6px rgba(0, 255, 65, 0.5);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
   }
 
   input[type='range']::-moz-range-track {
@@ -149,7 +149,7 @@
   }
 
   .seg-btn.active {
-    background: var(--accent, #00ff41);
+    background: var(--accent, #ffffff);
     color: #000;
     font-weight: 600;
   }
@@ -171,8 +171,8 @@
     margin-top: 0.5rem;
     padding: 0.5rem 1rem;
     background: transparent;
-    color: var(--accent, #00ff41);
-    border: 1px solid var(--accent, #00ff41);
+    color: var(--accent, #ffffff);
+    border: 1px solid var(--accent, #ffffff);
     font-family: inherit;
     font-size: 0.8rem;
     cursor: pointer;
@@ -183,7 +183,7 @@
   }
 
   .reset-btn:hover {
-    background: var(--accent, #00ff41);
+    background: var(--accent, #ffffff);
     color: #000;
   }
 </style>

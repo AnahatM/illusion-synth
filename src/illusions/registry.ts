@@ -38,8 +38,12 @@ import chromaticAdaptation from "./items/chromatic-adaptation";
 import steppingFeet from "./items/stepping-feet";
 import motionAftereffect from "./items/motion-aftereffect";
 import spinningDancer from "./items/spinning-dancer";
-import amesRoom from "./items/ames-room";
+import jastrowIllusion from "./items/jastrow";
+import perspectiveSize from "./items/perspective-size";
 import hollowFace from "./items/hollow-face";
+// Circular motion illusions
+import driftRings from "./items/drift-rings";
+import kitaokaDrift from "./items/kitaoka-drift";
 
 export const illusions: IllusionConfig[] = [
   hypnoticSpiral,
@@ -81,8 +85,12 @@ export const illusions: IllusionConfig[] = [
   steppingFeet,
   motionAftereffect,
   spinningDancer,
-  amesRoom,
+  jastrowIllusion,
+  perspectiveSize,
   hollowFace,
+  // Circular motion illusions
+  driftRings,
+  kitaokaDrift,
 ];
 
 export const categories = [...new Set(illusions.map((i) => i.category))];

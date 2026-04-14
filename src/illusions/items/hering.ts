@@ -24,6 +24,12 @@ const heringIllusion: IllusionConfig = {
       max: 40,
       step: 1,
     },
+    {
+      key: "lineColor",
+      label: "Line Color",
+      type: "color",
+      default: "#ffffff",
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -33,6 +39,7 @@ const heringIllusion: IllusionConfig = {
       uniforms: {
         uLineCount: { value: 2 },
         uRayCount: { value: params.rayCount },
+        uLineColor: { value: new THREE.Color(params.lineColor) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -42,6 +49,7 @@ const heringIllusion: IllusionConfig = {
   update(_time, params) {
     if (!material) return;
     material.uniforms.uRayCount.value = params.rayCount;
+    material.uniforms.uLineColor.value.set(params.lineColor);
   },
 
   dispose() {

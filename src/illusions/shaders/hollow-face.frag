@@ -1,6 +1,7 @@
 uniform float uTime;
 uniform float uSpeed;
 uniform float uDepth;
+uniform float uShowFeatures;
 varying vec2 vUv;
 
 #define PI 3.14159265359
@@ -56,10 +57,13 @@ void main() {
 
   // Compose face
   col = mix(col, faceCol, faceMask);
-  col = mix(col, vec3(1.0), (inLeftEye + inRightEye) * faceMask);
-  col = mix(col, vec3(0.15), (inLeftPupil + inRightPupil) * faceMask);
-  col -= noseShadow * faceMask;
-  col = mix(col, vec3(0.6, 0.2, 0.2), mouth * faceMask * 0.8);
+
+  if (uShowFeatures > 0.5) {
+    col = mix(col, vec3(1.0), (inLeftEye + inRightEye) * faceMask);
+    col = mix(col, vec3(0.15), (inLeftPupil + inRightPupil) * faceMask);
+    col -= noseShadow * faceMask;
+    col = mix(col, vec3(0.6, 0.2, 0.2), mouth * faceMask * 0.8);
+  }
 
   gl_FragColor = vec4(col, 1.0);
 }

@@ -12,27 +12,45 @@ void main() {
 
   int count = int(uDotCount);
   float spacing = uSpacing * 0.08;
-  float radius = 0.015;
+  float radius = 0.018;
 
-  // Two rows of dots
+  // Current active dot index (sequential, one at a time)
+  float cycle = uTime * uSpeed;
+  int activeIdx = int(mod(floor(cycle), uDotCount));
+
+  // Smooth transition: fractional part for fade
+  float frac = fract(cycle);
+
+  // Two rows demonstrating the effect
   for (int row = 0; row < 2; row++) {
     float y = float(row) * spacing - spacing * 0.5;
-    float phase = float(row) * PI; // offset phase
+    int rowActive = int(mod(float(activeIdx) + float(row) * uDotCount * 0.5, uDotCount));
 
     for (int i = 0; i < 20; i++) {
       if (i >= count) break;
       float fi = float(i);
       float x = (fi / uDotCount - 0.5) * 0.8;
 
-      // Alternate on/off to create phi motion
-      float t = uTime * uSpeed;
-      float onOff = step(0.0, sin(t + fi * PI + phase));
-
       vec2 pos = vec2(x, y);
       float dist = length(uv - pos);
-      float dot = smoothstep(radius, radius * 0.4, dist);
 
-      col = mix(col, vec3(1.0), dot * onOff);
+      // Dim position markers
+      float marker = smoothstep(radius * 0.6, radius * 0.3, dist);
+      col = mix(col, vec3(0.2), marker);
+
+      // Active dot: bright
+      if (i == rowActive) {
+        float bright = smoothstep(radius, radius * 0.3, dist);
+        float fade = 1.0 - frac * 0.3; // slight fade toward end
+        col = mix(col, vec3(1.0), bright * fade);
+      }
+
+      // Next dot: fading in
+      int nextIdx = int(mod(float(rowActive) + 1.0, uDotCount));
+      if (i == nextIdx) {
+        float bright = smoothstep(radius, radius * 0.3, dist);
+        col = mix(col, vec3(1.0), bright * frac * 0.5);
+      }
     }
   }
 
