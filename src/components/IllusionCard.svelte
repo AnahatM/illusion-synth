@@ -11,6 +11,9 @@
 
   let canvas: HTMLCanvasElement;
 
+  const hasColorParam = $derived(illusion.params.some(p => p.type === 'color'));
+  const needsTint = $derived(!hasColorParam);
+
   $effect(() => {
     if (!canvas) return;
 
@@ -29,16 +32,23 @@
       defaults[p.key] = p.default;
     }
 
-    illusion.setup(scene, camera, defaults);
-    illusion.update(0.5, defaults);
-    renderer.render(scene, camera);
-    illusion.dispose();
-    renderer.dispose();
+    const result = illusion.setup(scene, camera, defaults);
+    const doRender = () => {
+      illusion.update(0.5, defaults);
+      renderer.render(scene, camera);
+      illusion.dispose();
+      renderer.dispose();
+    };
+    if (result && typeof (result as any).then === 'function') {
+      (result as Promise<void>).then(doRender);
+    } else {
+      doRender();
+    }
   });
 </script>
 
 <button class="card" onclick={onClick}>
-  <div class="thumbnail">
+  <div class="thumbnail" class:tinted={needsTint}>
     <canvas bind:this={canvas}></canvas>
   </div>
   <div class="info">
@@ -73,6 +83,20 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    position: relative;
+  }
+
+  .thumbnail.tinted canvas {
+    filter: grayscale(1) brightness(0.8);
+  }
+
+  .thumbnail.tinted::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 255, 65, 0.25);
+    mix-blend-mode: multiply;
+    pointer-events: none;
   }
 
   .thumbnail canvas {

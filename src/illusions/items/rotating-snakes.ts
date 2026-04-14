@@ -16,15 +16,15 @@ const rotatingSnakes: IllusionConfig = {
   name: "Rotating Snakes",
   category: "Motion",
   description:
-    "Circular arrays that appear to rotate when viewed peripherally, inspired by Akiyoshi Kitaoka.",
+    "A static pattern that appears to rotate in your peripheral vision, inspired by Akiyoshi Kitaoka's famous illusion. The asymmetric luminance sequence (black → dark → light → white) tricks your visual system.",
   howTo:
-    "Don't stare at one spot — let your eyes wander across the pattern. The rings should appear to rotate in your peripheral vision. The effect is stronger when you blink or shift your gaze.",
+    "This is a STATIC image — it does not actually move. Don't fixate on one spot. Let your eyes wander across the pattern, or look slightly to the side. The rings should appear to slowly rotate in your peripheral vision. Blinking or shifting your gaze enhances the effect.",
   params: [
     {
       key: "ringCount",
       label: "Ring Count",
       type: "slider",
-      default: 6,
+      default: 8,
       min: 2,
       max: 15,
       step: 1,
@@ -38,9 +38,8 @@ const rotatingSnakes: IllusionConfig = {
       max: 3,
       step: 0.1,
     },
-    { key: "color1", label: "Color 1", type: "color", default: "#00ff41" },
-    { key: "color2", label: "Color 2", type: "color", default: "#004411" },
-    { key: "color3", label: "Color 3", type: "color", default: "#00aa2a" },
+    { key: "color1", label: "Bright Color", type: "color", default: "#00ff41" },
+    { key: "color2", label: "Dark Color", type: "color", default: "#004411" },
   ],
 
   setup(scene, _camera, params) {
@@ -53,7 +52,7 @@ const rotatingSnakes: IllusionConfig = {
         uDensity: { value: params.density },
         uColor1: { value: hexToVec3(params.color1) },
         uColor2: { value: hexToVec3(params.color2) },
-        uColor3: { value: hexToVec3(params.color3) },
+        uColor3: { value: new THREE.Vector3(0, 0, 0) },
       },
       transparent: true,
     });
@@ -63,12 +62,10 @@ const rotatingSnakes: IllusionConfig = {
 
   update(time, params) {
     if (!material) return;
-    material.uniforms.uTime.value = time;
     material.uniforms.uRingCount.value = params.ringCount;
     material.uniforms.uDensity.value = params.density;
     material.uniforms.uColor1.value = hexToVec3(params.color1);
     material.uniforms.uColor2.value = hexToVec3(params.color2);
-    material.uniforms.uColor3.value = hexToVec3(params.color3);
   },
 
   dispose() {

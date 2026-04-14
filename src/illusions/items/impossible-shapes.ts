@@ -2,9 +2,26 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 
 let mesh: THREE.Mesh;
-let material: THREE.MeshBasicMaterial;
+let material: THREE.ShaderMaterial;
 let textureLoader: THREE.TextureLoader;
 let currentTexture: THREE.Texture | null = null;
+
+const invertVert = `
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}`;
+
+const shapeFrag = `
+uniform sampler2D uMap;
+uniform float uInvert;
+varying vec2 vUv;
+void main() {
+  vec4 tex = texture2D(uMap, vUv);
+  vec3 col = mix(tex.rgb, 1.0 - tex.rgb, uInvert);
+  gl_FragColor = vec4(col, tex.a);
+}`;
 
 const impossibleShapes: IllusionConfig = {
   id: "impossible-shapes",
@@ -40,7 +57,13 @@ const impossibleShapes: IllusionConfig = {
 
   setup(scene, _camera, params) {
     textureLoader = new THREE.TextureLoader();
-    material = new THREE.MeshBasicMaterial({
+    material = new THREE.ShaderMaterial({
+      vertexShader: invertVert,
+      fragmentShader: shapeFrag,
+      uniforms: {
+        uMap: { value: null },
+        uInvert: { value: 0.0 },
+      },
       transparent: true,
       side: THREE.DoubleSide,
     });
@@ -49,7 +72,7 @@ const impossibleShapes: IllusionConfig = {
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2 * s, 2 * s), material);
     scene.add(mesh);
 
-    loadShape(params.shape);
+    return loadShape(params.shape);
   },
 
   update(_time, params) {
@@ -73,7 +96,7 @@ const impossibleShapes: IllusionConfig = {
   },
 };
 
-function loadShape(shapeName: string) {
+function loadShape(shapeName: string): Promise<void> {
   const fileMap: Record<string, string> = {
     "Penrose Triangle": "/impossible-shapes/penrose-triangle.png",
     "Impossible Staircase": "/impossible-shapes/impossible-staircase.png",
@@ -82,16 +105,30 @@ function loadShape(shapeName: string) {
   };
 
   const path = fileMap[shapeName];
-  if (!path || !textureLoader || !material) return;
+  if (!path || !textureLoader || !material) return Promise.resolve();
 
   material.userData.currentShape = shapeName;
+  const needsInvert =
+    shapeName === "Penrose Rectangle" || shapeName === "Impossible Trident";
+  material.uniforms.uInvert.value = needsInvert ? 1.0 : 0.0;
 
-  textureLoader.load(path, (texture) => {
-    if (currentTexture) currentTexture.dispose();
-    currentTexture = texture;
-    texture.colorSpace = THREE.SRGBColorSpace;
-    material.map = texture;
-    material.needsUpdate = true;
+  return new Promise<void>((resolve) => {
+    textureLoader.load(
+      path,
+      (texture) => {
+        if (currentTexture) currentTexture.dispose();
+        currentTexture = texture;
+        texture.colorSpace = THREE.SRGBColorSpace;
+        material.uniforms.uMap.value = texture;
+        material.needsUpdate = true;
+        resolve();
+      },
+      undefined,
+      (err) => {
+        console.error("Failed to load impossible shape:", path, err);
+        resolve();
+      },
+    );
   });
 }
 

@@ -18,18 +18,9 @@ const rubinsVase: IllusionConfig = {
   description:
     "The classic figure-ground illusion: do you see a vase, or two faces in profile? Your perception flips between the two interpretations.",
   howTo:
-    "Focus on the colored center to see a vase. Then focus on the sides to see two face profiles looking at each other. The subtle brightness shift hints at the alternate interpretation.",
+    "Focus on the white center to see a vase. Then focus on the dark sides to see two face profiles looking at each other.",
   params: [
-    {
-      key: "speed",
-      label: "Animation Speed",
-      type: "slider",
-      default: 0.5,
-      min: 0,
-      max: 2,
-      step: 0.1,
-    },
-    { key: "color1", label: "Vase Color", type: "color", default: "#ddd5a0" },
+    { key: "color1", label: "Vase Color", type: "color", default: "#ffffff" },
     { key: "color2", label: "Face Color", type: "color", default: "#000000" },
   ],
 
@@ -39,7 +30,7 @@ const rubinsVase: IllusionConfig = {
       fragmentShader,
       uniforms: {
         uTime: { value: 0 },
-        uSpeed: { value: params.speed },
+        uSpeed: { value: 0 },
         uColor1: { value: hexToVec3(params.color1) },
         uColor2: { value: hexToVec3(params.color2) },
       },
@@ -52,8 +43,6 @@ const rubinsVase: IllusionConfig = {
 
   update(time, params) {
     if (!material) return;
-    material.uniforms.uTime.value = time;
-    material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uColor1.value = hexToVec3(params.color1);
     material.uniforms.uColor2.value = hexToVec3(params.color2);
   },

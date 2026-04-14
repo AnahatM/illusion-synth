@@ -9,6 +9,7 @@
   const routes = {
     '/': Browse,
     '/about': About,
+    '/illusion/:id': Browse,
   };
 
   let currentTheme = $state<'dark' | 'light'>('dark');
