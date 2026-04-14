@@ -11,13 +11,13 @@ const cafeWall: IllusionConfig = {
   name: "Café Wall",
   category: "Op-Art",
   description:
-    "Offset rows of alternating tiles that create the illusion of non-parallel lines.",
+    "Offset rows of alternating black and white tiles separated by thin gray mortar lines create the illusion of non-parallel, wedge-shaped rows.",
   howTo:
-    "Look at the horizontal mortar lines between tile rows. Despite being perfectly parallel, they appear to converge and diverge. This effect is caused by the contrast and offset of adjacent tiles.",
+    "Look at the horizontal gray mortar lines between tile rows. Despite being perfectly parallel and straight, they appear to tilt and converge. The effect is strongest with the offset at 0.5 (half a tile shift).",
   params: [
     {
       key: "offset",
-      label: "Offset",
+      label: "Row Offset",
       type: "slider",
       default: 0.5,
       min: 0,
@@ -25,22 +25,31 @@ const cafeWall: IllusionConfig = {
       step: 0.01,
     },
     {
-      key: "tileCount",
-      label: "Tile Count",
+      key: "rows",
+      label: "Rows",
       type: "slider",
-      default: 8,
+      default: 12,
+      min: 4,
+      max: 24,
+      step: 1,
+    },
+    {
+      key: "tilesPerRow",
+      label: "Tiles per Row",
+      type: "slider",
+      default: 9,
       min: 3,
       max: 20,
       step: 1,
     },
     {
-      key: "contrast",
-      label: "Contrast",
+      key: "mortarWidth",
+      label: "Mortar Width",
       type: "slider",
-      default: 0.8,
-      min: 0.1,
-      max: 1,
-      step: 0.05,
+      default: 0.4,
+      min: 0.2,
+      max: 3,
+      step: 0.1,
     },
   ],
 
@@ -49,22 +58,22 @@ const cafeWall: IllusionConfig = {
       vertexShader,
       fragmentShader,
       uniforms: {
-        uTime: { value: 0 },
         uOffset: { value: params.offset },
-        uTileCount: { value: params.tileCount },
-        uContrast: { value: params.contrast },
+        uRows: { value: params.rows },
+        uTilesPerRow: { value: params.tilesPerRow },
+        uMortarWidth: { value: params.mortarWidth },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
     scene.add(mesh);
   },
 
-  update(time, params) {
+  update(_time, params) {
     if (!material) return;
-    material.uniforms.uTime.value = time;
     material.uniforms.uOffset.value = params.offset;
-    material.uniforms.uTileCount.value = params.tileCount;
-    material.uniforms.uContrast.value = params.contrast;
+    material.uniforms.uRows.value = params.rows;
+    material.uniforms.uTilesPerRow.value = params.tilesPerRow;
+    material.uniforms.uMortarWidth.value = params.mortarWidth;
   },
 
   dispose() {

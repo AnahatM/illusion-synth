@@ -45,7 +45,7 @@
     width: 100%;
     padding: 0.6rem 1rem;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 0;
     background: var(--surface);
     color: var(--text);
     font-size: 1rem;
@@ -67,7 +67,7 @@
   .chip {
     padding: 0.3rem 0.75rem;
     border: 1px solid var(--border);
-    border-radius: 999px;
+    border-radius: 0;
     background: var(--surface);
     color: var(--text-secondary);
     font-size: 0.8rem;

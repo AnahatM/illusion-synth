@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
-import fragmentShader from "../shaders/moire-circles.frag";
+import fragmentShader from "../shaders/wireframe-torus.frag";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -11,14 +11,14 @@ function hexToVec3(hex: string): THREE.Vector3 {
   return new THREE.Vector3(c.r, c.g, c.b);
 }
 
-const concentricMoire: IllusionConfig = {
-  id: "concentric-moire",
-  name: "Concentric Circles Moiré",
-  category: "Moiré",
+const wireframeTorus: IllusionConfig = {
+  id: "wireframe-torus",
+  name: "Ambiguous Torus",
+  category: "Motion",
   description:
-    "Two overlapping sets of concentric circles creating shifting moiré interference patterns.",
+    "A wireframe torus rotating in 3D with orthographic projection. The lack of depth cues makes the rotation direction and shape orientation ambiguous.",
   howTo:
-    "Watch the pattern as the circles overlap. The shimmering interference fringes are not actually in the image — your brain creates them from the interaction of the two grids.",
+    "Stare at the torus — you may perceive it rotating one way, then suddenly flip to the opposite direction. The flat projection removes all depth information, creating a bistable percept. Try focusing on a single ring to trigger a reversal.",
   params: [
     {
       key: "speed",
@@ -26,36 +26,36 @@ const concentricMoire: IllusionConfig = {
       type: "slider",
       default: 0.5,
       min: 0.1,
-      max: 3,
-      step: 0.1,
-    },
-    {
-      key: "offset",
-      label: "Offset",
-      type: "slider",
-      default: 1,
-      min: 0.1,
-      max: 3,
-      step: 0.1,
-    },
-    {
-      key: "thickness",
-      label: "Thickness",
-      type: "slider",
-      default: 1,
-      min: 0.3,
-      max: 3,
+      max: 2,
       step: 0.1,
     },
     { key: "color", label: "Color", type: "color", default: "#00ff41" },
     {
-      key: "scale",
-      label: "Scale",
+      key: "major",
+      label: "Major Radius",
       type: "slider",
-      default: 4,
-      min: 1,
-      max: 10,
-      step: 0.5,
+      default: 1,
+      min: 0.5,
+      max: 2,
+      step: 0.1,
+    },
+    {
+      key: "minor",
+      label: "Minor Radius",
+      type: "slider",
+      default: 0.4,
+      min: 0.1,
+      max: 0.8,
+      step: 0.05,
+    },
+    {
+      key: "segments",
+      label: "Segments",
+      type: "slider",
+      default: 16,
+      min: 6,
+      max: 24,
+      step: 1,
     },
   ],
 
@@ -66,14 +66,13 @@ const concentricMoire: IllusionConfig = {
       uniforms: {
         uTime: { value: 0 },
         uSpeed: { value: params.speed },
-        uOffset: { value: params.offset },
-        uThickness: { value: params.thickness },
         uColor: { value: hexToVec3(params.color) },
-        uScale: { value: params.scale },
+        uMajor: { value: params.major },
+        uMinor: { value: params.minor },
+        uSegments: { value: params.segments },
       },
       transparent: true,
     });
-
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
     scene.add(mesh);
   },
@@ -82,10 +81,10 @@ const concentricMoire: IllusionConfig = {
     if (!material) return;
     material.uniforms.uTime.value = time;
     material.uniforms.uSpeed.value = params.speed;
-    material.uniforms.uOffset.value = params.offset;
-    material.uniforms.uThickness.value = params.thickness;
     material.uniforms.uColor.value = hexToVec3(params.color);
-    material.uniforms.uScale.value = params.scale;
+    material.uniforms.uMajor.value = params.major;
+    material.uniforms.uMinor.value = params.minor;
+    material.uniforms.uSegments.value = params.segments;
   },
 
   dispose() {
@@ -94,4 +93,4 @@ const concentricMoire: IllusionConfig = {
   },
 };
 
-export default concentricMoire;
+export default wireframeTorus;

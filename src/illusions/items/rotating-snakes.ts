@@ -38,9 +38,9 @@ const rotatingSnakes: IllusionConfig = {
       max: 3,
       step: 0.1,
     },
-    { key: "color1", label: "Color 1", type: "color", default: "#ffcc00" },
-    { key: "color2", label: "Color 2", type: "color", default: "#0066ff" },
-    { key: "color3", label: "Color 3", type: "color", default: "#ff3300" },
+    { key: "color1", label: "Color 1", type: "color", default: "#00ff41" },
+    { key: "color2", label: "Color 2", type: "color", default: "#004411" },
+    { key: "color3", label: "Color 3", type: "color", default: "#00aa2a" },
   ],
 
   setup(scene, _camera, params) {

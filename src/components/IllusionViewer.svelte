@@ -36,6 +36,16 @@
     window.history.replaceState(null, '', encodeState(illusion, params));
   }
 
+  function handleReset() {
+    const p: Record<string, any> = {};
+    for (const def of illusion.params) {
+      p[def.key] = def.default;
+    }
+    params = p;
+    paramsRef = p;
+    window.history.replaceState(null, '', encodeState(illusion, params));
+  }
+
   function toggleFullscreen() {
     if (!document.fullscreenElement) {
       container?.requestFullscreen();
@@ -102,7 +112,7 @@
         <strong>How to experience:</strong>
         <p>{illusion.howTo}</p>
       </div>
-      <ControlPanel paramDefs={illusion.params} values={params} onChange={handleParamChange} />
+      <ControlPanel paramDefs={illusion.params} values={params} onChange={handleParamChange} onReset={handleReset} />
     </div>
   {/if}
 </div>
@@ -134,7 +144,7 @@
     background: rgba(0, 0, 0, 0.6);
     color: #fff;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
+    border-radius: 0;
     width: 2.5rem;
     height: 2.5rem;
     font-size: 1.2rem;
@@ -154,7 +164,7 @@
     top: 0;
     left: 0;
     bottom: 0;
-    width: 280px;
+    width: 340px;
     background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(10px);
     color: #fff;
@@ -169,22 +179,26 @@
   }
 
   .description {
-    font-size: 0.8rem;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
     opacity: 0.7;
     margin: 0 0 0.75rem;
+    line-height: 1.6;
   }
 
   .how-to {
-    font-size: 0.8rem;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 6px;
+    border: 1px solid rgba(0, 255, 65, 0.1);
+    border-radius: 0;
     padding: 0.6rem 0.75rem;
     margin: 0 0 1rem;
-    line-height: 1.5;
+    line-height: 1.6;
   }
 
   .how-to strong {
-    color: var(--accent, #7c3aed);
+    color: var(--accent, #00ff41);
     display: block;
     margin-bottom: 0.25rem;
     font-size: 0.75rem;

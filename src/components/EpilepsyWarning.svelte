@@ -41,10 +41,10 @@
   }
 
   .modal {
-    background: var(--bg, #1a1a2e);
+    background: var(--bg, #000000);
     color: var(--text, #eee);
     border: 1px solid var(--border, #333);
-    border-radius: 12px;
+    border-radius: 0;
     padding: 2rem;
     max-width: 480px;
     text-align: center;
@@ -63,10 +63,10 @@
   }
 
   button {
-    background: var(--accent, #7c3aed);
-    color: #fff;
+    background: var(--accent, #00ff41);
+    color: #000;
     border: none;
-    border-radius: 8px;
+    border-radius: 0;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
     cursor: pointer;

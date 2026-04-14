@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
-import fragmentShader from "../shaders/grid-moire.frag";
+import fragmentShader from "../shaders/wireframe-sphere.frag";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -11,14 +11,14 @@ function hexToVec3(hex: string): THREE.Vector3 {
   return new THREE.Vector3(c.r, c.g, c.b);
 }
 
-const gridMoire: IllusionConfig = {
-  id: "grid-moire",
-  name: "Grid Moiré",
-  category: "Moiré",
+const wireframeSphere: IllusionConfig = {
+  id: "wireframe-sphere",
+  name: "Ambiguous Sphere",
+  category: "Motion",
   description:
-    "Two overlapping line grids rotating relative to each other, creating dynamic moiré patterns.",
+    "A wireframe sphere rotating with orthographic projection. Without depth cues, the rotation direction becomes ambiguous — it can appear to spin either way.",
   howTo:
-    "Watch the center as the grids rotate. Large-scale flowing shapes will emerge from the fine line patterns — these shapes exist only in your perception.",
+    "Watch the sphere rotate. Try to see it spinning clockwise, then counterclockwise. Because all lines have equal thickness (no depth shading), your brain can interpret either direction. Blinking often triggers a perceptual flip.",
   params: [
     {
       key: "speed",
@@ -26,19 +26,28 @@ const gridMoire: IllusionConfig = {
       type: "slider",
       default: 0.5,
       min: 0.1,
-      max: 3,
-      step: 0.1,
-    },
-    {
-      key: "density",
-      label: "Density",
-      type: "slider",
-      default: 2,
-      min: 0.5,
-      max: 5,
+      max: 2,
       step: 0.1,
     },
     { key: "color", label: "Color", type: "color", default: "#00ff41" },
+    {
+      key: "size",
+      label: "Size",
+      type: "slider",
+      default: 1,
+      min: 0.3,
+      max: 1.5,
+      step: 0.1,
+    },
+    {
+      key: "rings",
+      label: "Ring Count",
+      type: "slider",
+      default: 10,
+      min: 4,
+      max: 16,
+      step: 1,
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -48,8 +57,9 @@ const gridMoire: IllusionConfig = {
       uniforms: {
         uTime: { value: 0 },
         uSpeed: { value: params.speed },
-        uDensity: { value: params.density },
         uColor: { value: hexToVec3(params.color) },
+        uSize: { value: params.size },
+        uRings: { value: params.rings },
       },
       transparent: true,
     });
@@ -61,8 +71,9 @@ const gridMoire: IllusionConfig = {
     if (!material) return;
     material.uniforms.uTime.value = time;
     material.uniforms.uSpeed.value = params.speed;
-    material.uniforms.uDensity.value = params.density;
     material.uniforms.uColor.value = hexToVec3(params.color);
+    material.uniforms.uSize.value = params.size;
+    material.uniforms.uRings.value = params.rings;
   },
 
   dispose() {
@@ -71,4 +82,4 @@ const gridMoire: IllusionConfig = {
   },
 };
 
-export default gridMoire;
+export default wireframeSphere;

@@ -11,8 +11,13 @@ import rotatingSnakes from "./items/rotating-snakes";
 import peripheralDrift from "./items/peripheral-drift";
 import infiniteTunnel from "./items/infinite-tunnel";
 import vortexWarp from "./items/vortex-warp";
-import penroseTriangle from "./items/penrose-triangle";
-import impossibleStaircase from "./items/impossible-staircase";
+import impossibleShapes from "./items/impossible-shapes";
+import mccolloughEffect from "./items/mccollough-effect";
+import spinningDots from "./items/spinning-dots";
+import neckerCube from "./items/necker-cube";
+import rubinsVase from "./items/rubins-vase";
+import wireframeSphere from "./items/wireframe-sphere";
+import wireframeTorus from "./items/wireframe-torus";
 
 export const illusions: IllusionConfig[] = [
   hypnoticSpiral,
@@ -27,8 +32,13 @@ export const illusions: IllusionConfig[] = [
   peripheralDrift,
   infiniteTunnel,
   vortexWarp,
-  penroseTriangle,
-  impossibleStaircase,
+  impossibleShapes,
+  mccolloughEffect,
+  spinningDots,
+  neckerCube,
+  rubinsVase,
+  wireframeSphere,
+  wireframeTorus,
 ];
 
 export const categories = [...new Set(illusions.map((i) => i.category))];

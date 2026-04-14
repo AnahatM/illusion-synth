@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
-import fragmentShader from "../shaders/grid-moire.frag";
+import fragmentShader from "../shaders/spinning-dots.frag";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -11,34 +11,43 @@ function hexToVec3(hex: string): THREE.Vector3 {
   return new THREE.Vector3(c.r, c.g, c.b);
 }
 
-const gridMoire: IllusionConfig = {
-  id: "grid-moire",
-  name: "Grid Moiré",
-  category: "Moiré",
+const spinningDots: IllusionConfig = {
+  id: "spinning-dots",
+  name: "Ambiguous Spinning Dots",
+  category: "Motion",
   description:
-    "Two overlapping line grids rotating relative to each other, creating dynamic moiré patterns.",
+    "Dots on a rotating sphere projected without depth cues. Your brain can perceive it spinning in either direction — and it can spontaneously flip.",
   howTo:
-    "Watch the center as the grids rotate. Large-scale flowing shapes will emerge from the fine line patterns — these shapes exist only in your perception.",
+    "Watch the dots rotate. Try to see them spinning clockwise — then try counter-clockwise. Most people can voluntarily switch the perceived direction. Blinking or looking away can trigger a flip.",
   params: [
     {
       key: "speed",
       label: "Speed",
       type: "slider",
-      default: 0.5,
+      default: 0.8,
       min: 0.1,
       max: 3,
       step: 0.1,
     },
+    { key: "color", label: "Dot Color", type: "color", default: "#00ff41" },
     {
-      key: "density",
-      label: "Density",
+      key: "dotCount",
+      label: "Dot Count",
       type: "slider",
-      default: 2,
-      min: 0.5,
-      max: 5,
+      default: 24,
+      min: 8,
+      max: 40,
+      step: 1,
+    },
+    {
+      key: "dotSize",
+      label: "Dot Size",
+      type: "slider",
+      default: 1,
+      min: 0.3,
+      max: 2,
       step: 0.1,
     },
-    { key: "color", label: "Color", type: "color", default: "#00ff41" },
   ],
 
   setup(scene, _camera, params) {
@@ -48,11 +57,13 @@ const gridMoire: IllusionConfig = {
       uniforms: {
         uTime: { value: 0 },
         uSpeed: { value: params.speed },
-        uDensity: { value: params.density },
         uColor: { value: hexToVec3(params.color) },
+        uDotCount: { value: params.dotCount },
+        uDotSize: { value: params.dotSize },
       },
       transparent: true,
     });
+
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
     scene.add(mesh);
   },
@@ -61,8 +72,9 @@ const gridMoire: IllusionConfig = {
     if (!material) return;
     material.uniforms.uTime.value = time;
     material.uniforms.uSpeed.value = params.speed;
-    material.uniforms.uDensity.value = params.density;
     material.uniforms.uColor.value = hexToVec3(params.color);
+    material.uniforms.uDotCount.value = params.dotCount;
+    material.uniforms.uDotSize.value = params.dotSize;
   },
 
   dispose() {
@@ -71,4 +83,4 @@ const gridMoire: IllusionConfig = {
   },
 };
 
-export default gridMoire;
+export default spinningDots;

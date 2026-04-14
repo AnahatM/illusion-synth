@@ -92,7 +92,7 @@
   .page-header h1 {
     font-size: 2.2rem;
     margin: 0;
-    background: linear-gradient(135deg, var(--accent), #ec4899);
+    background: linear-gradient(135deg, #00ff41, #00cc33);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

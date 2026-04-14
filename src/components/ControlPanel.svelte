@@ -1,13 +1,15 @@
 <script lang="ts">
   import type { ParamDef } from '../illusions/types';
+  import ColorPicker from './ColorPicker.svelte';
 
   interface Props {
     paramDefs: ParamDef[];
     values: Record<string, any>;
     onChange: (key: string, value: any) => void;
+    onReset?: () => void;
   }
 
-  let { paramDefs, values, onChange }: Props = $props();
+  let { paramDefs, values, onChange, onReset }: Props = $props();
 </script>
 
 <div class="control-panel">
@@ -26,11 +28,9 @@
         />
         <span class="value">{Number(values[param.key]).toFixed(2)}</span>
       {:else if param.type === 'color'}
-        <input
-          id={param.key}
-          type="color"
+        <ColorPicker
           value={values[param.key]}
-          oninput={(e) => onChange(param.key, (e.target as HTMLInputElement).value)}
+          onChange={(v) => onChange(param.key, v)}
         />
       {:else if param.type === 'toggle'}
         <input
@@ -52,6 +52,10 @@
       {/if}
     </div>
   {/each}
+
+  {#if onReset}
+    <button class="reset-btn" onclick={onReset}>Reset to Defaults</button>
+  {/if}
 </div>
 
 <style>
@@ -64,29 +68,53 @@
 
   .control {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
   }
 
   label {
-    min-width: 6rem;
+    min-width: 5.5rem;
+    flex-shrink: 0;
     font-size: 0.85rem;
     color: var(--text-secondary);
   }
 
   input[type='range'] {
     flex: 1;
-    accent-color: var(--accent);
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: var(--border, #1a3a1a);
+    outline: none;
+    cursor: pointer;
   }
 
-  input[type='color'] {
-    width: 2.5rem;
-    height: 2rem;
-    border: 1px solid var(--border);
-    border-radius: 4px;
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--accent, #00ff41);
+    border: none;
     cursor: pointer;
-    background: none;
-    padding: 2px;
+    box-shadow: 0 0 6px rgba(0, 255, 65, 0.5);
+  }
+
+  input[type='range']::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: var(--accent, #00ff41);
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(0, 255, 65, 0.5);
+  }
+
+  input[type='range']::-moz-range-track {
+    height: 4px;
+    background: var(--border, #1a3a1a);
+    border: none;
   }
 
   input[type='checkbox'] {
@@ -99,7 +127,7 @@
     background: var(--surface);
     color: var(--text);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 0;
     padding: 0.3rem 0.5rem;
     font-size: 0.85rem;
   }
@@ -110,5 +138,25 @@
     font-size: 0.8rem;
     font-family: monospace;
     color: var(--text-secondary);
+  }
+
+  .reset-btn {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    color: var(--accent, #00ff41);
+    border: 1px solid var(--accent, #00ff41);
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background 0.2s, color 0.2s;
+    width: 100%;
+  }
+
+  .reset-btn:hover {
+    background: var(--accent, #00ff41);
+    color: #000;
   }
 </style>

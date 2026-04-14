@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
-import fragmentShader from "../shaders/afterimage.frag";
+import fragmentShader from "../shaders/necker-cube.frag";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -11,24 +11,33 @@ function hexToVec3(hex: string): THREE.Vector3 {
   return new THREE.Vector3(c.r, c.g, c.b);
 }
 
-const afterimageFlash: IllusionConfig = {
-  id: "afterimage-flash",
-  name: "Afterimage Flash",
-  category: "Color",
+const neckerCube: IllusionConfig = {
+  id: "necker-cube",
+  name: "Necker Cube",
+  category: "Impossible",
   description:
-    "Stare at the colored shape, then see its complementary afterimage when it fades.",
+    "A wireframe cube drawn without depth cues. Your brain spontaneously flips which face appears in front.",
   howTo:
-    "Fix your eyes on the small dot in the center without blinking for the full stare phase. When the image switches to white, keep looking at the dot — you'll see a ghostly shape in the complementary color.",
+    "Stare at the rotating wireframe cube. Without shading or perspective cues, your brain cannot determine which face is in front — so it alternates. Try to force a specific interpretation and watch it flip.",
   params: [
+    {
+      key: "speed",
+      label: "Rotation Speed",
+      type: "slider",
+      default: 0.4,
+      min: 0,
+      max: 2,
+      step: 0.1,
+    },
     { key: "color", label: "Color", type: "color", default: "#00ff41" },
     {
-      key: "duration",
-      label: "Phase Duration",
+      key: "size",
+      label: "Size",
       type: "slider",
-      default: 10,
-      min: 3,
-      max: 30,
-      step: 1,
+      default: 1,
+      min: 0.3,
+      max: 2,
+      step: 0.1,
     },
   ],
 
@@ -38,11 +47,13 @@ const afterimageFlash: IllusionConfig = {
       fragmentShader,
       uniforms: {
         uTime: { value: 0 },
-        uPhase: { value: 0 },
-        uDuration: { value: params.duration },
+        uSpeed: { value: params.speed },
         uColor: { value: hexToVec3(params.color) },
+        uSize: { value: params.size },
       },
+      transparent: true,
     });
+
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
     scene.add(mesh);
   },
@@ -50,8 +61,9 @@ const afterimageFlash: IllusionConfig = {
   update(time, params) {
     if (!material) return;
     material.uniforms.uTime.value = time;
-    material.uniforms.uDuration.value = params.duration;
+    material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uColor.value = hexToVec3(params.color);
+    material.uniforms.uSize.value = params.size;
   },
 
   dispose() {
@@ -60,4 +72,4 @@ const afterimageFlash: IllusionConfig = {
   },
 };
 
-export default afterimageFlash;
+export default neckerCube;

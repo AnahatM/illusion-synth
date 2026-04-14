@@ -1,52 +1,14 @@
 import * as THREE from "three";
 import type { IllusionConfig } from "../types";
+import vertexShader from "../shaders/fullscreen.vert";
+import fragmentShader from "../shaders/impossible-staircase.frag";
 
-let group: THREE.Group;
-let materialRef: THREE.MeshStandardMaterial;
-let light: THREE.DirectionalLight;
-let ambientLight: THREE.AmbientLight;
+let mesh: THREE.Mesh;
+let material: THREE.ShaderMaterial;
 
-function createStaircase(color: string, wireframe: boolean): THREE.Group {
-  const g = new THREE.Group();
-  const mat = new THREE.MeshStandardMaterial({
-    color,
-    wireframe,
-    flatShading: true,
-  });
-  materialRef = mat;
-
-  const stepCount = 16;
-  const stepGeo = new THREE.BoxGeometry(0.3, 0.06, 0.15);
-
-  for (let i = 0; i < stepCount; i++) {
-    const step = new THREE.Mesh(stepGeo, mat);
-    const angle = (i / stepCount) * Math.PI * 2;
-    const radius = 0.5;
-
-    step.position.x = Math.cos(angle) * radius;
-    step.position.z = Math.sin(angle) * radius;
-    // Height loops back to start — the "impossible" part
-    step.position.y = (i / stepCount) * 0.8 - 0.4;
-
-    step.lookAt(0, step.position.y, 0);
-    g.add(step);
-  }
-
-  // Connecting pillars at corners
-  const pillarGeo = new THREE.BoxGeometry(0.08, 0.9, 0.08);
-  const pillarPositions = [
-    [0.5, 0, 0.5],
-    [-0.5, 0, 0.5],
-    [-0.5, 0, -0.5],
-    [0.5, 0, -0.5],
-  ];
-  for (const [x, y, z] of pillarPositions) {
-    const pillar = new THREE.Mesh(pillarGeo, mat);
-    pillar.position.set(x, y, z);
-    g.add(pillar);
-  }
-
-  return g;
+function hexToVec3(hex: string): THREE.Vector3 {
+  const c = new THREE.Color(hex);
+  return new THREE.Vector3(c.r, c.g, c.b);
 }
 
 const impossibleStaircase: IllusionConfig = {
@@ -54,61 +16,59 @@ const impossibleStaircase: IllusionConfig = {
   name: "Impossible Staircase",
   category: "Impossible",
   description:
-    "An Escher-inspired looping staircase that appears to ascend endlessly.",
+    "An Escher-inspired looping staircase — four flights of steps that each ascend yet impossibly return to where they started.",
   howTo:
-    "Follow the steps around the loop — they appear to continuously ascend yet return to where they started. This is a 3D version of the Penrose stairs, famously depicted by M.C. Escher.",
+    "Follow the highlighted step as it travels around the staircase. Each side appears to go up, yet the loop returns to the starting height — an impossible construction known as the Penrose stairs.",
   params: [
     {
       key: "speed",
-      label: "Rotation Speed",
+      label: "Animation Speed",
       type: "slider",
-      default: 0.3,
+      default: 0.5,
       min: 0.1,
-      max: 2,
+      max: 3,
       step: 0.1,
     },
-    { key: "color", label: "Color", type: "color", default: "#4488cc" },
-    { key: "wireframe", label: "Wireframe", type: "toggle", default: false },
+    { key: "color", label: "Color", type: "color", default: "#00ff41" },
+    {
+      key: "stepCount",
+      label: "Steps per Side",
+      type: "slider",
+      default: 8,
+      min: 4,
+      max: 16,
+      step: 1,
+    },
   ],
 
-  setup(scene, camera, params) {
-    if (camera instanceof THREE.OrthographicCamera) {
-      camera.left = -1.5;
-      camera.right = 1.5;
-      camera.top = 1.5;
-      camera.bottom = -1.5;
-      camera.updateProjectionMatrix();
-    }
+  setup(scene, _camera, params) {
+    material = new THREE.ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      uniforms: {
+        uTime: { value: 0 },
+        uSpeed: { value: params.speed },
+        uColor: { value: hexToVec3(params.color) },
+        uStepCount: { value: params.stepCount },
+      },
+      transparent: true,
+    });
 
-    group = createStaircase(params.color, params.wireframe);
-    scene.add(group);
-
-    light = new THREE.DirectionalLight(0xffffff, 1.5);
-    light.position.set(3, 4, 2);
-    scene.add(light);
-
-    ambientLight = new THREE.AmbientLight(0x404040, 1);
-    scene.add(ambientLight);
+    mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+    scene.add(mesh);
   },
 
   update(time, params) {
-    if (!group) return;
-    group.rotation.y = time * params.speed;
-    group.rotation.x = 0.4; // Fixed tilt for best viewing angle
-
-    if (materialRef) {
-      materialRef.color.set(params.color);
-      materialRef.wireframe = params.wireframe;
-    }
+    if (!material) return;
+    material.uniforms.uTime.value = time;
+    material.uniforms.uSpeed.value = params.speed;
+    material.uniforms.uColor.value = hexToVec3(params.color);
+    material.uniforms.uStepCount.value = params.stepCount;
   },
 
   dispose() {
-    group?.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
-        child.geometry.dispose();
-        if (child.material instanceof THREE.Material) child.material.dispose();
-      }
-    });
+    mesh?.geometry.dispose();
+    material?.dispose();
   },
 };
 

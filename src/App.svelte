@@ -19,10 +19,31 @@
 
 <nav class="nav">
   <div class="nav-inner">
-    <a href="#/" class="nav-brand">IllusionSynth</a>
+    <a href="#/" class="nav-brand">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+      IllusionSynth
+    </a>
     <div class="nav-links">
-      <a href="#/">Browse</a>
-      <a href="#/about">About</a>
+      <a href="#/">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Browse
+      </a>
+      <a href="#/about">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        About
+      </a>
       <ThemeToggle />
     </div>
   </div>
@@ -56,6 +77,9 @@
     font-weight: 700;
     text-decoration: none;
     color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .nav-links {
@@ -69,6 +93,9 @@
     text-decoration: none;
     font-size: 0.9rem;
     transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
   }
 
   .nav-links a:hover {

@@ -38,8 +38,8 @@ const infiniteTunnel: IllusionConfig = {
       max: 20,
       step: 1,
     },
-    { key: "color1", label: "Color 1", type: "color", default: "#0a0a2e" },
-    { key: "color2", label: "Color 2", type: "color", default: "#7c3aed" },
+    { key: "color1", label: "Color 1", type: "color", default: "#000000" },
+    { key: "color2", label: "Color 2", type: "color", default: "#00ff41" },
   ],
 
   setup(scene, _camera, params) {

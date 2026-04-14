@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
-import fragmentShader from "../shaders/vortex-warp.frag";
+import fragmentShader from "../shaders/rubins-vase.frag";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -11,35 +11,26 @@ function hexToVec3(hex: string): THREE.Vector3 {
   return new THREE.Vector3(c.r, c.g, c.b);
 }
 
-const vortexWarp: IllusionConfig = {
-  id: "vortex-warp",
-  name: "Vortex Warp",
-  category: "Tunnel",
+const rubinsVase: IllusionConfig = {
+  id: "rubins-vase",
+  name: "Rubin's Vase",
+  category: "Impossible",
   description:
-    "A twisting distortion field that warps space into a hypnotic vortex.",
+    "The classic figure-ground illusion: do you see a vase, or two faces in profile? Your perception flips between the two interpretations.",
   howTo:
-    "Focus on the center and let the twisted spiral arms draw your eye inward. After 30 seconds, look at a flat surface — you should see a strong warping aftereffect.",
+    "Focus on the colored center to see a vase. Then focus on the sides to see two face profiles looking at each other. The subtle brightness shift hints at the alternate interpretation.",
   params: [
     {
       key: "speed",
-      label: "Speed",
+      label: "Animation Speed",
       type: "slider",
-      default: 1,
-      min: 0.1,
-      max: 4,
+      default: 0.5,
+      min: 0,
+      max: 2,
       step: 0.1,
     },
-    {
-      key: "twist",
-      label: "Twist",
-      type: "slider",
-      default: 1,
-      min: 0.1,
-      max: 3,
-      step: 0.1,
-    },
-    { key: "color1", label: "Color 1", type: "color", default: "#000000" },
-    { key: "color2", label: "Color 2", type: "color", default: "#00ff41" },
+    { key: "color1", label: "Vase Color", type: "color", default: "#00ff41" },
+    { key: "color2", label: "Face Color", type: "color", default: "#003310" },
   ],
 
   setup(scene, _camera, params) {
@@ -49,12 +40,12 @@ const vortexWarp: IllusionConfig = {
       uniforms: {
         uTime: { value: 0 },
         uSpeed: { value: params.speed },
-        uTwist: { value: params.twist },
         uColor1: { value: hexToVec3(params.color1) },
         uColor2: { value: hexToVec3(params.color2) },
       },
       transparent: true,
     });
+
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
     scene.add(mesh);
   },
@@ -63,7 +54,6 @@ const vortexWarp: IllusionConfig = {
     if (!material) return;
     material.uniforms.uTime.value = time;
     material.uniforms.uSpeed.value = params.speed;
-    material.uniforms.uTwist.value = params.twist;
     material.uniforms.uColor1.value = hexToVec3(params.color1);
     material.uniforms.uColor2.value = hexToVec3(params.color2);
   },
@@ -74,4 +64,4 @@ const vortexWarp: IllusionConfig = {
   },
 };
 
-export default vortexWarp;
+export default rubinsVase;

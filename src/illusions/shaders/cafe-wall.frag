@@ -1,36 +1,45 @@
-uniform float uTime;
 uniform float uOffset;
-uniform float uTileCount;
-uniform float uContrast;
+uniform float uRows;
+uniform float uTilesPerRow;
+uniform float uMortarWidth;
 varying vec2 vUv;
 
 void main() {
   vec2 uv = vUv;
 
-  float row = floor(uv.y * uTileCount);
-  float rowOffset = mod(row, 2.0) * uOffset / uTileCount;
+  // Number of rows and tiles
+  float rows = uRows;
+  float tilesPerRow = uTilesPerRow;
 
-  float col = fract((uv.x + rowOffset) * uTileCount);
-  float tile = step(0.5, col);
+  // Row height includes mortar
+  float rowH = 1.0 / rows;
+  float mortarH = uMortarWidth * 0.004;
 
-  // Mortar lines between rows
-  float mortar = smoothstep(0.0, 0.02, fract(uv.y * uTileCount)) *
-                 smoothstep(1.0, 0.98, fract(uv.y * uTileCount));
+  // Which row are we in?
+  float rowIndex = floor(uv.y / rowH);
+  float yInRow = fract(uv.y / rowH);
 
-  float dark = mix(0.5 - uContrast * 0.5, 0.0, uContrast);
-  float light = mix(0.5 + uContrast * 0.5, 1.0, uContrast);
+  // Mortar lines: thin gray lines at top and bottom of each row
+  float mortarFrac = mortarH / rowH;
+  float isMortar = 1.0 - step(mortarFrac, yInRow) * step(yInRow, 1.0 - mortarFrac);
 
-  float brightness = mix(dark, light, tile);
+  // Tile width
+  float tileW = 1.0 / tilesPerRow;
 
-  // Grey mortar
-  brightness = mix(0.5, brightness, mortar);
+  // Each row offset by half a tile alternating
+  float shift = mod(rowIndex, 2.0) * uOffset * tileW;
+  float xShifted = uv.x + shift;
 
-  // Subtle animation: slowly shift offset
-  float animOffset = sin(uTime * 0.3) * 0.1;
-  float col2 = fract((uv.x + rowOffset + animOffset) * uTileCount);
-  float tile2 = step(0.5, col2);
-  float b2 = mix(dark, light, tile2);
-  brightness = mix(brightness, b2, 0.3);
+  // Which tile column?
+  float tileCol = floor(xShifted / tileW);
+  float tile = mod(tileCol, 2.0); // 0 = black, 1 = white
+
+  // Pure black and white tiles
+  float brightness = tile;
+
+  // Apply mortar: gray line between rows
+  // Mortar color is medium gray (0.5) — this is crucial for the illusion
+  brightness = mix(brightness, 0.5, isMortar);
 
   gl_FragColor = vec4(vec3(brightness), 1.0);
 }
