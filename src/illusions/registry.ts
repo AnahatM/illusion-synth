@@ -40,10 +40,10 @@ import motionAftereffect from "./items/motion-aftereffect";
 import spinningDancer from "./items/spinning-dancer";
 import jastrowIllusion from "./items/jastrow";
 import perspectiveSize from "./items/perspective-size";
-import hollowFace from "./items/hollow-face";
 // Circular motion illusions
 import driftRings from "./items/drift-rings";
 import kitaokaDrift from "./items/kitaoka-drift";
+import anomalousTiles from "./items/anomalous-tiles";
 
 export const illusions: IllusionConfig[] = [
   hypnoticSpiral,
@@ -87,10 +87,10 @@ export const illusions: IllusionConfig[] = [
   spinningDancer,
   jastrowIllusion,
   perspectiveSize,
-  hollowFace,
   // Circular motion illusions
   driftRings,
   kitaokaDrift,
+  anomalousTiles,
 ];
 
 export const categories = [...new Set(illusions.map((i) => i.category))];

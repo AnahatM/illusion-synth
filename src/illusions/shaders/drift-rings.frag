@@ -1,6 +1,7 @@
 uniform float uRings;
 uniform float uSegments;
-uniform float uContrast;
+uniform vec3 uColor1;
+uniform vec3 uColor2;
 varying vec2 vUv;
 
 #define PI 3.14159265359
@@ -12,57 +13,51 @@ void main() {
 
   vec3 col = vec3(0.0);
 
-  // Kitaoka-style peripheral drift: concentric rings of asymmetric luminance
-  // Segments are elliptical blobs (rounded) instead of hard angular wedges
   float rings = uRings;
   float segments = uSegments;
-
-  float ringW = 0.4 / rings;
+  float ringW = 0.42 / rings;
 
   for (float i = 0.0; i < 20.0; i++) {
     if (i >= rings) break;
     float ringR = (i + 1.0) / (rings + 1.0) * 0.45;
 
     float radialDist = abs(r - ringR);
-    if (radialDist > ringW * 0.6) continue;
+    if (radialDist > ringW * 0.7) continue;
 
-    // Offset each ring's segments
-    float segA = a + i * PI / segments;
-    float segIndex = floor(mod(segA / (2.0 * PI) * segments + segments, segments));
-
-    // Angular position within segment (0 to 1, centered at 0.5)
+    // Offset each ring's segments for spiral flow
     float segWidth = 2.0 * PI / segments;
+    float segA = a + i * segWidth * 1.0;
+    float segIndex = floor(mod(segA / segWidth + segments, segments));
+
+    // Angular position within segment for elliptical shape
     float segCenter = (segIndex + 0.5) * segWidth;
-    float angOffset = segA - segCenter;
-    // Wrap to [-pi, pi]
-    angOffset = mod(angOffset + PI, 2.0 * PI) - PI;
-    float angNorm = angOffset / (segWidth * 0.5); // -1 to 1 within segment
+    float angOffset = mod(segA - segCenter + PI, 2.0 * PI) - PI;
+    float angNorm = angOffset / (segWidth * 0.5);
 
-    // Elliptical distance: radial vs angular axes
-    float radNorm = radialDist / (ringW * 0.5);
-    float ellipseDist = sqrt(radNorm * radNorm + angNorm * angNorm);
+    // Elliptical blob (wider angularly, narrower radially)
+    float radNorm = radialDist / (ringW * 0.45);
+    float ellipseDist = sqrt(radNorm * radNorm * 1.5 + angNorm * angNorm);
 
-    float blob = smoothstep(1.0, 0.75, ellipseDist);
+    float blob = smoothstep(1.0, 0.6, ellipseDist);
     if (blob < 0.01) continue;
 
-    // Four-phase luminance ramp: creates asymmetric profile
+    // 4-phase color cycle: black → color2 → white → color1
+    // This asymmetric sequence is key to the Kitaoka peripheral drift effect
     float phase = mod(segIndex, 4.0);
-    float lum;
-    if (phase < 1.0) lum = 0.05;       // black
-    else if (phase < 2.0) lum = 0.35;   // dark gray
-    else if (phase < 3.0) lum = 0.95;   // white
-    else lum = 0.6;                      // light gray
 
     // Direction alternates per ring
     float dir = mod(i, 2.0);
     if (dir > 0.5) {
-      if (phase < 1.0) lum = 0.95;
-      else if (phase < 2.0) lum = 0.6;
-      else if (phase < 3.0) lum = 0.05;
-      else lum = 0.35;
+      phase = mod(3.0 - phase, 4.0);
     }
 
-    col = mix(col, vec3(lum) * uContrast, blob);
+    vec3 segCol;
+    if (phase < 1.0)      segCol = vec3(0.0);     // black
+    else if (phase < 2.0) segCol = uColor2;        // dark color (blue)
+    else if (phase < 3.0) segCol = vec3(1.0);      // white
+    else                   segCol = uColor1;        // bright color (yellow)
+
+    col = mix(col, segCol, blob);
   }
 
   // Center dot (fixation)

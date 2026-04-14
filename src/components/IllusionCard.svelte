@@ -79,7 +79,7 @@
 
   .thumbnail {
     aspect-ratio: 1 / 1;
-    background: var(--surface-hover);
+    background: #141414;
     display: flex;
     align-items: center;
     justify-content: center;

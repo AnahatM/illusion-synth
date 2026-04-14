@@ -7,8 +7,6 @@ let matA: THREE.MeshBasicMaterial;
 let matB: THREE.MeshBasicMaterial;
 let meshA: THREE.Mesh;
 let meshB: THREE.Mesh;
-let proofMesh: THREE.Mesh;
-let proofMat: THREE.MeshBasicMaterial;
 let texture: THREE.Texture | null = null;
 
 function loadSvgTexture(): Promise<THREE.Texture> {
@@ -37,22 +35,25 @@ const jastrowIllusion: IllusionConfig = {
   description:
     "Two identical curved shapes (annular sectors) are stacked — the bottom one always appears larger than the top one due to the contrast between the long and short edges.",
   howTo:
-    "The two curved shapes are exactly the same size. The bottom one looks bigger because your brain compares the short inner arc of the top with the long outer arc of the bottom. Toggle 'Show Proof' to overlay them.",
+    "The two curved shapes are exactly the same size. The bottom one looks bigger because your brain compares the short inner arc of the top with the long outer arc of the bottom. Move shape B with the X/Y sliders to overlay them and confirm they're identical.",
   params: [
     {
-      key: "offset",
-      label: "Separation",
+      key: "offsetX",
+      label: "Shape B — X",
       type: "slider",
-      default: 1,
-      min: 0,
-      max: 3,
-      step: 0.1,
+      default: -0.1,
+      min: -0.8,
+      max: 0.8,
+      step: 0.01,
     },
     {
-      key: "showProof",
-      label: "Show Proof",
-      type: "toggle",
-      default: false,
+      key: "offsetY",
+      label: "Shape B — Y",
+      type: "slider",
+      default: -0.45,
+      min: -1,
+      max: 1,
+      step: 0.01,
     },
     { key: "color1", label: "Arc A Color", type: "color", default: "#4d99d9" },
     { key: "color2", label: "Arc B Color", type: "color", default: "#d9734d" },
@@ -72,9 +73,7 @@ const jastrowIllusion: IllusionConfig = {
     },
   ],
 
-  setup(scene, camera, params) {
-    // Use orthographic-like setup: the viewer already has an ortho camera at z=1
-    // PlaneGeometry(2,2) fills the view. We place our shapes in NDC-like coords.
+  async setup(scene, _camera, params) {
     group = new THREE.Group();
 
     const aspect = 333 / 120;
@@ -82,48 +81,31 @@ const jastrowIllusion: IllusionConfig = {
     const planeH = planeW / aspect;
     const geo = new THREE.PlaneGeometry(planeW, planeH);
 
+    const tex = await loadSvgTexture();
+    texture = tex;
+
     matA = new THREE.MeshBasicMaterial({
+      map: tex,
       transparent: true,
       alphaTest: 0.1,
       color: new THREE.Color(params.color1 as string),
     });
     matB = new THREE.MeshBasicMaterial({
+      map: tex,
       transparent: true,
       alphaTest: 0.1,
       color: new THREE.Color(params.color2 as string),
     });
-    proofMat = new THREE.MeshBasicMaterial({
-      transparent: true,
-      alphaTest: 0.1,
-      color: new THREE.Color("#ffff00"),
-      visible: false,
-    });
 
     meshA = new THREE.Mesh(geo, matA);
     meshB = new THREE.Mesh(geo, matB);
-    proofMesh = new THREE.Mesh(geo, proofMat);
 
-    // Stack: A on top, B below, offset horizontally to create the classic stacking
-    const sep = (params.offset as number) * 0.08;
-    meshA.position.set(0.1, sep + planeH * 0.5, 0);
-    meshB.position.set(-0.1, -sep - planeH * 0.5, 0);
-    proofMesh.position.copy(meshA.position);
+    meshA.position.set(0.1, planeH * 0.5 + 0.02, 0);
+    meshB.position.set(params.offsetX as number, params.offsetY as number, 0);
 
     group.add(meshA);
     group.add(meshB);
-    group.add(proofMesh);
     scene.add(group);
-
-    // Load texture
-    loadSvgTexture().then((tex) => {
-      texture = tex;
-      matA.map = tex;
-      matA.needsUpdate = true;
-      matB.map = tex;
-      matB.needsUpdate = true;
-      proofMat.map = tex;
-      proofMat.needsUpdate = true;
-    });
   },
 
   update(_time, params) {
@@ -137,23 +119,13 @@ const jastrowIllusion: IllusionConfig = {
     matA.color.set(c1);
     matB.color.set(c2);
 
-    const aspect = 333 / 120;
-    const planeW = 1.2;
-    const planeH = planeW / aspect;
-    const sep = (params.offset as number) * 0.08;
-    meshA.position.set(0.1, sep + planeH * 0.5, 0);
-    meshB.position.set(-0.1, -sep - planeH * 0.5, 0);
-
-    // Show proof: overlay shape B at A's position
-    proofMat.visible = !!params.showProof;
-    proofMesh.position.copy(meshA.position);
+    meshB.position.set(params.offsetX as number, params.offsetY as number, 0);
   },
 
   dispose() {
     meshA?.geometry.dispose();
     matA?.dispose();
     matB?.dispose();
-    proofMat?.dispose();
     texture?.dispose();
     texture = null;
     group?.parent?.remove(group);

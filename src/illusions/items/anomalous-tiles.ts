@@ -1,43 +1,43 @@
 import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
-import fragmentShader from "../shaders/drift-rings.frag";
+import fragmentShader from "../shaders/anomalous-tiles.frag";
 import { resolvePalette } from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
 
-const driftRings: IllusionConfig = {
-  id: "drift-rings",
-  name: "Drift Rings (Kitaoka)",
+const anomalousTiles: IllusionConfig = {
+  id: "anomalous-tiles",
+  name: "Anomalous Motion Tiles",
   category: "Motion",
-  description:
-    "Coloured elliptical segments arranged in concentric rings create a powerful illusion of rotation — even though the image is completely static.",
-  howTo:
-    "Look at the red center dot. In your peripheral vision the rings appear to slowly rotate in alternating directions. Move your eyes around the image to see the motion restart. This is a static image — nothing is animated.",
   tintThumbnail: true,
+  description:
+    "A static grid of coloured tiles with small asymmetric dots appears to shimmer and shift — rows seem to slide left and right even though nothing moves.",
+  howTo:
+    "Stare at the pattern and let your eyes wander. The rows of tiles appear to drift sideways in alternating directions. The small dark squares on each tile create an asymmetric luminance profile that tricks your peripheral vision into perceiving motion.",
   params: [
     {
-      key: "rings",
-      label: "Rings",
+      key: "gridSize",
+      label: "Grid Size",
       type: "slider",
       default: 8,
-      min: 3,
-      max: 14,
+      min: 4,
+      max: 16,
       step: 1,
     },
     {
-      key: "segments",
-      label: "Segments",
+      key: "dotSize",
+      label: "Dot Size",
       type: "slider",
-      default: 20,
-      min: 8,
-      max: 40,
-      step: 4,
+      default: 0.25,
+      min: 0.1,
+      max: 0.4,
+      step: 0.05,
     },
-    { key: "color1", label: "Bright Color", type: "color", default: "#ffdd00" },
-    { key: "color2", label: "Dark Color", type: "color", default: "#2244aa" },
+    { key: "color1", label: "Color A", type: "color", default: "#cc44cc" },
+    { key: "color2", label: "Color B", type: "color", default: "#dddd00" },
     {
       key: "palette",
       label: "Palette",
@@ -59,8 +59,8 @@ const driftRings: IllusionConfig = {
       vertexShader,
       fragmentShader,
       uniforms: {
-        uRings: { value: params.rings },
-        uSegments: { value: params.segments },
+        uGridSize: { value: params.gridSize },
+        uDotSize: { value: params.dotSize },
         uColor1: { value: hexToVec3(params.color1) },
         uColor2: { value: hexToVec3(params.color2) },
       },
@@ -71,8 +71,8 @@ const driftRings: IllusionConfig = {
 
   update(_time, params) {
     if (!material) return;
-    material.uniforms.uRings.value = params.rings;
-    material.uniforms.uSegments.value = params.segments;
+    material.uniforms.uGridSize.value = params.gridSize;
+    material.uniforms.uDotSize.value = params.dotSize;
     const [c1, c2] = resolvePalette(
       params.palette,
       params.color1,
@@ -88,4 +88,4 @@ const driftRings: IllusionConfig = {
   },
 };
 
-export default driftRings;
+export default anomalousTiles;
