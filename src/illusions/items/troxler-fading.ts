@@ -82,6 +82,8 @@ const troxlerFading: IllusionConfig = {
     mesh?.geometry.dispose();
     material?.dispose();
   },
+
+  tintThumbnail: true,
 };
 
 export default troxlerFading;

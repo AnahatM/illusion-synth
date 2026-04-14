@@ -24,6 +24,15 @@ const simultaneousContrast: IllusionConfig = {
       max: 2,
       step: 0.1,
     },
+    {
+      key: "gap",
+      label: "Gap",
+      type: "slider",
+      default: 1,
+      min: 0,
+      max: 5,
+      step: 0.1,
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -32,7 +41,7 @@ const simultaneousContrast: IllusionConfig = {
       fragmentShader,
       uniforms: {
         uBarWidth: { value: params.barWidth },
-        uContrast: { value: 1.0 },
+        uGap: { value: params.gap },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -42,6 +51,7 @@ const simultaneousContrast: IllusionConfig = {
   update(_time, params) {
     if (!material) return;
     material.uniforms.uBarWidth.value = params.barWidth;
+    material.uniforms.uGap.value = params.gap;
   },
 
   dispose() {
