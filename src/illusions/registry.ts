@@ -15,7 +15,6 @@ import impossibleShapes from "./items/impossible-shapes";
 import mccolloughEffect from "./items/mccollough-effect";
 import spinningDots from "./items/spinning-dots";
 import neckerCube from "./items/necker-cube";
-import rubinsVase from "./items/rubins-vase";
 import wireframeSphere from "./items/wireframe-sphere";
 import wireframeTorus from "./items/wireframe-torus";
 
@@ -36,7 +35,6 @@ export const illusions: IllusionConfig[] = [
   mccolloughEffect,
   spinningDots,
   neckerCube,
-  rubinsVase,
   wireframeSphere,
   wireframeTorus,
 ];
