@@ -4,49 +4,39 @@ uniform vec3 uColor1;
 uniform vec3 uColor2;
 varying vec2 vUv;
 
-// Simple face profile using key control points with smooth interpolation.
-// 16 control points: (height, halfWidth) from bottom to top.
-// Height 0.0 = bottom, 1.0 = top.
+// Classic Rubin's Vase face profile.
+// Gentle curves — the silhouette should read as BOTH a vase and two faces.
+// 12 control points: (height, halfWidth) from bottom to top.
 
-const int N = 16;
-
-// Heights (bottom to top)
-float h[16];
-// Half-widths at each height
-float w[16];
+const int N = 12;
+float h[12];
+float w[12];
 
 void initProfile() {
-  // Bottom base flare
-  h[0]  = 0.00; w[0]  = 0.42;
-  h[1]  = 0.04; w[1]  = 0.38;
-  // Pedestal (narrow stem)
-  h[2]  = 0.10; w[2]  = 0.14;
-  // Chin
-  h[3]  = 0.20; w[3]  = 0.28;
-  // Below lower lip
-  h[4]  = 0.26; w[4]  = 0.18;
-  // Lower lip
-  h[5]  = 0.30; w[5]  = 0.22;
-  // Between lips (mouth gap)
-  h[6]  = 0.34; w[6]  = 0.14;
-  // Upper lip
-  h[7]  = 0.37; w[7]  = 0.20;
-  // Below nose
-  h[8]  = 0.41; w[8]  = 0.11;
-  // Nose tip
-  h[9]  = 0.48; w[9]  = 0.28;
-  // Nose bridge
-  h[10] = 0.55; w[10] = 0.22;
-  // Eye socket (deepest indent)
-  h[11] = 0.62; w[11] = 0.08;
-  // Brow ridge
-  h[12] = 0.68; w[12] = 0.20;
-  // Forehead
-  h[13] = 0.80; w[13] = 0.30;
-  // Top rim start
-  h[14] = 0.92; w[14] = 0.30;
-  // Top rim flare
-  h[15] = 1.00; w[15] = 0.42;
+  // Bottom base (wide foot of vase)
+  h[0]  = 0.00; w[0]  = 0.35;
+  // Stem narrows
+  h[1]  = 0.08; w[1]  = 0.13;
+  // Chin (gentle outward)
+  h[2]  = 0.18; w[2]  = 0.20;
+  // Mouth area (slight inward)
+  h[3]  = 0.28; w[3]  = 0.15;
+  // Upper lip / below nose
+  h[4]  = 0.35; w[4]  = 0.13;
+  // Nose (most prominent feature, but moderate)
+  h[5]  = 0.44; w[5]  = 0.22;
+  // Nose bridge (inward)
+  h[6]  = 0.53; w[6]  = 0.14;
+  // Eye / brow area (gentle indent then rise)
+  h[7]  = 0.62; w[7]  = 0.16;
+  // Forehead (broad, smooth)
+  h[8]  = 0.74; w[8]  = 0.22;
+  // Crown
+  h[9]  = 0.85; w[9]  = 0.20;
+  // Rim flare
+  h[10] = 0.94; w[10] = 0.30;
+  // Top (wide rim)
+  h[11] = 1.00; w[11] = 0.35;
 }
 
 float profileCurve(float t) {
@@ -54,6 +44,7 @@ float profileCurve(float t) {
   if (t <= h[0]) return w[0];
   if (t >= h[N-1]) return w[N-1];
   for (int i = 0; i < N-1; i++) {
+    if (i >= 11) break;
     if (t >= h[i] && t <= h[i+1]) {
       float s = (t - h[i]) / (h[i+1] - h[i]);
       s = s * s * (3.0 - 2.0 * s); // smoothstep

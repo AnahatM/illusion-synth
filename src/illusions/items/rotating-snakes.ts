@@ -22,18 +22,18 @@ const rotatingSnakes: IllusionConfig = {
   params: [
     {
       key: "ringCount",
-      label: "Ring Count",
+      label: "Rings per Disc",
       type: "slider",
-      default: 8,
+      default: 4,
       min: 2,
-      max: 15,
+      max: 8,
       step: 1,
     },
     {
       key: "density",
-      label: "Density",
+      label: "Segment Density",
       type: "slider",
-      default: 1,
+      default: 1.5,
       min: 0.5,
       max: 3,
       step: 0.1,
