@@ -13,7 +13,7 @@ const driftRings: IllusionConfig = {
   name: "Drift Rings (Kitaoka)",
   category: "Motion",
   description:
-    "Coloured elliptical segments arranged in concentric rings create a powerful illusion of rotation — even though the image is completely static.",
+    "Concentric rings of curved petal-shaped segments with an asymmetric luminance cycle create a powerful illusion of rotation — even though the image is completely static.",
   howTo:
     "Look at the red center dot. In your peripheral vision the rings appear to slowly rotate in alternating directions. Move your eyes around the image to see the motion restart. This is a static image — nothing is animated.",
   tintThumbnail: true,

@@ -10,7 +10,7 @@ let material: THREE.ShaderMaterial;
 const concentricMoire: IllusionConfig = {
   id: "concentric-moire",
   name: "Concentric Circles Moiré",
-  category: "Moiré",
+  category: "Pattern",
   description:
     "Two overlapping sets of concentric circles creating shifting moiré interference patterns.",
   howTo:

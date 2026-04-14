@@ -11,7 +11,7 @@ let material: THREE.ShaderMaterial;
 const spinningDancer: IllusionConfig = {
   id: "spinning-dancer",
   name: "Spinning Dancer",
-  category: "Depth/Ambiguity",
+  category: "Cognitive",
   description:
     "A silhouette figure that can be perceived as spinning either clockwise or counter-clockwise — the ambiguity comes from the lack of depth cues in the 2D projection.",
   howTo:

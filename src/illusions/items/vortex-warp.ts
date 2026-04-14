@@ -11,7 +11,7 @@ let material: THREE.ShaderMaterial;
 const vortexWarp: IllusionConfig = {
   id: "vortex-warp",
   name: "Vortex Warp",
-  category: "Tunnel",
+  category: "Pattern",
   description:
     "A twisting distortion field that warps space into a hypnotic vortex.",
   howTo:

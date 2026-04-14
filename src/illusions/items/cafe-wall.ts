@@ -11,7 +11,7 @@ let material: THREE.ShaderMaterial;
 const cafeWall: IllusionConfig = {
   id: "cafe-wall",
   name: "Café Wall",
-  category: "Op-Art",
+  category: "Geometric",
   description:
     "Offset rows of alternating black and white tiles separated by thin gray mortar lines create the illusion of non-parallel, wedge-shaped rows.",
   howTo:

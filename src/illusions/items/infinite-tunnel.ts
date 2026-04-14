@@ -11,7 +11,7 @@ let material: THREE.ShaderMaterial;
 const infiniteTunnel: IllusionConfig = {
   id: "infinite-tunnel",
   name: "Infinite Tunnel",
-  category: "Tunnel",
+  category: "Pattern",
   description:
     "Zooming concentric rings that create an endless depth illusion.",
   howTo:

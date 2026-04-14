@@ -5,62 +5,63 @@ uniform vec3 uColor2;
 varying vec2 vUv;
 
 #define PI 3.14159265359
+#define TAU 6.28318530718
 
 void main() {
   vec2 uv = vUv - 0.5;
   float r = length(uv);
-  float a = atan(uv.y, uv.x);
+  float angle = atan(uv.y, uv.x);
 
-  vec3 col = vec3(0.0);
+  float ringCount = uRings;
+  float segCount = uSegments;
+  float maxR = 0.48;
 
-  float rings = uRings;
-  float segments = uSegments;
-  float ringW = 0.42 / rings;
+  // Background
+  vec3 col = vec3(0.5);
 
-  for (float i = 0.0; i < 20.0; i++) {
-    if (i >= rings) break;
-    float ringR = (i + 1.0) / (rings + 1.0) * 0.45;
+  if (r < maxR) {
+    float normDist = r / maxR;
+    float ringWidth = 1.0 / ringCount;
+    float ring = floor(normDist / ringWidth);
+    float ringFract = fract(normDist / ringWidth);
 
-    float radialDist = abs(r - ringR);
-    if (radialDist > ringW * 0.7) continue;
+    ring = min(ring, ringCount - 1.0);
 
-    // Offset each ring's segments for spiral flow
-    float segWidth = 2.0 * PI / segments;
-    float segA = a + i * segWidth * 1.0;
-    float segIndex = floor(mod(segA / segWidth + segments, segments));
-
-    // Angular position within segment for elliptical shape
-    float segCenter = (segIndex + 0.5) * segWidth;
-    float angOffset = mod(segA - segCenter + PI, 2.0 * PI) - PI;
-    float angNorm = angOffset / (segWidth * 0.5);
-
-    // Elliptical blob (wider angularly, narrower radially)
-    float radNorm = radialDist / (ringW * 0.45);
-    float ellipseDist = sqrt(radNorm * radNorm * 1.5 + angNorm * angNorm);
-
-    float blob = smoothstep(1.0, 0.6, ellipseDist);
-    if (blob < 0.01) continue;
-
-    // 4-phase color cycle: black → color2 → white → color1
-    // This asymmetric sequence is key to the Kitaoka peripheral drift effect
-    float phase = mod(segIndex, 4.0);
+    float segWidth = TAU / segCount;
 
     // Direction alternates per ring
-    float dir = mod(i, 2.0);
-    if (dir > 0.5) {
-      phase = mod(3.0 - phase, 4.0);
-    }
+    float dir = mod(ring, 2.0) < 1.0 ? 1.0 : -1.0;
 
-    vec3 segCol;
-    if (phase < 1.0)      segCol = vec3(0.0);     // black
-    else if (phase < 2.0) segCol = uColor2;        // dark color (blue)
-    else if (phase < 3.0) segCol = vec3(1.0);      // white
-    else                   segCol = uColor1;        // bright color (yellow)
+    // Spiral offset: each ring shifts by 1 segment
+    float spiralShift = ring * segWidth * dir;
 
-    col = mix(col, segCol, blob);
+    // Curved segment boundaries — petal/crescent shapes
+    float curvature = 0.35;
+    float curveOffset = sin(ringFract * PI) * curvature * segWidth;
+    float a = mod(angle + spiralShift + curveOffset, TAU);
+
+    float segAngle = a / TAU * segCount;
+    float seg = floor(segAngle);
+
+    // 4-phase asymmetric luminance cycle
+    float phase = mod(seg, 4.0);
+
+    vec3 color;
+    if (phase < 1.0)      color = vec3(0.0);   // black
+    else if (phase < 2.0) color = uColor2;     // dark color
+    else if (phase < 3.0) color = vec3(1.0);   // white
+    else                   color = uColor1;     // bright color
+
+    // Ring separation lines
+    float ringEdge = smoothstep(0.0, 0.06, ringFract) * smoothstep(1.0, 0.94, ringFract);
+    color = mix(vec3(0.5), color, ringEdge);
+
+    // Soft outer edge
+    float edgeFade = smoothstep(maxR, maxR - 0.01, r);
+    col = mix(col, color, edgeFade);
   }
 
-  // Center dot (fixation)
+  // Center fixation dot
   float dot = smoothstep(0.012, 0.008, r);
   col = mix(col, vec3(0.9, 0.2, 0.2), dot);
 

@@ -9,7 +9,7 @@ let material: THREE.ShaderMaterial;
 const simultaneousContrast: IllusionConfig = {
   id: "simultaneous-contrast",
   name: "Simultaneous Contrast",
-  category: "Color/Brightness",
+  category: "Color",
   description:
     "A uniform gray bar spans two halves with different backgrounds. The gray looks lighter on the dark side and darker on the light side, yet it's the same shade everywhere.",
   howTo:

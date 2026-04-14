@@ -9,7 +9,7 @@ let material: THREE.ShaderMaterial;
 const checkerShadow: IllusionConfig = {
   id: "checker-shadow",
   name: "Checker Shadow (Adelson)",
-  category: "Color/Brightness",
+  category: "Color",
   description:
     "Two squares on a checkerboard — one in shadow, one outside — appear to be very different shades, but they are physically identical in luminance. One of the most famous brightness illusions.",
   howTo:

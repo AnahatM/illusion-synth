@@ -11,7 +11,7 @@ let material: THREE.ShaderMaterial;
 const breathingSquares: IllusionConfig = {
   id: "breathing-squares",
   name: "Breathing Squares",
-  category: "Op-Art",
+  category: "Pattern",
   description:
     "Concentric squares alternating in color that appear to pulse and breathe.",
   howTo:

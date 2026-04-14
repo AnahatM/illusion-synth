@@ -11,7 +11,7 @@ let material: THREE.ShaderMaterial;
 const fibonacciSpiral: IllusionConfig = {
   id: "fibonacci-spiral",
   name: "Fibonacci Spiral",
-  category: "Spiral",
+  category: "Pattern",
   description:
     "A golden-ratio spiral with a pulsing effect inspired by the Fibonacci sequence.",
   howTo:

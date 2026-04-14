@@ -11,7 +11,7 @@ let material: THREE.ShaderMaterial;
 const gridMoire: IllusionConfig = {
   id: "grid-moire",
   name: "Grid Moiré",
-  category: "Moiré",
+  category: "Pattern",
   description:
     "Two overlapping line grids rotating relative to each other, creating dynamic moiré patterns.",
   howTo:

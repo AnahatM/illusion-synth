@@ -4,8 +4,6 @@ uniform vec3 uColor1;
 uniform vec3 uColor2;
 varying vec2 vUv;
 
-#define PI 3.14159265359
-
 void main() {
   vec2 uv = vUv;
   float gridSize = uGridSize;
@@ -17,44 +15,28 @@ void main() {
   // Checkerboard of two colors
   float checker = mod(cell.x + cell.y, 2.0);
   vec3 tileColor = checker < 0.5 ? uColor1 : uColor2;
+  vec3 otherColor = checker < 0.5 ? uColor2 : uColor1;
 
-  // Asymmetric dark/light dots on alternating edges
-  // The dot placement creates the motion illusion
-  // Each tile has small squares near the edges
-  float dotR = uDotSize;
+  // Small corner squares size
+  float sz = uDotSize;
 
-  // Row-based direction: alternate which edge gets the dot
-  float rowDir = mod(cell.y, 2.0) < 1.0 ? 1.0 : -1.0;
-  // Also alternate per checkerboard phase
-  float phase = checker < 0.5 ? 1.0 : -1.0;
-  float dir = rowDir * phase;
+  // Determine which two corners get the small squares.
+  // Row-based alternation creates the diagonal illusion:
+  // Even rows: small squares in top-right and bottom-right corners
+  // Odd rows: small squares in top-left and bottom-left corners
+  float rowParity = mod(cell.y, 2.0);
 
   vec3 col = tileColor;
 
-  // Dark dot (black) on one side
-  vec2 darkDotPos = vec2(dir > 0.0 ? dotR * 0.5 + 0.02 : 1.0 - dotR * 0.5 - 0.02, 0.5);
-  float darkDot = step(abs(local.x - darkDotPos.x), dotR * 0.5) *
-                  step(abs(local.y - darkDotPos.y), dotR * 0.5);
+  // Corner square 1 (top corner)
+  vec2 c1 = rowParity < 1.0 ? vec2(1.0 - sz * 0.5, 1.0 - sz * 0.5) : vec2(sz * 0.5, 1.0 - sz * 0.5);
+  float sq1 = step(abs(local.x - c1.x), sz * 0.5) * step(abs(local.y - c1.y), sz * 0.5);
 
-  // Light border line between tiles for structure
-  float edgeX = smoothstep(0.0, 0.02, local.x) * smoothstep(1.0, 0.98, local.x);
-  float edgeY = smoothstep(0.0, 0.02, local.y) * smoothstep(1.0, 0.98, local.y);
-  float edge = edgeX * edgeY;
+  // Corner square 2 (bottom corner, same side)
+  vec2 c2 = rowParity < 1.0 ? vec2(1.0 - sz * 0.5, sz * 0.5) : vec2(sz * 0.5, sz * 0.5);
+  float sq2 = step(abs(local.x - c2.x), sz * 0.5) * step(abs(local.y - c2.y), sz * 0.5);
 
-  // Mix dark square onto tile
-  // The dark square is flanked by a thin bright strip on the inner side
-  // creating the asymmetric luminance profile
-  vec2 brightDotPos = vec2(dir > 0.0 ? dotR + 0.04 : 1.0 - dotR - 0.04, 0.5);
-  float brightDot = step(abs(local.x - brightDotPos.x), dotR * 0.3) *
-                    step(abs(local.y - brightDotPos.y), dotR * 0.5);
-
-  col = mix(col, vec3(0.0), darkDot);
-  col = mix(col, mix(tileColor, vec3(0.0), 0.3), brightDot);
-  col *= edge;
-
-  // Thin dark green/olive border between rows
-  float rowBorder = smoothstep(0.0, 0.03, local.y) * smoothstep(1.0, 0.97, local.y);
-  col *= mix(0.4, 1.0, rowBorder);
+  col = mix(col, otherColor, max(sq1, sq2));
 
   gl_FragColor = vec4(col, 1.0);
 }

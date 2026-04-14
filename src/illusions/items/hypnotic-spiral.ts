@@ -11,7 +11,7 @@ let material: THREE.ShaderMaterial;
 const hypnoticSpiral: IllusionConfig = {
   id: "hypnotic-spiral",
   name: "Hypnotic Spiral",
-  category: "Spiral",
+  category: "Pattern",
   description:
     "A continuously rotating Archimedes spiral that creates a hypnotic tunnel effect.",
   howTo:

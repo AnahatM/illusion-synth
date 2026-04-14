@@ -9,7 +9,7 @@ let material: THREE.ShaderMaterial;
 const munkerWhite: IllusionConfig = {
   id: "munker-white",
   name: "Munker-White Illusion",
-  category: "Color/Brightness",
+  category: "Color",
   description:
     "Identical gray bars appear markedly different in lightness depending on whether they are placed on black or white stripes — a powerful brightness assimilation effect.",
   howTo:

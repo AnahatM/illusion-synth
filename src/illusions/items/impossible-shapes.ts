@@ -26,7 +26,7 @@ void main() {
 const impossibleShapes: IllusionConfig = {
   id: "impossible-shapes",
   name: "Impossible Shapes",
-  category: "Impossible",
+  category: "Cognitive",
   description:
     "Classic impossible objects — geometric figures that appear valid at first glance but cannot exist in 3D space. These include the Penrose triangle, impossible staircase, and more.",
   howTo:

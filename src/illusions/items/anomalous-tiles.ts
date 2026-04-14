@@ -14,9 +14,9 @@ const anomalousTiles: IllusionConfig = {
   category: "Motion",
   tintThumbnail: true,
   description:
-    "A static grid of coloured tiles with small asymmetric dots appears to shimmer and shift — rows seem to slide left and right even though nothing moves.",
+    "A checkerboard of coloured tiles, each with two small corner squares of the opposite colour, makes you perceive diagonal lines that aren't there.",
   howTo:
-    "Stare at the pattern and let your eyes wander. The rows of tiles appear to drift sideways in alternating directions. The small dark squares on each tile create an asymmetric luminance profile that tricks your peripheral vision into perceiving motion.",
+    "Look at the grid — the small corner squares are placed on the same side of each row, alternating left/right between rows. This asymmetric placement tricks your visual system into perceiving slanted diagonal lines across the straight grid.",
   params: [
     {
       key: "gridSize",
@@ -29,7 +29,7 @@ const anomalousTiles: IllusionConfig = {
     },
     {
       key: "dotSize",
-      label: "Dot Size",
+      label: "Corner Size",
       type: "slider",
       default: 0.25,
       min: 0.1,

@@ -12,7 +12,7 @@ let mouseRot: MouseRotation | null = null;
 const neckerCube: IllusionConfig = {
   id: "necker-cube",
   name: "Necker Cube",
-  category: "Impossible",
+  category: "Cognitive",
   description:
     "A wireframe cube drawn without depth cues. Your brain spontaneously flips which face appears in front.",
   howTo:

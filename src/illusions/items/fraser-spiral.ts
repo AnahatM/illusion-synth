@@ -11,7 +11,7 @@ let material: THREE.ShaderMaterial;
 const fraserSpiral: IllusionConfig = {
   id: "fraser-spiral",
   name: "Fraser Spiral",
-  category: "Pattern",
+  category: "Geometric",
   description:
     "Concentric circles with tilted arc segments appear to form a single continuous spiral — but they are actually perfect closed circles.",
   howTo:

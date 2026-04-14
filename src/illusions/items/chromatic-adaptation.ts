@@ -9,7 +9,7 @@ let material: THREE.ShaderMaterial;
 const chromaticAdaptation: IllusionConfig = {
   id: "chromatic-adaptation",
   name: "Chromatic Adaptation",
-  category: "Color/Brightness",
+  category: "Color",
   description:
     "After staring at a strongly colored image, a neutral gray appears tinted with the complementary color — your photoreceptors temporarily recalibrate.",
   howTo:
