@@ -125,27 +125,27 @@
 
   .segmented {
     display: flex;
-    flex: 1;
+    flex-direction: column;
+    width: 100%;
     border: 1px solid var(--border);
     overflow: hidden;
   }
 
   .seg-btn {
-    flex: 1;
-    padding: 0.3rem 0.4rem;
+    padding: 0.35rem 0.5rem;
     background: var(--surface);
     color: var(--text-secondary);
     border: none;
-    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
     font-family: inherit;
     font-size: 0.75rem;
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
-    white-space: nowrap;
+    text-align: left;
   }
 
   .seg-btn:last-child {
-    border-right: none;
+    border-bottom: none;
   }
 
   .seg-btn.active {

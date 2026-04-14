@@ -6,94 +6,117 @@ varying vec2 vUv;
 
 #define PI 3.14159265359
 
-// Attempt smooth hermite interpolation between control points
+// Face profile curve - dramatically pronounced features
+// t: 0 = bottom, 1 = top. Returns half-width of the vase.
 float profileCurve(float t) {
-  // t goes from 0 (bottom) to 1 (top)
-  // Define profile as half-width at each height
-  // This matches the reference: wide base, narrow neck with face features, wide rim
-
-  // Control points: (height, half-width)
-  // Bottom base flare
-  if (t < 0.05) {
-    float s = t / 0.05;
-    return mix(0.38, 0.36, smoothstep(0.0, 1.0, s));
+  // --- BOTTOM BASE / PEDESTAL ---
+  // Wide foot
+  if (t < 0.04) {
+    float s = t / 0.04;
+    return mix(0.42, 0.40, smoothstep(0.0, 1.0, s));
   }
-  // Base narrows to pedestal
+  // Foot narrows sharply to neck/pedestal
   if (t < 0.10) {
-    float s = (t - 0.05) / 0.05;
-    return mix(0.36, 0.22, smoothstep(0.0, 1.0, s));
+    float s = (t - 0.04) / 0.06;
+    return mix(0.40, 0.18, smoothstep(0.0, 1.0, s));
   }
-  // Pedestal to chin
-  if (t < 0.18) {
-    float s = (t - 0.10) / 0.08;
-    return mix(0.22, 0.17, smoothstep(0.0, 1.0, s));
+
+  // --- CHIN ---
+  // Neck to chin point (the most protruding bottom of face)
+  if (t < 0.16) {
+    float s = (t - 0.10) / 0.06;
+    return mix(0.18, 0.28, smoothstep(0.0, 1.0, s));
   }
-  // Chin bump (small outward curve)
-  if (t < 0.24) {
-    float s = (t - 0.18) / 0.06;
-    return 0.17 + 0.025 * sin(s * PI);
+  // Chin rounds back inward toward jawline
+  if (t < 0.22) {
+    float s = (t - 0.16) / 0.06;
+    return mix(0.28, 0.20, smoothstep(0.0, 1.0, s));
   }
-  // Chin to below lower lip (inward)
-  if (t < 0.29) {
-    float s = (t - 0.24) / 0.05;
-    return mix(0.17, 0.14, smoothstep(0.0, 1.0, s));
+
+  // --- LIPS ---
+  // Jaw to lower lip (slight outward)
+  if (t < 0.27) {
+    float s = (t - 0.22) / 0.05;
+    return mix(0.20, 0.24, smoothstep(0.0, 1.0, s));
   }
-  // Lower lip bump
+  // Lower lip peak
+  if (t < 0.30) {
+    float s = (t - 0.27) / 0.03;
+    return mix(0.24, 0.25, smoothstep(0.0, 1.0, s));
+  }
+  // Gap between lips (deep indent)
   if (t < 0.33) {
-    float s = (t - 0.29) / 0.04;
-    return 0.14 + 0.025 * sin(s * PI);
+    float s = (t - 0.30) / 0.03;
+    return mix(0.25, 0.16, smoothstep(0.0, 1.0, s));
   }
-  // Upper lip / philtrum indent
-  if (t < 0.37) {
-    float s = (t - 0.33) / 0.04;
-    return mix(0.14, 0.12, smoothstep(0.0, 1.0, s));
+  // Upper lip peak
+  if (t < 0.36) {
+    float s = (t - 0.33) / 0.03;
+    return mix(0.16, 0.23, smoothstep(0.0, 1.0, s));
   }
-  // Below nose to nose tip
-  if (t < 0.42) {
-    float s = (t - 0.37) / 0.05;
-    return mix(0.12, 0.19, smoothstep(0.0, 1.0, s));
+
+  // --- PHILTRUM (below nose) ---
+  // Upper lip back inward to below nose
+  if (t < 0.40) {
+    float s = (t - 0.36) / 0.04;
+    return mix(0.23, 0.13, smoothstep(0.0, 1.0, s));
   }
-  // Nose tip plateau
-  if (t < 0.47) {
-    float s = (t - 0.42) / 0.05;
-    return mix(0.19, 0.20, smoothstep(0.0, 1.0, s));
+
+  // --- NOSE ---
+  // Nose shoots outward dramatically
+  if (t < 0.46) {
+    float s = (t - 0.40) / 0.06;
+    return mix(0.13, 0.30, smoothstep(0.0, 1.0, s));
   }
-  // Nose bridge (inward from nose to eye area)
-  if (t < 0.54) {
-    float s = (t - 0.47) / 0.07;
-    return mix(0.20, 0.13, smoothstep(0.0, 1.0, s));
+  // Nose tip / bridge plateau
+  if (t < 0.52) {
+    float s = (t - 0.46) / 0.06;
+    return mix(0.30, 0.28, smoothstep(0.0, 1.0, s));
   }
-  // Eye socket indent
-  if (t < 0.60) {
-    float s = (t - 0.54) / 0.06;
-    return 0.13 - 0.015 * sin(s * PI);
+  // Nose bridge recedes sharply inward
+  if (t < 0.58) {
+    float s = (t - 0.52) / 0.06;
+    return mix(0.28, 0.10, smoothstep(0.0, 1.0, s));
   }
-  // Brow ridge bump
-  if (t < 0.66) {
-    float s = (t - 0.60) / 0.06;
-    return mix(0.13, 0.17, smoothstep(0.0, 1.0, s));
+
+  // --- EYE SOCKET ---
+  // Deep eye indent (the narrowest part of the face)
+  if (t < 0.64) {
+    float s = (t - 0.58) / 0.06;
+    return mix(0.10, 0.08, smoothstep(0.0, 1.0, s));
   }
-  // Forehead (gentle outward curve)
-  if (t < 0.78) {
-    float s = (t - 0.66) / 0.12;
-    return mix(0.17, 0.21, smoothstep(0.0, 1.0, s));
+
+  // --- BROW RIDGE ---
+  // Brow pushes outward
+  if (t < 0.70) {
+    float s = (t - 0.64) / 0.06;
+    return mix(0.08, 0.22, smoothstep(0.0, 1.0, s));
   }
-  // Forehead to hairline / top of head → rim start
-  if (t < 0.85) {
-    float s = (t - 0.78) / 0.07;
-    return mix(0.21, 0.22, smoothstep(0.0, 1.0, s));
+
+  // --- FOREHEAD ---
+  // Forehead: broad gentle curve outward
+  if (t < 0.82) {
+    float s = (t - 0.70) / 0.12;
+    return mix(0.22, 0.30, smoothstep(0.0, 1.0, s));
   }
-  // Rim flare outward
-  if (t < 0.92) {
-    float s = (t - 0.85) / 0.07;
-    return mix(0.22, 0.36, smoothstep(0.0, 1.0, s));
+  // Top of forehead / crown
+  if (t < 0.88) {
+    float s = (t - 0.82) / 0.06;
+    return mix(0.30, 0.28, smoothstep(0.0, 1.0, s));
+  }
+
+  // --- RIM (top of vase) ---
+  // Rim flares outward
+  if (t < 0.94) {
+    float s = (t - 0.88) / 0.06;
+    return mix(0.28, 0.40, smoothstep(0.0, 1.0, s));
   }
   // Rim top
-  if (t < 0.97) {
-    float s = (t - 0.92) / 0.05;
-    return mix(0.36, 0.38, smoothstep(0.0, 1.0, s));
+  if (t < 0.98) {
+    float s = (t - 0.94) / 0.04;
+    return mix(0.40, 0.42, smoothstep(0.0, 1.0, s));
   }
-  return 0.38;
+  return 0.42;
 }
 
 void main() {
@@ -106,8 +129,8 @@ void main() {
   // Mirror horizontally for symmetry
   float ax = abs(uv.x);
 
-  // Map y from [-0.45, 0.45] to [0, 1]
-  float t = (uv.y + 0.45) / 0.9;
+  // Map y from [-0.48, 0.48] to [0, 1] — use more vertical space
+  float t = (uv.y + 0.48) / 0.96;
 
   // Clip outside vase vertical range
   if (t < 0.0 || t > 1.0) {
