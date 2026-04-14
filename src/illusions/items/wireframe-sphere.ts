@@ -2,9 +2,11 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/wireframe-sphere.frag";
+import { setupMouseRotation, type MouseRotation } from "../lib/mouse-rotation";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
+let mouseRot: MouseRotation | null = null;
 
 function hexToVec3(hex: string): THREE.Vector3 {
   const c = new THREE.Color(hex);
@@ -18,7 +20,7 @@ const wireframeSphere: IllusionConfig = {
   description:
     "A wireframe sphere rotating with orthographic projection. Without depth cues, the rotation direction becomes ambiguous — it can appear to spin either way.",
   howTo:
-    "Watch the sphere rotate. Try to see it spinning clockwise, then counterclockwise. Because all lines have equal thickness (no depth shading), your brain can interpret either direction. Blinking often triggers a perceptual flip.",
+    "Watch the sphere rotate. Try to see it spinning clockwise, then counterclockwise. Because all lines have equal thickness (no depth shading), your brain can interpret either direction. Blinking often triggers a perceptual flip. Enable Manual Rotation to explore angles yourself.",
   params: [
     {
       key: "speed",
@@ -48,9 +50,15 @@ const wireframeSphere: IllusionConfig = {
       max: 16,
       step: 1,
     },
+    {
+      key: "manualRotation",
+      label: "Manual Rotation",
+      type: "toggle",
+      default: false,
+    },
   ],
 
-  setup(scene, _camera, params) {
+  setup(scene, _camera, params, canvas) {
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -60,11 +68,15 @@ const wireframeSphere: IllusionConfig = {
         uColor: { value: hexToVec3(params.color) },
         uSize: { value: params.size },
         uRings: { value: params.rings },
+        uManual: { value: 0 },
+        uManualRotX: { value: 0 },
+        uManualRotY: { value: 0 },
       },
       transparent: true,
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
     scene.add(mesh);
+    if (canvas) mouseRot = setupMouseRotation(canvas);
   },
 
   update(time, params) {
@@ -74,11 +86,19 @@ const wireframeSphere: IllusionConfig = {
     material.uniforms.uColor.value = hexToVec3(params.color);
     material.uniforms.uSize.value = params.size;
     material.uniforms.uRings.value = params.rings;
+    const manual = params.manualRotation ? 1 : 0;
+    material.uniforms.uManual.value = manual;
+    if (mouseRot && manual) {
+      material.uniforms.uManualRotX.value = mouseRot.rotX;
+      material.uniforms.uManualRotY.value = mouseRot.rotY;
+    }
   },
 
   dispose() {
     mesh?.geometry.dispose();
     material?.dispose();
+    mouseRot?.destroy();
+    mouseRot = null;
   },
 };
 

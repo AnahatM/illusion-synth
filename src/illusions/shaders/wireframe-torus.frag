@@ -6,6 +6,9 @@ uniform vec3 uColor;
 uniform float uMajor;
 uniform float uMinor;
 uniform int uSegments;
+uniform float uManual;
+uniform float uManualRotX;
+uniform float uManualRotY;
 
 varying vec2 vUv;
 
@@ -32,8 +35,9 @@ void main() {
     float aspect = 1.0;
     uv.x *= aspect;
 
-    float t = uTime * uSpeed;
-    mat3 rot = rotX(t * 0.7) * rotY(t);
+    float ry = mix(uTime * uSpeed, uManualRotY, uManual);
+    float rx = mix(uTime * uSpeed * 0.7, uManualRotX, uManual);
+    mat3 rot = rotX(rx) * rotY(ry);
 
     float R = uMajor * 0.3;
     float r = uMinor * 0.3;

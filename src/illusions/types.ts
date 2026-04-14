@@ -22,7 +22,9 @@ export interface IllusionConfig {
     scene: THREE.Scene,
     camera: THREE.Camera,
     params: Record<string, any>,
+    canvas?: HTMLCanvasElement,
   ) => void | Promise<void>;
   update: (time: number, params: Record<string, any>) => void;
   dispose: () => void;
+  tintThumbnail?: boolean;
 }

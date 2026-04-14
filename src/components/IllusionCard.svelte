@@ -12,7 +12,7 @@
   let canvas: HTMLCanvasElement;
 
   const hasColorParam = $derived(illusion.params.some(p => p.type === 'color'));
-  const needsTint = $derived(!hasColorParam);
+  const needsTint = $derived(!hasColorParam || illusion.tintThumbnail === true);
 
   $effect(() => {
     if (!canvas) return;

@@ -24,22 +24,23 @@ const rotatingSnakes: IllusionConfig = {
       key: "ringCount",
       label: "Rings per Disc",
       type: "slider",
-      default: 4,
-      min: 2,
-      max: 8,
+      default: 8,
+      min: 3,
+      max: 14,
       step: 1,
     },
     {
       key: "density",
       label: "Segment Density",
       type: "slider",
-      default: 1.5,
-      min: 0.5,
-      max: 3,
-      step: 0.1,
+      default: 2,
+      min: 1,
+      max: 4,
+      step: 0.5,
     },
-    { key: "color1", label: "Bright Color", type: "color", default: "#00ff41" },
-    { key: "color2", label: "Dark Color", type: "color", default: "#004411" },
+    { key: "color1", label: "Bright Color", type: "color", default: "#ffdd00" },
+    { key: "color2", label: "Dark Color", type: "color", default: "#2244aa" },
+    { key: "bgColor", label: "Background", type: "color", default: "#e8e8e8" },
   ],
 
   setup(scene, _camera, params) {
@@ -52,7 +53,7 @@ const rotatingSnakes: IllusionConfig = {
         uDensity: { value: params.density },
         uColor1: { value: hexToVec3(params.color1) },
         uColor2: { value: hexToVec3(params.color2) },
-        uColor3: { value: new THREE.Vector3(0, 0, 0) },
+        uColor3: { value: hexToVec3(params.bgColor) },
       },
       transparent: true,
     });
@@ -66,12 +67,15 @@ const rotatingSnakes: IllusionConfig = {
     material.uniforms.uDensity.value = params.density;
     material.uniforms.uColor1.value = hexToVec3(params.color1);
     material.uniforms.uColor2.value = hexToVec3(params.color2);
+    material.uniforms.uColor3.value = hexToVec3(params.bgColor);
   },
 
   dispose() {
     mesh?.geometry.dispose();
     material?.dispose();
   },
+
+  tintThumbnail: true,
 };
 
 export default rotatingSnakes;

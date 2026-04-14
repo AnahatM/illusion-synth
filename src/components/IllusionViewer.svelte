@@ -74,7 +74,7 @@
     initParams();
 
     const ctx = createRenderer(container);
-    currentIllusion.setup(ctx.scene, ctx.camera, paramsRef);
+    currentIllusion.setup(ctx.scene, ctx.camera, paramsRef, ctx.canvas);
 
     const stopLoop = startAnimationLoop(ctx, (time) => {
       currentIllusion.update(time, paramsRef);

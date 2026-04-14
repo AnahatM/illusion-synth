@@ -3,6 +3,9 @@ uniform float uSpeed;
 uniform vec3 uColor;
 uniform float uDotCount;
 uniform float uDotSize;
+uniform float uManual;
+uniform float uManualRotX;
+uniform float uManualRotY;
 varying vec2 vUv;
 
 #define PI 3.14159265359
@@ -14,7 +17,7 @@ void main() {
   vec3 col = vec3(0.0);
   float alpha = 0.0;
 
-  float t = uTime * uSpeed;
+  float t = mix(uTime * uSpeed, uManualRotY, uManual);
   int count = int(uDotCount);
   float radius = 0.3;
 

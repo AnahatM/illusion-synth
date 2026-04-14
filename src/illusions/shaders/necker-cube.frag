@@ -2,6 +2,9 @@ uniform float uTime;
 uniform float uSpeed;
 uniform vec3 uColor;
 uniform float uSize;
+uniform float uManual;
+uniform float uManualRotX;
+uniform float uManualRotY;
 varying vec2 vUv;
 
 #define PI 3.14159265359
@@ -16,12 +19,13 @@ float line(vec2 p, vec2 a, vec2 b, float thickness) {
 void main() {
   vec2 uv = (vUv - 0.5) * 2.0;
 
-  float t = uTime * uSpeed;
   float s = uSize * 0.35;
 
-  // 3D cube vertices
-  float ct = cos(t), st = sin(t);
-  float cp = cos(t * 0.7), sp = sin(t * 0.7);
+  // Choose rotation source
+  float ry = mix(uTime * uSpeed, uManualRotY, uManual);
+  float rx = mix(uTime * uSpeed * 0.7, uManualRotX, uManual);
+  float ct = cos(ry), st = sin(ry);
+  float cp = cos(rx), sp = sin(rx);
 
   // 8 vertices of a cube centered at origin
   vec3 verts[8];

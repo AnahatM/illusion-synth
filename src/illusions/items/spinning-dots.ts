@@ -2,9 +2,11 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/spinning-dots.frag";
+import { setupMouseRotation, type MouseRotation } from "../lib/mouse-rotation";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
+let mouseRot: MouseRotation | null = null;
 
 function hexToVec3(hex: string): THREE.Vector3 {
   const c = new THREE.Color(hex);
@@ -18,7 +20,7 @@ const spinningDots: IllusionConfig = {
   description:
     "Dots on a rotating sphere projected without depth cues. Your brain can perceive it spinning in either direction — and it can spontaneously flip.",
   howTo:
-    "Watch the dots rotate. Try to see them spinning clockwise — then try counter-clockwise. Most people can voluntarily switch the perceived direction. Blinking or looking away can trigger a flip.",
+    "Watch the dots rotate. Try to see them spinning clockwise — then try counter-clockwise. Most people can voluntarily switch the perceived direction. Blinking or looking away can trigger a flip. Enable Manual Rotation to explore angles yourself.",
   params: [
     {
       key: "speed",
@@ -48,9 +50,15 @@ const spinningDots: IllusionConfig = {
       max: 2,
       step: 0.1,
     },
+    {
+      key: "manualRotation",
+      label: "Manual Rotation",
+      type: "toggle",
+      default: false,
+    },
   ],
 
-  setup(scene, _camera, params) {
+  setup(scene, _camera, params, canvas) {
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -60,12 +68,16 @@ const spinningDots: IllusionConfig = {
         uColor: { value: hexToVec3(params.color) },
         uDotCount: { value: params.dotCount },
         uDotSize: { value: params.dotSize },
+        uManual: { value: 0 },
+        uManualRotX: { value: 0 },
+        uManualRotY: { value: 0 },
       },
       transparent: true,
     });
 
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
     scene.add(mesh);
+    if (canvas) mouseRot = setupMouseRotation(canvas);
   },
 
   update(time, params) {
@@ -75,11 +87,19 @@ const spinningDots: IllusionConfig = {
     material.uniforms.uColor.value = hexToVec3(params.color);
     material.uniforms.uDotCount.value = params.dotCount;
     material.uniforms.uDotSize.value = params.dotSize;
+    const manual = params.manualRotation ? 1 : 0;
+    material.uniforms.uManual.value = manual;
+    if (mouseRot && manual) {
+      material.uniforms.uManualRotX.value = mouseRot.rotX;
+      material.uniforms.uManualRotY.value = mouseRot.rotY;
+    }
   },
 
   dispose() {
     mesh?.geometry.dispose();
     material?.dispose();
+    mouseRot?.destroy();
+    mouseRot = null;
   },
 };
 

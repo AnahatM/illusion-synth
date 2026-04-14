@@ -3,6 +3,9 @@ uniform float uSpeed;
 uniform vec3 uColor;
 uniform float uSize;
 uniform float uRings;
+uniform float uManual;
+uniform float uManualRotX;
+uniform float uManualRotY;
 varying vec2 vUv;
 
 #define PI 3.14159265359
@@ -15,12 +18,14 @@ float line(vec2 p, vec2 a, vec2 b, float thickness) {
 
 void main() {
   vec2 uv = (vUv - 0.5) * 2.0;
-  float t = uTime * uSpeed;
   float s = uSize * 0.38;
   int rings = int(uRings);
 
-  float ct = cos(t), st = sin(t);
-  float cx = cos(t * 0.6), sx = sin(t * 0.6);
+  // Choose rotation source: auto (time-based) or manual (mouse-driven)
+  float ry = mix(uTime * uSpeed, uManualRotY, uManual);
+  float rx = mix(uTime * uSpeed * 0.6, uManualRotX, uManual);
+  float ct = cos(ry), st = sin(ry);
+  float cx = cos(rx), sx = sin(rx);
 
   float result = 0.0;
   float thick = 0.006;
