@@ -51,6 +51,18 @@
   </section>
 
   <section>
+    <h2>Screenshots</h2>
+    <div class="screenshots">
+      <img src="/images/IllusionSynth-Screenshot-1.png" alt="Screenshot 1" />
+      <img src="/images/IllusionSynth-Screenshot-2.png" alt="Screenshot 2" />
+      <img src="/images/IllusionSynth-Screenshot-3.png" alt="Screenshot 3" />
+      <img src="/images/IllusionSynth-Screenshot-4.png" alt="Screenshot 4" />
+      <img src="/images/IllusionSynth-Screenshot-5.png" alt="Screenshot 5" />
+      <img src="/images/IllusionSynth-Screenshot-6.png" alt="Screenshot 6" />
+    </div>
+  </section>
+
+  <section>
     <h2>Tech Stack</h2>
     <p>
       Svelte 5 &bull; Vite &bull; Three.js &bull; GLSL Shaders &bull; TypeScript
@@ -111,5 +123,23 @@
 
   .links a:hover {
     text-decoration: underline;
+  }
+
+  .screenshots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .screenshots img {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border, #333);
+  }
+
+  @media (max-width: 500px) {
+    .screenshots {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
