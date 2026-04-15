@@ -45,6 +45,11 @@ import kitaokaDrift from "./items/kitaoka-drift";
 import anomalousTiles from "./items/anomalous-tiles";
 import tiltedSquares from "./items/tilted-squares";
 import bulgingCheckerboard from "./items/bulging-checkerboard";
+import machBands from "./items/mach-bands";
+import mullerLyer from "./items/muller-lyer";
+import motionInducedBlindness from "./items/motion-induced-blindness";
+import delboeufIllusion from "./items/delboeuf";
+import ehrensteinIllusion from "./items/ehrenstein";
 
 export const illusions: IllusionConfig[] = [
   hypnoticSpiral,
@@ -93,6 +98,12 @@ export const illusions: IllusionConfig[] = [
   anomalousTiles,
   tiltedSquares,
   bulgingCheckerboard,
+  // New from michaelbach.de
+  machBands,
+  mullerLyer,
+  motionInducedBlindness,
+  delboeufIllusion,
+  ehrensteinIllusion,
 ];
 
 export const categories = [...new Set(illusions.map((i) => i.category))];
