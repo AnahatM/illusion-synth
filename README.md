@@ -1,47 +1,52 @@
-# Svelte + TS + Vite
+<div align="center">
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+# 🌀 IllusionSynth
 
-## Recommended IDE Setup
+**An interactive optical illusion generator — real-time WebGL visuals you can customize and share.**
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+[![Svelte](https://img.shields.io/badge/Svelte-5-ff3e00?style=flat-square&logo=svelte&logoColor=white)](https://svelte.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Vite](https://img.shields.io/badge/Vite-8-646cff?style=flat-square&logo=vite&logoColor=white)](https://vite.dev)
+[![Three.js](https://img.shields.io/badge/Three.js-WebGL-000000?style=flat-square&logo=threedotjs&logoColor=white)](https://threejs.org)
+[![GLSL](https://img.shields.io/badge/GLSL-Shaders-5586a4?style=flat-square)](https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](#license)
 
-## Need an official Svelte framework?
+[![Portfolio](https://img.shields.io/badge/Portfolio-anahatmudgal.com-796eb3?style=flat-square&logo=googlechrome&logoColor=white)](https://anahatmudgal.com)
+[![GitHub](https://img.shields.io/badge/GitHub-anahatM-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/anahatM)
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+[![Try IllusionSynth](https://img.shields.io/badge/Try_IllusionSynth-illusionsynth.anahatmudgal.com-60a5fa?style=for-the-badge&logo=webgl&logoColor=white)](https://illusionsynth.anahatmudgal.com)
+[![Project Page](https://img.shields.io/badge/Project_Page-IllusionSynth-a78bfa?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.anahatmudgal.com/projects/illusionsynth)
 
-## Technical considerations
+</div>
 
-**Why use this over SvelteKit?**
+## About
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+**IllusionSynth** is an interactive optical illusion generator that renders mesmerizing visual patterns in real-time using WebGL. Browse a curated collection of 40+ illusions — from hypnotic spirals and moiré patterns to impossible shapes and infinite tunnels — and customize them with intuitive controls.
 
-This template contains as little as possible to get started with Vite + TypeScript + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+### Illusion Categories
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+- **Spirals** — Rotating and pulsing spiral patterns
+- **Moiré** — Overlapping patterns creating interference effects
+- **Color** — Afterimage and color drift illusions
+- **Op-Art** — Geometric patterns that appear to move
+- **Motion** — Static patterns with apparent motion
+- **Tunnel** — Depth and vortex effects
+- **Impossible** — Paradoxical 3D geometry
 
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
+### Features
 
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
+- **Real-time rendering** — All illusions are GPU-accelerated via WebGL shaders
+- **Customizable parameters** — Adjust speed, colors, scale, direction, and more
+- **Fullscreen mode** — Immerse yourself in the visual experience
+- **Shareable links** — Share your custom illusion settings via URL
+- **Dark & light themes** — Switch to match your preference
+- **Responsive design** — Works on desktop and mobile
 
-**Why include `.vscode/extensions.json`?**
+Fully client-side. No backend. No database. Deploys as a static site.
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+## Screenshots
 
-**Why enable `allowJs` in the TS template?**
-
-While `allowJs: false` would indeed prevent the use of `.js` files in the project, it does not prevent the use of JavaScript syntax in `.svelte` files. In addition, it would force `checkJs: false`, bringing the worst of both worlds: not being able to guarantee the entire codebase is TypeScript, and also having worse typechecking for the existing JavaScript. In addition, there are valid use cases in which a mixed codebase may be relevant.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```ts
-// store.ts
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
-```
+| ![Screenshot 1](public/images/IllusionSynth-Screenshot-1.png) | ![Screenshot 2](public/images/IllusionSynth-Screenshot-2.png) |
+| ------------------------------------------------------------- | ------------------------------------------------------------- |
+| ![Screenshot 3](public/images/IllusionSynth-Screenshot-3.png) | ![Screenshot 4](public/images/IllusionSynth-Screenshot-4.png) |
+| ![Screenshot 5](public/images/IllusionSynth-Screenshot-5.png) | ![Screenshot 6](public/images/IllusionSynth-Screenshot-6.png) |
