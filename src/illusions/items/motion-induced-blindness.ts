@@ -3,6 +3,7 @@ import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/motion-induced-blindness.frag";
 import { hexToVec3 } from "../lib/color-utils";
+import { resolvePalette } from "../lib/palettes";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -94,6 +95,20 @@ const motionInducedBlindness: IllusionConfig = {
       type: "color",
       default: "#0d0d0d",
     },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -132,8 +147,13 @@ const motionInducedBlindness: IllusionConfig = {
       params.dotMode === "Ring" ? 1 : params.dotMode === "Array" ? 2 : 0;
     material.uniforms.uCrossSize.value = params.crossSize;
     material.uniforms.uLineWidth.value = params.lineWidth;
-    material.uniforms.uGridColor.value = hexToVec3(params.gridColor as string);
-    material.uniforms.uDotColor.value = hexToVec3(params.dotColor as string);
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.gridColor,
+      params.dotColor,
+    );
+    material.uniforms.uGridColor.value = hexToVec3(c1);
+    material.uniforms.uDotColor.value = hexToVec3(c2);
     material.uniforms.uBgColor.value = hexToVec3(params.bgColor as string);
   },
 

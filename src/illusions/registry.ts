@@ -50,6 +50,13 @@ import mullerLyer from "./items/muller-lyer";
 import motionInducedBlindness from "./items/motion-induced-blindness";
 import delboeufIllusion from "./items/delboeuf";
 import ehrensteinIllusion from "./items/ehrenstein";
+import tIllusion from "./items/t-illusion";
+import cornsweetIllusion from "./items/cornsweet";
+import blindSpot from "./items/blind-spot";
+import bourdonIllusion from "./items/bourdon";
+import neonSpreading from "./items/neon-spreading";
+import tiltIllusion from "./items/tilt-illusion";
+import popOut from "./items/pop-out";
 
 export const illusions: IllusionConfig[] = [
   hypnoticSpiral,
@@ -104,6 +111,13 @@ export const illusions: IllusionConfig[] = [
   motionInducedBlindness,
   delboeufIllusion,
   ehrensteinIllusion,
+  tIllusion,
+  cornsweetIllusion,
+  blindSpot,
+  bourdonIllusion,
+  neonSpreading,
+  tiltIllusion,
+  popOut,
 ];
 
 export const categories = [...new Set(illusions.map((i) => i.category))];

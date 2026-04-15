@@ -3,6 +3,7 @@ import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/delboeuf.frag";
 import { hexToVec3 } from "../lib/color-utils";
+import { resolvePalette } from "../lib/palettes";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -53,6 +54,20 @@ const delboeufIllusion: IllusionConfig = {
       type: "color",
       default: "#000000",
     },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -75,10 +90,13 @@ const delboeufIllusion: IllusionConfig = {
     if (!material) return;
     material.uniforms.uRingSize.value = params.ringSize;
     material.uniforms.uCircleSize.value = params.circleSize;
-    material.uniforms.uCircleColor.value = hexToVec3(
-      params.circleColor as string,
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.circleColor,
+      params.ringColor,
     );
-    material.uniforms.uRingColor.value = hexToVec3(params.ringColor as string);
+    material.uniforms.uCircleColor.value = hexToVec3(c1);
+    material.uniforms.uRingColor.value = hexToVec3(c2);
     material.uniforms.uBgColor.value = hexToVec3(params.bgColor as string);
   },
 

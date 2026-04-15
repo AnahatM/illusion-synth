@@ -1,55 +1,45 @@
 import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
-import fragmentShader from "../shaders/muller-lyer.frag";
-import { hexToVec3 } from "../lib/color-utils";
+import fragmentShader from "../shaders/t-illusion.frag";
 import { resolvePalette } from "../lib/palettes";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
 
-const mullerLyer: IllusionConfig = {
-  id: "muller-lyer",
-  name: "Müller-Lyer Illusion",
-  category: "Geometric",
+const tIllusion: IllusionConfig = {
+  id: "t-illusion",
+  name: "T-Illusion",
+  category: "Size & Space",
   tintThumbnail: true,
   description:
-    "Two lines of identical length appear to be different sizes. The line with outward-pointing arrows looks longer than the one with inward-pointing arrows.",
+    "In a T shape made of two equal-length lines, the vertical line appears significantly longer than the horizontal line, even though both are the same length.",
   howTo:
-    "Compare the two horizontal lines. They are exactly the same length, but the top line (outward arrows) appears longer than the bottom line (inward arrows). Measure them to confirm!",
+    "Look at the T shape — the vertical stem looks longer than the horizontal top. They are actually the same length. This is the vertical–horizontal illusion enhanced by the T-junction.",
   params: [
-    {
-      key: "arrowSize",
-      label: "Arrow Size",
-      type: "slider",
-      default: 1,
-      min: 0.3,
-      max: 2,
-      step: 0.1,
-    },
     {
       key: "lineLength",
       label: "Line Length",
       type: "slider",
-      default: 1,
+      default: 1.0,
       min: 0.5,
-      max: 1.5,
+      max: 2.0,
       step: 0.1,
     },
     {
       key: "lineWidth",
       label: "Line Width",
       type: "slider",
-      default: 1,
+      default: 1.0,
       min: 0.5,
-      max: 2,
+      max: 3.0,
       step: 0.1,
     },
     {
-      key: "lineColor",
+      key: "color",
       label: "Line Color",
       type: "color",
-      default: "#e6e6e6",
+      default: "#ffffff",
     },
     {
       key: "bgColor",
@@ -74,15 +64,21 @@ const mullerLyer: IllusionConfig = {
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.color,
+      params.bgColor,
+    );
+    const fg = new THREE.Color(c1);
+    const bg = new THREE.Color(c2);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
       uniforms: {
-        uArrowSize: { value: params.arrowSize },
         uLineLength: { value: params.lineLength },
         uLineWidth: { value: params.lineWidth },
-        uLineColor: { value: hexToVec3(params.lineColor as string) },
-        uBgColor: { value: hexToVec3(params.bgColor as string) },
+        uColor: { value: new THREE.Vector3(fg.r, fg.g, fg.b) },
+        uBgColor: { value: new THREE.Vector3(bg.r, bg.g, bg.b) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -91,16 +87,17 @@ const mullerLyer: IllusionConfig = {
 
   update(_time, params) {
     if (!material) return;
-    material.uniforms.uArrowSize.value = params.arrowSize;
     material.uniforms.uLineLength.value = params.lineLength;
     material.uniforms.uLineWidth.value = params.lineWidth;
     const [c1, c2] = resolvePalette(
       params.palette,
-      params.lineColor,
+      params.color,
       params.bgColor,
     );
-    material.uniforms.uLineColor.value = hexToVec3(c1);
-    material.uniforms.uBgColor.value = hexToVec3(c2);
+    const fg = new THREE.Color(c1);
+    material.uniforms.uColor.value.set(fg.r, fg.g, fg.b);
+    const bg = new THREE.Color(c2);
+    material.uniforms.uBgColor.value.set(bg.r, bg.g, bg.b);
   },
 
   dispose() {
@@ -109,4 +106,4 @@ const mullerLyer: IllusionConfig = {
   },
 };
 
-export default mullerLyer;
+export default tIllusion;

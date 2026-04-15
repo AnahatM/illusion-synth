@@ -3,6 +3,7 @@ import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/ehrenstein.frag";
 import { hexToVec3 } from "../lib/color-utils";
+import { resolvePalette } from "../lib/palettes";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -11,6 +12,7 @@ const ehrensteinIllusion: IllusionConfig = {
   id: "ehrenstein",
   name: "Ehrenstein Illusion",
   category: "Luminance",
+  tintThumbnail: true,
   description:
     "Radial lines converge toward a central gap, creating an illusory bright disc at the center that appears brighter than the background — even though the brightness is uniform.",
   howTo:
@@ -64,6 +66,20 @@ const ehrensteinIllusion: IllusionConfig = {
       type: "color",
       default: "#ffffff",
     },
+    {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Custom",
+      options: [
+        "Custom",
+        "B/W",
+        "Blue & Gold",
+        "Red & Cyan",
+        "Purple & Lime",
+        "Sunset",
+      ],
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -89,8 +105,13 @@ const ehrensteinIllusion: IllusionConfig = {
     material.uniforms.uGapSize.value = params.gapSize;
     material.uniforms.uLineWidth.value = params.lineWidth;
     material.uniforms.uGridSize.value = params.gridSize;
-    material.uniforms.uLineColor.value = hexToVec3(params.lineColor as string);
-    material.uniforms.uBgColor.value = hexToVec3(params.bgColor as string);
+    const [c1, c2] = resolvePalette(
+      params.palette,
+      params.lineColor,
+      params.bgColor,
+    );
+    material.uniforms.uLineColor.value = hexToVec3(c1);
+    material.uniforms.uBgColor.value = hexToVec3(c2);
   },
 
   dispose() {
