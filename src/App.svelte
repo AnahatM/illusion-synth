@@ -1,11 +1,11 @@
 <script lang="ts">
   import Router from 'svelte-spa-router';
-  import Browse from './routes/Browse.svelte';
-  import About from './routes/About.svelte';
-  import Capture from './routes/Capture.svelte';
-  import ThemeToggle from './components/ThemeToggle.svelte';
   import EpilepsyWarning from './components/EpilepsyWarning.svelte';
+  import ThemeToggle from './components/ThemeToggle.svelte';
   import { theme } from './lib/theme';
+  import About from './routes/About.svelte';
+  import Browse from './routes/Browse.svelte';
+  import Capture from './routes/Capture.svelte';
 
   const routes = {
     '/': Browse,
@@ -27,7 +27,7 @@
         <circle cx="12" cy="12" r="10"/>
         <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
       </svg>
-      IllusionSynth
+      <span class="brand-text">IllusionSynth</span>
     </a>
     <div class="nav-links">
       <a href="#/">
@@ -107,5 +107,11 @@
 
   main {
     min-height: calc(100vh - 60px);
+  }
+
+  @media (max-width: 600px) {
+    .brand-text {
+      display: none;
+    }
   }
 </style>

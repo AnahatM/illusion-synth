@@ -62,6 +62,8 @@
   <div class="thumbnail" class:tinted={needsTint}>
     {#if thumbSrc}
       <img src={thumbSrc} alt={illusion.name} width="320" height="320" />
+    {:else if hasBeenVisible}
+      <div class="loading-spinner"></div>
     {/if}
   </div>
   <div class="info">
@@ -146,5 +148,50 @@
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+  }
+
+  .loading-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba(255, 255, 255, 0.15);
+    border-top-color: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 600px) {
+    .card {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .thumbnail {
+      aspect-ratio: 1 / 1;
+      width: 100px;
+      min-width: 100px;
+      flex-shrink: 0;
+    }
+
+    .info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0.5rem 0.75rem;
+      min-width: 0;
+    }
+
+    h3 {
+      font-size: 0.85rem;
+    }
+
+    .desc {
+      font-size: 0.72rem;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+    }
   }
 </style>

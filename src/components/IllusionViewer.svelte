@@ -101,7 +101,10 @@
 <div class="viewer" bind:this={container}>
   <div class="toolbar">
     <button class="icon-btn" onclick={() => (controlsOpen = !controlsOpen)} title="Toggle controls">
-      ⚙
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1.08 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1.08z"/>
+      </svg>
     </button>
     <button class="icon-btn" onclick={() => (stopwatchVisible = !stopwatchVisible)} title="Stopwatch">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
@@ -111,23 +114,36 @@
         <path d="M12 2v3"/>
       </svg>
     </button>
-    <button class="icon-btn" onclick={toggleFullscreen} title="Toggle fullscreen">
+    <button class="icon-btn fullscreen-btn" onclick={toggleFullscreen} title="Toggle fullscreen">
       {isFullscreen ? '⊡' : '⛶'}
     </button>
     <button class="icon-btn close-btn" onclick={onClose} title="Close">✕</button>
   </div>
 
-  {#if controlsOpen}
-    <div class="controls-sidebar">
-      <h3>{illusion.name}</h3>
-      <p class="description">{illusion.description}</p>
-      <div class="how-to">
-        <strong>How to experience:</strong>
-        <p>{illusion.howTo}</p>
-      </div>
-      <ControlPanel paramDefs={illusion.params} values={params} onChange={handleParamChange} onReset={handleReset} />
-    </div>
+  {#if !controlsOpen}
+    <button class="show-tab" onclick={() => (controlsOpen = true)} title="Show settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+      <span>Settings</span>
+    </button>
   {/if}
+
+  <div class="controls-sidebar" class:collapsed={!controlsOpen}>
+    <button class="collapse-btn" onclick={() => (controlsOpen = false)} title="Hide panel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      <span>Hide</span>
+    </button>
+    <h3>{illusion.name}</h3>
+    <p class="description">{illusion.description}</p>
+    <div class="how-to">
+      <strong>How to experience:</strong>
+      <p>{illusion.howTo}</p>
+    </div>
+    <ControlPanel paramDefs={illusion.params} values={params} onChange={handleParamChange} onReset={handleReset} />
+  </div>
 
   <Stopwatch bind:this={stopwatchRef} visible={stopwatchVisible} />
 </div>
@@ -139,11 +155,23 @@
     z-index: 100;
     background: #000;
     display: flex;
+    /* Pin dark-mode palette so light theme never bleeds into the viewer */
+    --bg: #000000;
+    --surface: #0a0a0a;
+    --surface-hover: #141414;
+    --border: #2a2a2a;
+    --text: #e0e0e0;
+    --text-secondary: #888888;
+    --accent: #ffffff;
+    color-scheme: dark;
   }
 
   .viewer :global(canvas) {
     flex: 1;
     display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    overflow: hidden;
   }
 
   .toolbar {
@@ -174,6 +202,10 @@
     background: rgba(255, 255, 255, 0.15);
   }
 
+  .fullscreen-btn {
+    display: flex;
+  }
+
   .controls-sidebar {
     position: absolute;
     top: 0;
@@ -186,6 +218,31 @@
     overflow-y: auto;
     padding: 1rem;
     z-index: 105;
+    transition: transform 0.3s ease;
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .controls-sidebar.collapsed {
+    transform: translateX(-100%);
+  }
+
+  .collapse-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0;
+    color: #fff;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    margin-bottom: 0.75rem;
+    transition: background 0.2s;
+  }
+
+  .collapse-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
   }
 
   .controls-sidebar h3 {
@@ -226,12 +283,77 @@
     opacity: 0.8;
   }
 
+  .show-tab {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 106;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-left: none;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.5rem 0.5rem 0.5rem 0.35rem;
+    font-size: 0.7rem;
+    font-family: inherit;
+    cursor: pointer;
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    letter-spacing: 0.5px;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .show-tab svg {
+    transform: rotate(90deg);
+  }
+
+  .show-tab:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+  }
+
   @media (max-width: 600px) {
     .controls-sidebar {
       width: 100%;
       top: auto;
       bottom: 0;
+      left: 0;
+      right: 0;
       max-height: 50%;
+      border-right: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .controls-sidebar.collapsed {
+      transform: translateX(0) translateY(100%);
+    }
+
+    .collapse-btn svg {
+      transform: rotate(-90deg);
+    }
+
+    .fullscreen-btn {
+      display: none;
+    }
+
+    .show-tab {
+      left: 50%;
+      top: auto;
+      bottom: 0;
+      transform: translateX(-50%);
+      writing-mode: horizontal-tb;
+      padding: 0.35rem 0.7rem;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-bottom: none;
+      flex-direction: row;
+    }
+
+    .show-tab svg {
+      transform: rotate(0deg);
     }
   }
 </style>
