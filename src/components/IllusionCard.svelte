@@ -1,6 +1,6 @@
 <script lang="ts">
-  import * as THREE from 'three';
   import type { IllusionConfig } from '../illusions/types';
+  import { generateThumbnail, getThumbnail } from '../lib/thumbnail-cache';
 
   interface Props {
     illusion: IllusionConfig;
@@ -9,47 +9,53 @@
 
   let { illusion, onClick }: Props = $props();
 
-  let canvas: HTMLCanvasElement;
+  let cardEl: HTMLElement;
+  let thumbSrc = $state('');
+  let hasBeenVisible = $state(false);
 
   const hasColorParam = $derived(illusion.params.some(p => p.type === 'color'));
   const needsTint = $derived(!hasColorParam || illusion.tintThumbnail === true);
 
+  // Check cache synchronously — use $derived to track illusion reactively
+  const cachedThumb = $derived(getThumbnail(illusion.id));
+
   $effect(() => {
-    if (!canvas) return;
-
-    const width = 320;
-    const height = 320;
-
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    renderer.setSize(width, height);
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
-    camera.position.z = 1;
-
-    const defaults: Record<string, any> = {};
-    for (const p of illusion.params) {
-      defaults[p.key] = p.default;
+    if (cachedThumb) {
+      thumbSrc = cachedThumb;
+      hasBeenVisible = true;
     }
+  });
 
-    const result = illusion.setup(scene, camera, defaults);
-    const doRender = () => {
-      illusion.update(0.5, defaults);
-      renderer.render(scene, camera);
-      illusion.dispose();
-      renderer.dispose();
-    };
-    if (result && typeof (result as any).then === 'function') {
-      (result as Promise<void>).then(doRender);
-    } else {
-      doRender();
-    }
+  $effect(() => {
+    if (!cardEl || hasBeenVisible) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          hasBeenVisible = true;
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' },
+    );
+    observer.observe(cardEl);
+
+    return () => observer.disconnect();
+  });
+
+  $effect(() => {
+    if (!hasBeenVisible || thumbSrc) return;
+    generateThumbnail(illusion).then((url) => {
+      thumbSrc = url;
+    });
   });
 </script>
 
-<button class="card" onclick={onClick}>
+<button class="card" bind:this={cardEl} onclick={onClick}>
   <div class="thumbnail" class:tinted={needsTint}>
-    <canvas bind:this={canvas}></canvas>
+    {#if thumbSrc}
+      <img src={thumbSrc} alt={illusion.name} width="320" height="320" />
+    {/if}
   </div>
   <div class="info">
     <h3>{illusion.name}</h3>
@@ -87,7 +93,7 @@
     position: relative;
   }
 
-  .thumbnail.tinted canvas {
+  .thumbnail.tinted img {
     filter: grayscale(1) brightness(0.8);
   }
 
@@ -100,7 +106,7 @@
     pointer-events: none;
   }
 
-  .thumbnail canvas {
+  .thumbnail img {
     width: 100%;
     height: 100%;
     display: block;
@@ -122,6 +128,7 @@
     color: var(--text-secondary);
     line-height: 1.35;
     display: -webkit-box;
+    line-clamp: 2;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
