@@ -10,22 +10,22 @@ void main() {
 
   float lineW = uLineWidth * 0.003;
   float ringCount = uGridSize;
-  float maxR = 0.16;
-  float spacing = maxR / ringCount;
-
-  // Imaginary center circle radius
-  float centerR = uArcRadius * 0.06;
-  float centerD = length(uv);
 
   // 4 non-overlapping circle sets at cardinal positions
   float spread = 0.22;
+  float maxR = 0.13;
+  float spacing = maxR / ringCount;
   vec2 positions[4];
   positions[0] = vec2(0.0, spread);
   positions[1] = vec2(0.0, -spread);
   positions[2] = vec2(-spread, 0.0);
   positions[3] = vec2(spread, 0.0);
 
-  vec3 bg = vec3(1.0);
+  // Imaginary center circle radius
+  float centerR = uArcRadius * 0.06;
+  float centerD = length(uv);
+
+  vec3 bg = vec3(0.0);
   vec3 color = bg;
 
   float blackRing = 0.0;

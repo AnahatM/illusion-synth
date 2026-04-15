@@ -18,6 +18,15 @@ const bourdonIllusion: IllusionConfig = {
     "Look at the left edge of the shape — it looks slightly bent or bowed at the center where the two triangles meet. Use a ruler against your screen to confirm it is perfectly straight.",
   params: [
     {
+      key: "rotation",
+      label: "Rotation (°)",
+      type: "slider",
+      default: -120,
+      min: -180,
+      max: 180,
+      step: 1,
+    },
+    {
       key: "width",
       label: "Triangle Width",
       type: "slider",
@@ -66,7 +75,7 @@ const bourdonIllusion: IllusionConfig = {
       vertexShader,
       fragmentShader,
       uniforms: {
-        uAngle: { value: 0 },
+        uAngle: { value: (params.rotation * Math.PI) / 180 },
         uWidth: { value: params.width },
         uShapeColor: { value: new THREE.Vector3(sc.r, sc.g, sc.b) },
         uBgColor: { value: new THREE.Vector3(bc.r, bc.g, bc.b) },
@@ -78,6 +87,7 @@ const bourdonIllusion: IllusionConfig = {
 
   update(_time, params) {
     if (!material) return;
+    material.uniforms.uAngle.value = (params.rotation * Math.PI) / 180;
     material.uniforms.uWidth.value = params.width;
     const [c1, c2] = resolvePalette(
       params.palette,

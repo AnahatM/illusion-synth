@@ -3,6 +3,7 @@
   import { createRenderer, startAnimationLoop } from '../lib/renderer';
   import { encodeState } from '../lib/url-state';
   import ControlPanel from './ControlPanel.svelte';
+  import Stopwatch from './Stopwatch.svelte';
 
   interface Props {
     illusion: IllusionConfig;
@@ -15,6 +16,8 @@
   let container: HTMLDivElement;
   let controlsOpen = $state(true);
   let isFullscreen = $state(false);
+  let stopwatchVisible = $state(false);
+  let stopwatchRef: Stopwatch | null = null;
   let params = $state<Record<string, any>>({});
 
   // Use a mutable ref so the animation loop always reads current params
@@ -73,7 +76,7 @@
     const currentIllusion = illusion;
     initParams();
 
-    const ctx = createRenderer(container);
+    const ctx = createRenderer(container, { fillCanvas: currentIllusion.fillCanvas });
     currentIllusion.setup(ctx.scene, ctx.camera, paramsRef, ctx.canvas);
 
     const stopLoop = startAnimationLoop(ctx, (time) => {
@@ -89,6 +92,8 @@
       ctx.destroy();
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('keydown', handleKeydown);
+      stopwatchVisible = false;
+      stopwatchRef?.cleanup();
     };
   });
 </script>
@@ -97,6 +102,14 @@
   <div class="toolbar">
     <button class="icon-btn" onclick={() => (controlsOpen = !controlsOpen)} title="Toggle controls">
       ⚙
+    </button>
+    <button class="icon-btn" onclick={() => (stopwatchVisible = !stopwatchVisible)} title="Stopwatch">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+        <circle cx="12" cy="13" r="8"/>
+        <path d="M12 9v4l2.5 2.5"/>
+        <path d="M10 2h4"/>
+        <path d="M12 2v3"/>
+      </svg>
     </button>
     <button class="icon-btn" onclick={toggleFullscreen} title="Toggle fullscreen">
       {isFullscreen ? '⊡' : '⛶'}
@@ -115,6 +128,8 @@
       <ControlPanel paramDefs={illusion.params} values={params} onChange={handleParamChange} onReset={handleReset} />
     </div>
   {/if}
+
+  <Stopwatch bind:this={stopwatchRef} visible={stopwatchVisible} />
 </div>
 
 <style>

@@ -8,7 +8,14 @@ export interface RendererContext {
   destroy: () => void;
 }
 
-export function createRenderer(container: HTMLElement): RendererContext {
+export interface RendererOptions {
+  fillCanvas?: boolean;
+}
+
+export function createRenderer(
+  container: HTMLElement,
+  options?: RendererOptions,
+): RendererContext {
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   const canvas = renderer.domElement;
@@ -22,11 +29,18 @@ export function createRenderer(container: HTMLElement): RendererContext {
     const w = container.clientWidth;
     const h = container.clientHeight;
     renderer.setSize(w, h);
-    const aspect = w / h;
-    camera.left = -aspect;
-    camera.right = aspect;
-    camera.top = 1;
-    camera.bottom = -1;
+    if (options?.fillCanvas) {
+      camera.left = -1;
+      camera.right = 1;
+      camera.top = 1;
+      camera.bottom = -1;
+    } else {
+      const aspect = w / h;
+      camera.left = -aspect;
+      camera.right = aspect;
+      camera.top = 1;
+      camera.bottom = -1;
+    }
     camera.updateProjectionMatrix();
   }
 

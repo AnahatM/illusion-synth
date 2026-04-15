@@ -16,6 +16,7 @@ const mccolloughEffect: IllusionConfig = {
   name: "McCollough Effect",
   category: "Color",
   tintThumbnail: true,
+  fillCanvas: true,
   description:
     "A color aftereffect: stare at colored gratings, then see phantom colors on black-and-white test patterns. The effect can persist for hours.",
   howTo:
@@ -49,6 +50,12 @@ const mccolloughEffect: IllusionConfig = {
       max: 30,
       step: 1,
     },
+    {
+      key: "fullWidth",
+      label: "Full-Width Test Bars",
+      type: "toggle",
+      default: false,
+    },
   ],
 
   setup(scene, _camera, params) {
@@ -65,6 +72,7 @@ const mccolloughEffect: IllusionConfig = {
         uColor1: { value: hexToVec3(params.color1) },
         uColor2: { value: hexToVec3(params.color2) },
         uGratingFreq: { value: params.gratingFreq },
+        uFullWidth: { value: params.fullWidth ? 1.0 : 0.0 },
       },
     });
 
@@ -83,6 +91,7 @@ const mccolloughEffect: IllusionConfig = {
     material.uniforms.uColor1.value = hexToVec3(params.color1);
     material.uniforms.uColor2.value = hexToVec3(params.color2);
     material.uniforms.uGratingFreq.value = params.gratingFreq;
+    material.uniforms.uFullWidth.value = params.fullWidth ? 1.0 : 0.0;
   },
 
   dispose() {

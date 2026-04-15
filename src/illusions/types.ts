@@ -27,4 +27,6 @@ export interface IllusionConfig {
   update: (time: number, params: Record<string, any>) => void;
   dispose: () => void;
   tintThumbnail?: boolean;
+  /** When true the canvas fills the entire viewport (no square aspect lock). */
+  fillCanvas?: boolean;
 }

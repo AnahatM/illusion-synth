@@ -16,7 +16,7 @@ void main() {
   // Blur controls the power curve on the sinusoid - lower = sharper edges
   float sharpness = mix(1.0, 0.15, uBlur);
 
-  vec3 bg = vec3(0.5);
+  vec3 bg = vec3(0.0);
   vec3 color = bg;
 
   float dist = length(uv);

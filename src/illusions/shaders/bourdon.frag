@@ -7,8 +7,7 @@ varying vec2 vUv;
 void main() {
   vec2 uv = vUv - 0.5;
 
-  // Rotate ~30 degrees clockwise
-  float rotAngle = -0.52; // ~-30 degrees in radians
+  float rotAngle = uAngle;
   float ca = cos(rotAngle);
   float sa = sin(rotAngle);
   uv = vec2(uv.x * ca - uv.y * sa, uv.x * sa + uv.y * ca);

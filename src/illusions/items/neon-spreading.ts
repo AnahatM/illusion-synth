@@ -48,7 +48,7 @@ const neonSpreading: IllusionConfig = {
       key: "lineColor",
       label: "Line Color",
       type: "color",
-      default: "#000000",
+      default: "#ffffff",
     },
     {
       key: "neonColor",
