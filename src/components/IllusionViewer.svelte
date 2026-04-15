@@ -77,17 +77,22 @@
     initParams();
 
     const ctx = createRenderer(container, { fillCanvas: currentIllusion.fillCanvas });
-    currentIllusion.setup(ctx.scene, ctx.camera, paramsRef, ctx.canvas);
+    let stopLoop: (() => void) | null = null;
+    let disposed = false;
 
-    const stopLoop = startAnimationLoop(ctx, (time) => {
-      currentIllusion.update(time, paramsRef, ctx);
+    Promise.resolve(currentIllusion.setup(ctx.scene, ctx.camera, paramsRef, ctx.canvas)).then(() => {
+      if (disposed) return;
+      stopLoop = startAnimationLoop(ctx, (time) => {
+        currentIllusion.update(time, paramsRef, ctx);
+      });
     });
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('keydown', handleKeydown);
 
     return () => {
-      stopLoop();
+      disposed = true;
+      stopLoop?.();
       currentIllusion.dispose();
       ctx.destroy();
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
