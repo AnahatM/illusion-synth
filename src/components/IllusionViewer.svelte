@@ -154,7 +154,7 @@
     inset: 0;
     z-index: 100;
     background: #000;
-    display: flex;
+    overflow: hidden;
     /* Pin dark-mode palette so light theme never bleeds into the viewer */
     --bg: #000000;
     --surface: #0a0a0a;
@@ -167,11 +167,7 @@
   }
 
   .viewer :global(canvas) {
-    flex: 1;
     display: block;
-    max-width: 100vw;
-    max-height: 100vh;
-    overflow: hidden;
   }
 
   .toolbar {

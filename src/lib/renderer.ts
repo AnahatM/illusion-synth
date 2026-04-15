@@ -29,8 +29,15 @@ export function createRenderer(
   let fillCanvas = options?.fillCanvas ?? false;
 
   function resize() {
-    const w = container.clientWidth;
-    const h = container.clientHeight;
+    const cw = container.clientWidth;
+    const ch = container.clientHeight;
+    if (cw === 0 || ch === 0) return;
+
+    // On portrait screens (mobile), use a square canvas anchored to top
+    const isPortrait = cw < ch && cw <= 600;
+    const w = cw;
+    const h = isPortrait ? Math.min(cw, ch) : ch;
+
     renderer.setSize(w, h);
     if (fillCanvas) {
       camera.left = -1;
