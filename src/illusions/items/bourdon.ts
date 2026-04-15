@@ -21,7 +21,7 @@ const bourdonIllusion: IllusionConfig = {
       key: "rotation",
       label: "Rotation (°)",
       type: "slider",
-      default: -120,
+      default: 45,
       min: -180,
       max: 180,
       step: 1,

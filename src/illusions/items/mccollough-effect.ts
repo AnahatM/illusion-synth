@@ -16,7 +16,7 @@ const mccolloughEffect: IllusionConfig = {
   name: "McCollough Effect",
   category: "Color",
   tintThumbnail: true,
-  fillCanvas: true,
+  fillCanvas: false,
   description:
     "A color aftereffect: stare at colored gratings, then see phantom colors on black-and-white test patterns. The effect can persist for hours.",
   howTo:
@@ -80,7 +80,7 @@ const mccolloughEffect: IllusionConfig = {
     scene.add(mesh);
   },
 
-  update(_time, params) {
+  update(_time, params, ctx) {
     if (!material) return;
     const phaseMap: Record<string, number> = {
       Horizontal: 0,
@@ -92,6 +92,7 @@ const mccolloughEffect: IllusionConfig = {
     material.uniforms.uColor2.value = hexToVec3(params.color2);
     material.uniforms.uGratingFreq.value = params.gratingFreq;
     material.uniforms.uFullWidth.value = params.fullWidth ? 1.0 : 0.0;
+    ctx?.setFillCanvas?.(!!params.fullWidth);
   },
 
   dispose() {

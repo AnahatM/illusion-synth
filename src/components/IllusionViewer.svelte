@@ -80,7 +80,7 @@
     currentIllusion.setup(ctx.scene, ctx.camera, paramsRef, ctx.canvas);
 
     const stopLoop = startAnimationLoop(ctx, (time) => {
-      currentIllusion.update(time, paramsRef);
+      currentIllusion.update(time, paramsRef, ctx);
     });
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);

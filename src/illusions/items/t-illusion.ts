@@ -18,6 +18,15 @@ const tIllusion: IllusionConfig = {
     "Look at the T shape — the vertical stem looks longer than the horizontal top. They are actually the same length. This is the vertical–horizontal illusion enhanced by the T-junction.",
   params: [
     {
+      key: "rotation",
+      label: "Rotation (°)",
+      type: "slider",
+      default: 0,
+      min: -180,
+      max: 180,
+      step: 1,
+    },
+    {
       key: "lineLength",
       label: "Line Length",
       type: "slider",
@@ -77,6 +86,7 @@ const tIllusion: IllusionConfig = {
       uniforms: {
         uLineLength: { value: params.lineLength },
         uLineWidth: { value: params.lineWidth },
+        uAngle: { value: (params.rotation * Math.PI) / 180 },
         uColor: { value: new THREE.Vector3(fg.r, fg.g, fg.b) },
         uBgColor: { value: new THREE.Vector3(bg.r, bg.g, bg.b) },
       },
@@ -89,6 +99,7 @@ const tIllusion: IllusionConfig = {
     if (!material) return;
     material.uniforms.uLineLength.value = params.lineLength;
     material.uniforms.uLineWidth.value = params.lineWidth;
+    material.uniforms.uAngle.value = (params.rotation * Math.PI) / 180;
     const [c1, c2] = resolvePalette(
       params.palette,
       params.color,

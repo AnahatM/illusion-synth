@@ -24,7 +24,11 @@ export interface IllusionConfig {
     params: Record<string, any>,
     canvas?: HTMLCanvasElement,
   ) => void | Promise<void>;
-  update: (time: number, params: Record<string, any>) => void;
+  update: (
+    time: number,
+    params: Record<string, any>,
+    ctx?: { setFillCanvas?: (fill: boolean) => void },
+  ) => void;
   dispose: () => void;
   tintThumbnail?: boolean;
   /** When true the canvas fills the entire viewport (no square aspect lock). */

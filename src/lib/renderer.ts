@@ -5,6 +5,7 @@ export interface RendererContext {
   scene: THREE.Scene;
   camera: THREE.OrthographicCamera;
   canvas: HTMLCanvasElement;
+  setFillCanvas: (fill: boolean) => void;
   destroy: () => void;
 }
 
@@ -25,11 +26,13 @@ export function createRenderer(
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
   camera.position.z = 1;
 
+  let fillCanvas = options?.fillCanvas ?? false;
+
   function resize() {
     const w = container.clientWidth;
     const h = container.clientHeight;
     renderer.setSize(w, h);
-    if (options?.fillCanvas) {
+    if (fillCanvas) {
       camera.left = -1;
       camera.right = 1;
       camera.top = 1;
@@ -44,6 +47,12 @@ export function createRenderer(
     camera.updateProjectionMatrix();
   }
 
+  function setFillCanvas(fill: boolean) {
+    if (fill === fillCanvas) return;
+    fillCanvas = fill;
+    resize();
+  }
+
   const observer = new ResizeObserver(resize);
   observer.observe(container);
   resize();
@@ -54,7 +63,7 @@ export function createRenderer(
     if (canvas.parentElement) canvas.parentElement.removeChild(canvas);
   }
 
-  return { renderer, scene, camera, canvas, destroy };
+  return { renderer, scene, camera, canvas, setFillCanvas, destroy };
 }
 
 export function startAnimationLoop(
