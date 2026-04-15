@@ -3,9 +3,22 @@ import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/chromostereopsis.frag";
 import { hexToVec3 } from "../lib/color-utils";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic", colors: ["#ee1111", "#1111ee", "#111111"] },
+  { name: "Warm & Cool", colors: ["#ff6600", "#0066ff", "#0a0a0a"] },
+  { name: "Purple & Green", colors: ["#cc00cc", "#00cc44", "#050505"] },
+  { name: "Yellow & Blue", colors: ["#ffdd00", "#0044ff", "#080808"] },
+  { name: "Crimson & Cyan", colors: ["#cc0022", "#00ccdd", "#060606"] },
+];
 
 const chromostereopsis: IllusionConfig = {
   id: "chromostereopsis",
@@ -42,30 +55,22 @@ const chromostereopsis: IllusionConfig = {
       default: "Bars",
       options: ["Bars", "Blocks", "Rings"],
     },
-    {
-      key: "frontColor",
-      label: "Front Color",
-      type: "color",
-      default: "#ee1111",
-    },
-    {
-      key: "backColor",
-      label: "Back Color",
-      type: "color",
-      default: "#1111ee",
-    },
+    { key: "frontColor", label: "Front Color", type: "color", default: "#ee1111" },
+    { key: "backColor", label: "Back Color", type: "color", default: "#1111ee" },
     { key: "bgColor", label: "Background", type: "color", default: "#111111" },
+    { key: "palette", label: "Palette", type: "select", default: "Classic", options: getPaletteOptions(PALETTES) },
   ],
 
   setup(scene, _camera, params) {
     const patternMap: Record<string, number> = { Bars: 0, Blocks: 1, Rings: 2 };
+    const [fc, bc, bg] = resolvePaletteColors(params.palette, PALETTES, [params.frontColor, params.backColor, params.bgColor]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
       uniforms: {
-        uFrontColor: { value: hexToVec3(params.frontColor) },
-        uBackColor: { value: hexToVec3(params.backColor) },
-        uBgColor: { value: hexToVec3(params.bgColor) },
+        uFrontColor: { value: hexToVec3(fc) },
+        uBackColor: { value: hexToVec3(bc) },
+        uBgColor: { value: hexToVec3(bg) },
         uBarCount: { value: params.barCount },
         uBarWidth: { value: params.barWidth },
         uPattern: { value: patternMap[params.pattern as string] ?? 0 },
@@ -78,9 +83,10 @@ const chromostereopsis: IllusionConfig = {
   update(_time, params) {
     if (!material) return;
     const patternMap: Record<string, number> = { Bars: 0, Blocks: 1, Rings: 2 };
-    material.uniforms.uFrontColor.value.copy(hexToVec3(params.frontColor));
-    material.uniforms.uBackColor.value.copy(hexToVec3(params.backColor));
-    material.uniforms.uBgColor.value.copy(hexToVec3(params.bgColor));
+    const [fc, bc, bg] = resolvePaletteColors(params.palette, PALETTES, [params.frontColor, params.backColor, params.bgColor]);
+    material.uniforms.uFrontColor.value.copy(hexToVec3(fc));
+    material.uniforms.uBackColor.value.copy(hexToVec3(bc));
+    material.uniforms.uBgColor.value.copy(hexToVec3(bg));
     material.uniforms.uBarCount.value = params.barCount;
     material.uniforms.uBarWidth.value = params.barWidth;
     material.uniforms.uPattern.value =

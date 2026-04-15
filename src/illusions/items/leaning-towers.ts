@@ -2,11 +2,23 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/leaning-towers.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Stone", colors: ["#cc8844", "#cc8844"] },
+  { name: "Slate", colors: ["#778899", "#778899"] },
+  { name: "Terracotta", colors: ["#aa5533", "#aa5533"] },
+  { name: "Ivory", colors: ["#ddccaa", "#ddccaa"] },
+  { name: "Obsidian", colors: ["#334455", "#334455"] },
+];
 
 const leaningTowers: IllusionConfig = {
   id: "leaning-towers",
@@ -61,23 +73,16 @@ const leaningTowers: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Stone",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2] = resolvePalette(
+    const [c1, c2] = resolvePaletteColors(
       params.palette,
-      params.color1,
-      params.color2,
+      PALETTES,
+      [params.color1, params.color2],
     );
     material = new THREE.ShaderMaterial({
       vertexShader,
@@ -99,10 +104,10 @@ const leaningTowers: IllusionConfig = {
     material.uniforms.uSeparation.value = params.separation;
     material.uniforms.uTowerWidth.value = params.towerWidth;
     material.uniforms.uTowerHeight.value = params.towerHeight;
-    const [c1, c2] = resolvePalette(
+    const [c1, c2] = resolvePaletteColors(
       params.palette,
-      params.color1,
-      params.color2,
+      PALETTES,
+      [params.color1, params.color2],
     );
     material.uniforms.uColor1.value.copy(hexToVec3(c1));
     material.uniforms.uColor2.value.copy(hexToVec3(c2));

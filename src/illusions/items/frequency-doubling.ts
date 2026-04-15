@@ -2,11 +2,23 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/frequency-doubling.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic B&W", colors: ["#000000", "#ffffff"] },
+  { name: "Navy & White", colors: ["#001166", "#eeeeff"] },
+  { name: "Dark & Lime", colors: ["#001100", "#88ff44"] },
+  { name: "Purple & Gold", colors: ["#2a0050", "#ffee22"] },
+  { name: "Amber Glow", colors: ["#0a0500", "#ffcc66"] },
+];
 
 const frequencyDoubling: IllusionConfig = {
   id: "frequency-doubling",
@@ -22,10 +34,11 @@ const frequencyDoubling: IllusionConfig = {
     { key: "contrast", label: "Contrast", type: "slider", default: 1, min: 0.1, max: 1, step: 0.05 },
     { key: "color1", label: "Color 1", type: "color", default: "#000000" },
     { key: "color2", label: "Color 2", type: "color", default: "#ffffff" },
-    { key: "palette", label: "Palette", type: "select", default: "Custom", options: ["Custom", "B/W", "Blue & Gold", "Red & Cyan", "Purple & Lime", "Sunset"] },
+    { key: "palette", label: "Palette", type: "select", default: "Classic B&W", options: getPaletteOptions(PALETTES) },
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -34,8 +47,8 @@ const frequencyDoubling: IllusionConfig = {
         uSpeed: { value: params.speed },
         uFrequency: { value: params.frequency },
         uContrast: { value: params.contrast },
-        uColor1: { value: hexToVec3(params.color1 as string) },
-        uColor2: { value: hexToVec3(params.color2 as string) },
+        uColor1: { value: hexToVec3(c1) },
+        uColor2: { value: hexToVec3(c2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -48,7 +61,7 @@ const frequencyDoubling: IllusionConfig = {
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uFrequency.value = params.frequency;
     material.uniforms.uContrast.value = params.contrast;
-    const [c1, c2] = resolvePalette(params.palette, params.color1, params.color2);
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     material.uniforms.uColor1.value = hexToVec3(c1);
     material.uniforms.uColor2.value = hexToVec3(c2);
   },

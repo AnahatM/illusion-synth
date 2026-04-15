@@ -2,11 +2,23 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/hermann-grid-curved.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic", colors: ["#d9d9d9", "#0d0d0d"] },
+  { name: "Blue Ice", colors: ["#99ccff", "#050a14"] },
+  { name: "Gold Dark", colors: ["#ddaa44", "#080600"] },
+  { name: "Forest Night", colors: ["#66cc66", "#04090a"] },
+  { name: "Copper", colors: ["#cc8844", "#0a0600"] },
+];
 
 const hermannGridCurved: IllusionConfig = {
   id: "hermann-grid-curved",
@@ -22,10 +34,11 @@ const hermannGridCurved: IllusionConfig = {
     { key: "curvature", label: "Curvature", type: "slider", default: 1, min: -2, max: 3, step: 0.1 },
     { key: "lineColor", label: "Line Color", type: "color", default: "#d9d9d9" },
     { key: "bgColor", label: "Background", type: "color", default: "#0d0d0d" },
-    { key: "palette", label: "Palette", type: "select", default: "Custom", options: ["Custom", "B/W", "Blue & Gold", "Red & Cyan", "Purple & Lime", "Sunset"] },
+    { key: "palette", label: "Palette", type: "select", default: "Classic", options: getPaletteOptions(PALETTES) },
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.lineColor, params.bgColor]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -33,8 +46,8 @@ const hermannGridCurved: IllusionConfig = {
         uGridSize: { value: params.gridSize },
         uLineWidth: { value: params.lineWidth },
         uCurvature: { value: params.curvature },
-        uLineColor: { value: hexToVec3(params.lineColor as string) },
-        uBgColor: { value: hexToVec3(params.bgColor as string) },
+        uLineColor: { value: hexToVec3(c1) },
+        uBgColor: { value: hexToVec3(c2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -46,7 +59,7 @@ const hermannGridCurved: IllusionConfig = {
     material.uniforms.uGridSize.value = params.gridSize;
     material.uniforms.uLineWidth.value = params.lineWidth;
     material.uniforms.uCurvature.value = params.curvature;
-    const [c1, c2] = resolvePalette(params.palette, params.lineColor, params.bgColor);
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.lineColor, params.bgColor]);
     material.uniforms.uLineColor.value = hexToVec3(c1);
     material.uniforms.uBgColor.value = hexToVec3(c2);
   },

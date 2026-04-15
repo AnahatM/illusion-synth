@@ -2,11 +2,23 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/dotted-lines-motion.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Navy & Red", colors: ["#2244bb", "#dd3311"] },
+  { name: "Royal & Gold", colors: ["#1122aa", "#ffcc00"] },
+  { name: "Teal & Orange", colors: ["#009988", "#ff6622"] },
+  { name: "Classic B&W", colors: ["#eeeeee", "#222222"] },
+  { name: "Violet & Lime", colors: ["#7722cc", "#88ff44"] },
+];
 
 const dottedLinesMotion: IllusionConfig = {
   id: "dotted-lines-motion",
@@ -60,23 +72,16 @@ const dottedLinesMotion: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Navy & Red",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2] = resolvePalette(
+    const [c1, c2] = resolvePaletteColors(
       params.palette,
-      params.color1,
-      params.color2,
+      PALETTES,
+      [params.color1, params.color2],
     );
     material = new THREE.ShaderMaterial({
       vertexShader,
@@ -102,10 +107,10 @@ const dottedLinesMotion: IllusionConfig = {
     material.uniforms.uLineCount.value = params.lineCount;
     material.uniforms.uDotSpacing.value = params.dotSpacing;
     material.uniforms.uDotSize.value = params.dotSize;
-    const [c1, c2] = resolvePalette(
+    const [c1, c2] = resolvePaletteColors(
       params.palette,
-      params.color1,
-      params.color2,
+      PALETTES,
+      [params.color1, params.color2],
     );
     material.uniforms.uColor1.value.copy(hexToVec3(c1));
     material.uniforms.uColor2.value.copy(hexToVec3(c2));

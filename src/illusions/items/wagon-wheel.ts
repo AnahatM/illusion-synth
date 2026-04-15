@@ -16,7 +16,7 @@ const PALETTES: IllusionPalette[] = [
   { name: "Steel Night", colors: ["#cccccc", "#1a1a2e"] },
   { name: "Brass & Void", colors: ["#cc9944", "#0a0800"] },
   { name: "Neon Green", colors: ["#44ff88", "#060e06"] },
-  { name: "Ghost Blue", colors: ["#aaббff", "#080814"] },
+  { name: "Ghost Blue", colors: ["#aabbff", "#080814"] },
   { name: "Copper Dark", colors: ["#dd7733", "#0e0800"] },
 ];
 

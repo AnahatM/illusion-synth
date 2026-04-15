@@ -2,11 +2,23 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/stroboscopic-motion.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Amber & Red", colors: ["#ffcc00", "#ff4444"] },
+  { name: "Teal & Purple", colors: ["#00bbaa", "#8844cc"] },
+  { name: "Lime & Navy", colors: ["#88ff44", "#001166"] },
+  { name: "White & Blue", colors: ["#eeeeff", "#1122aa"] },
+  { name: "Coral & Teal", colors: ["#ff6655", "#006677"] },
+];
 
 const stroboscopicMotion: IllusionConfig = {
   id: "stroboscopic-motion",
@@ -51,23 +63,16 @@ const stroboscopicMotion: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Amber & Red",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2] = resolvePalette(
+    const [c1, c2] = resolvePaletteColors(
       params.palette,
-      params.color1,
-      params.color2,
+      PALETTES,
+      [params.color1, params.color2],
     );
     material = new THREE.ShaderMaterial({
       vertexShader,
@@ -91,10 +96,10 @@ const stroboscopicMotion: IllusionConfig = {
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uDotSize.value = params.dotSize;
     material.uniforms.uSpacing.value = params.spacing;
-    const [c1, c2] = resolvePalette(
+    const [c1, c2] = resolvePaletteColors(
       params.palette,
-      params.color1,
-      params.color2,
+      PALETTES,
+      [params.color1, params.color2],
     );
     material.uniforms.uColor1.value.copy(hexToVec3(c1));
     material.uniforms.uColor2.value.copy(hexToVec3(c2));

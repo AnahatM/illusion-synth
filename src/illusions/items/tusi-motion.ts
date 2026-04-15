@@ -2,11 +2,23 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/tusi-motion.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Blue & Red", colors: ["#2255cc", "#ee4422"] },
+  { name: "Gold & Teal", colors: ["#ddaa00", "#00aacc"] },
+  { name: "Purple & Green", colors: ["#8822cc", "#22cc44"] },
+  { name: "Ghost", colors: ["#99aacc", "#cc9988"] },
+  { name: "Classic B&W", colors: ["#eeeeee", "#222222"] },
+];
 
 const tusiMotion: IllusionConfig = {
   id: "tusi-motion",
@@ -51,23 +63,16 @@ const tusiMotion: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Blue & Red",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2] = resolvePalette(
+    const [c1, c2] = resolvePaletteColors(
       params.palette,
-      params.color1,
-      params.color2,
+      PALETTES,
+      [params.color1, params.color2],
     );
     material = new THREE.ShaderMaterial({
       vertexShader,
@@ -91,10 +96,10 @@ const tusiMotion: IllusionConfig = {
     material.uniforms.uDotCount.value = params.dotCount;
     material.uniforms.uDotSize.value = params.dotSize;
     material.uniforms.uSpeed.value = params.speed;
-    const [c1, c2] = resolvePalette(
+    const [c1, c2] = resolvePaletteColors(
       params.palette,
-      params.color1,
-      params.color2,
+      PALETTES,
+      [params.color1, params.color2],
     );
     material.uniforms.uColor1.value.copy(hexToVec3(c1));
     material.uniforms.uColor2.value.copy(hexToVec3(c2));

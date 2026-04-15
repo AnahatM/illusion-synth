@@ -2,11 +2,23 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/rotatory-moire.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic", colors: ["#000000", "#ffffff"] },
+  { name: "Cobalt Ring", colors: ["#001166", "#99ccff"] },
+  { name: "Magnetic", colors: ["#220011", "#ff8866"] },
+  { name: "Forest Pulse", colors: ["#001100", "#88ff66"] },
+  { name: "Ice", colors: ["#001133", "#cceeff"] },
+];
 
 const rotatoryMoire: IllusionConfig = {
   id: "rotatory-moire",
@@ -51,23 +63,16 @@ const rotatoryMoire: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Classic",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2] = resolvePalette(
+    const [c1, c2] = resolvePaletteColors(
       params.palette,
-      params.color1,
-      params.color2,
+      PALETTES,
+      [params.color1, params.color2],
     );
     material = new THREE.ShaderMaterial({
       vertexShader,
@@ -91,10 +96,10 @@ const rotatoryMoire: IllusionConfig = {
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uLineCount.value = params.lineCount;
     material.uniforms.uLineWidth.value = params.lineWidth;
-    const [c1, c2] = resolvePalette(
+    const [c1, c2] = resolvePaletteColors(
       params.palette,
-      params.color1,
-      params.color2,
+      PALETTES,
+      [params.color1, params.color2],
     );
     material.uniforms.uColor1.value.copy(hexToVec3(c1));
     material.uniforms.uColor2.value.copy(hexToVec3(c2));
