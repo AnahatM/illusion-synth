@@ -57,6 +57,38 @@ import bourdonIllusion from "./items/bourdon";
 import neonSpreading from "./items/neon-spreading";
 import tiltIllusion from "./items/tilt-illusion";
 import popOut from "./items/pop-out";
+// Batch 2 from michaelbach.de
+import tusiMotion from "./items/tusi-motion";
+import rotatoryMoire from "./items/rotatory-moire";
+import chromostereopsis from "./items/chromostereopsis";
+import kineticOrbison from "./items/kinetic-orbison";
+import spineDrift from "./items/spine-drift";
+import leaningTowers from "./items/leaning-towers";
+import dottedLinesMotion from "./items/dotted-lines-motion";
+import colourFan from "./items/colour-fan";
+import stroboscopicMotion from "./items/stroboscopic-motion";
+import peripheralCurvedLines from "./items/peripheral-curved-lines";
+// Batch 3 – famous & high-ROI illusions
+import vanishingDots from "./items/vanishing-dots";
+import benhamTop from "./items/benham-top";
+import watercolorIllusion from "./items/watercolor";
+import wertheimerkoffka from "./items/wertheimer-koffka";
+import sineIllusion from "./items/sine-illusion";
+import flashLag from "./items/flash-lag";
+import dynamicEbbinghaus from "./items/dynamic-ebbinghaus";
+import enigma from "./items/enigma";
+import pinnaBrelstaff from "./items/pinna-brelstaff";
+import wagonWheel from "./items/wagon-wheel";
+import colourAssimilation from "./items/colour-assimilation";
+import reversePhi from "./items/reverse-phi";
+import pyramidIllusion from "./items/pyramid-illusion";
+import shepardTables from "./items/shepard-tables";
+import shadedDiamond from "./items/shaded-diamond";
+import adelsonPlaid from "./items/adelson-plaid";
+import hermannGridCurved from "./items/hermann-grid-curved";
+import frequencyDoubling from "./items/frequency-doubling";
+import ternusDisplay from "./items/ternus-display";
+import moonIllusion from "./items/moon-illusion";
 
 export const illusions: IllusionConfig[] = [
   hypnoticSpiral,
@@ -118,6 +150,38 @@ export const illusions: IllusionConfig[] = [
   neonSpreading,
   tiltIllusion,
   popOut,
+  // Batch 2 from michaelbach.de
+  tusiMotion,
+  rotatoryMoire,
+  chromostereopsis,
+  kineticOrbison,
+  spineDrift,
+  leaningTowers,
+  dottedLinesMotion,
+  colourFan,
+  stroboscopicMotion,
+  peripheralCurvedLines,
+  // Batch 3 – famous & high-ROI illusions
+  vanishingDots,
+  benhamTop,
+  watercolorIllusion,
+  wertheimerkoffka,
+  sineIllusion,
+  flashLag,
+  dynamicEbbinghaus,
+  enigma,
+  pinnaBrelstaff,
+  wagonWheel,
+  colourAssimilation,
+  reversePhi,
+  pyramidIllusion,
+  shepardTables,
+  shadedDiamond,
+  adelsonPlaid,
+  hermannGridCurved,
+  frequencyDoubling,
+  ternusDisplay,
+  moonIllusion,
 ];
 
 export const categories = [...new Set(illusions.map((i) => i.category))];

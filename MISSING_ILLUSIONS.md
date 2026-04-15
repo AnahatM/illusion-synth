@@ -6,58 +6,58 @@ Illusions from [michaelbach.de/ot/](https://michaelbach.de/ot/) that are **not y
 
 ## Motion & Time
 
-- [ ] Reverse Phi Motion
+- [x] Reverse Phi Motion
 - [ ] Snake ad lib (optimised motion illusion variant)
 - [ ] "Rotating Snakes" with luminance control
 - [ ] Stereokinetic Phenomenon (kinetic depth effect)
 - [ ] Motion silences hue changes
-- [ ] Pinna-Brelstaff Illusion
+- [x] Pinna-Brelstaff Illusion
 - [ ] Pinna-Brelstaff Illusion № 2
 - [ ] Kinegram ("Scanimation")
 - [ ] Roget's Palisade Illusion
 - [ ] Spoke Illusion
-- [ ] Wagon-wheel effect
+- [x] Wagon-wheel effect
 - [ ] Wagon-wheel with colours
 - [ ] Stroboscopic Artifacts
 - [ ] Sigma Motion
 - [ ] »Mainz-Linez« illusion
-- [ ] Spine Drift illusion
+- [x] Spine Drift illusion
 - [ ] Eye Jitter
 - [ ] Relative motion illusions (eye movements)
 - [ ] Biological Motion
-- [ ] Flash-lag Effect
+- [x] Flash-lag Effect
 - [ ] Ramp Aftereffect
-- [ ] Enigma (Isia Leviant)
+- [x] Enigma (Isia Leviant)
 - [ ] Freezing Rotation Illusion
 - [ ] »Stepping feet« illusion 2 (circular version)
 - [ ] Motion Binding
-- [ ] Tusi Motion
+- [x] Tusi Motion
 - [ ] Missing-fundamental motion inversion
-- [ ] Frequency-doubling illusion
+- [x] Frequency-doubling illusion
 - [ ] »Kaleidoscope Motion« Illusion
-- [ ] Ternus Display
-- [ ] Stroboscopic alternative motion
+- [x] Ternus Display
+- [x] Stroboscopic alternative motion
 - [ ] "Pigeon Neck" illusion
 - [ ] "Psychokinematic" objects
 - [ ] Kinetic Depth Effect
-- [ ] Dotted Lines motion illusion
+- [x] Dotted Lines motion illusion
 - [ ] Spiral Motion Aftereffect
 
 ## Luminance/Brightness & Contrast
 
-- [ ] Hermann's Grid bent
-- [ ] 12 Vanishing Dots
+- [x] Hermann's Grid bent
+- [x] 12 Vanishing Dots
 - [ ] Translational Moiré Patterns
-- [ ] Rotatory Moiré Patterns
+- [x] Rotatory Moiré Patterns
 - [ ] Pulfrich effect
 - [ ] Classic simultaneous brightness contrast probed
 - [ ] Induced grating (cortical brightness contrast)
-- [ ] Shaded-diamond illusion
+- [x] Shaded-diamond illusion
 - [x] Craik-O'Brien-Cornsweet
-- [ ] Wertheimer-Koffka-Ring
+- [x] Wertheimer-Koffka-Ring
 - [ ] Simultaneous Contrast (dynamic version)
-- [ ] Pyramid Illusion (Vasarely)
-- [ ] Adelson's »Corrugated Plaid«
+- [x] Pyramid Illusion (Vasarely)
+- [x] Adelson's »Corrugated Plaid«
 - [ ] Saccadic Suppression
 - [ ] Contour Adaptation
 - [ ] Contrast Constancy
@@ -69,13 +69,13 @@ Illusions from [michaelbach.de/ot/](https://michaelbach.de/ot/) that are **not y
 
 ## Colour
 
-- [ ] Watercolor Illusion
-- [ ] Chromostereopsis demonstration
+- [x] Watercolor Illusion
+- [x] Chromostereopsis demonstration
 - [ ] Context affects colour
-- [ ] Colour Fan
-- [ ] Benham's Top
+- [x] Colour Fan
+- [x] Benham's Top
 - [ ] Benham's Top "unrolled"
-- [ ] Colour Assimilation
+- [x] Colour Assimilation
 - [x] Neon Colour Spreading
 - [ ] Xmas Colours (colour assimilation variant)
 - [ ] Munker Illusion
@@ -95,23 +95,23 @@ Illusions from [michaelbach.de/ot/](https://michaelbach.de/ot/) that are **not y
 
 - [ ] Skye's Oblique Grating
 - [ ] Oblique Grating adjustable
-- [ ] Kinetic Orbison Illusion
+- [x] Kinetic Orbison Illusion
 - [ ] Tilted Table (Zöllner variant)
 - [ ] Disjointed Arch Illusion (Poggendorff variant)
 - [x] Tilt Illusion
 - [ ] Oblique grating simplest
 - [ ] Checker Bulge
 - [x] Bourdon Illusion
-- [ ] Peripheral curved lines
+- [x] Peripheral curved lines
 - [ ] Magic Triangle (puzzle)
 
 ## Space, 3D & Size Constancy
 
-- [ ] Moon illusion
+- [x] Moon illusion
 - [x] T-illusion
-- [ ] Sine Illusion
+- [x] Sine Illusion
 - [ ] Schäffel's Luminance Looming
-- [ ] Shepard's "Turning the Tables"
+- [x] Shepard's "Turning the Tables"
 - [ ] Shepard's "Subterranean Terror"
 - [ ] Size Constancy
 - [ ] Reverspective (reverse perspective)
@@ -121,7 +121,7 @@ Illusions from [michaelbach.de/ot/](https://michaelbach.de/ot/) that are **not y
 - [ ] Ambiguous Wireframe / Silhouette Illusion
 - [ ] Frankfurter Illusion
 - [ ] Anamorphosis
-- [ ] Leaning Towers Illusion
+- [x] Leaning Towers Illusion
 
 ## Cognitive / Gestalt Effects
 
@@ -138,7 +138,7 @@ Illusions from [michaelbach.de/ot/](https://michaelbach.de/ot/) that are **not y
 - [ ] Hallucii ("impossible" movie)
 - [ ] Impossible waterfall
 - [ ] Numerosity adaptation
-- [ ] Dynamic Ebbinghaus Illusion
+- [x] Dynamic Ebbinghaus Illusion
 - [x] Pop-out in visual search
 
 ## Specialties with Faces
