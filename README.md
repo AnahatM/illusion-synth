@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌀 IllusionSynth
+# 🌀 Illusion Synth
 
 **An interactive optical illusion generator — real-time WebGL visuals you can customize and share.**
 
@@ -14,8 +14,8 @@
 [![Portfolio](https://img.shields.io/badge/Portfolio-anahatmudgal.com-796eb3?style=flat-square&logo=googlechrome&logoColor=white)](https://anahatmudgal.com)
 [![GitHub](https://img.shields.io/badge/GitHub-anahatM-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/anahatM)
 
-[![Try IllusionSynth](https://img.shields.io/badge/Try_IllusionSynth-illusionsynth.anahatmudgal.com-60a5fa?style=for-the-badge&logo=webgl&logoColor=white)](https://illusionsynth.anahatmudgal.com)
-[![Project Page](https://img.shields.io/badge/Project_Page-IllusionSynth-a78bfa?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.anahatmudgal.com/projects/illusionsynth)
+[![Try Illusion Synth](https://img.shields.io/badge/Try_IllusionSynth-illusion--synth.anahatmudgal.com-60a5fa?style=for-the-badge&logo=webgl&logoColor=white)](https://illusion-synth.anahatmudgal.com)
+[![Project Page](https://img.shields.io/badge/Project_Page-IllusionSynth-a78bfa?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.anahatmudgal.com/development/illusion-synth)
 
 </div>
 
