@@ -68,34 +68,11 @@ export async function generateThumbnail(
   illusion.update(0.5, defaults);
   renderer.render(scene, camera);
 
-  // Read pixels from WebGL and flip vertically for cross-browser consistency
-  // (Firefox does not always flip correctly with toDataURL on WebGL canvases)
-  const gl = renderer.getContext();
-  const pixels = new Uint8Array(THUMB_SIZE * THUMB_SIZE * 4);
-  gl.readPixels(
-    0,
-    0,
-    THUMB_SIZE,
-    THUMB_SIZE,
-    gl.RGBA,
-    gl.UNSIGNED_BYTE,
-    pixels,
-  );
-
+  // Draw WebGL canvas onto a 2D canvas via drawImage — the browser compositor
+  // handles the WebGL coordinate flip automatically and consistently
   const { canvas: fc, ctx } = getFlipCanvas();
-  const imageData = ctx.createImageData(THUMB_SIZE, THUMB_SIZE);
-
-  // WebGL readPixels gives bottom-to-top rows; flip to top-to-bottom
-  const rowSize = THUMB_SIZE * 4;
-  for (let y = 0; y < THUMB_SIZE; y++) {
-    const srcOffset = (THUMB_SIZE - y - 1) * rowSize;
-    const dstOffset = y * rowSize;
-    imageData.data.set(
-      pixels.subarray(srcOffset, srcOffset + rowSize),
-      dstOffset,
-    );
-  }
-  ctx.putImageData(imageData, 0, 0);
+  ctx.clearRect(0, 0, THUMB_SIZE, THUMB_SIZE);
+  ctx.drawImage(sharedCanvas!, 0, 0);
 
   const dataUrl = fc.toDataURL("image/webp", 0.8);
 
