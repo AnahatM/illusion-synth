@@ -143,24 +143,4 @@
       grid-template-columns: 1fr;
     }
   }
-
-  .reset-btn {
-    margin-top: 0.75rem;
-    padding: 0.5rem 1.25rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: background 0.2s;
-  }
-
-  .reset-btn:hover:not(:disabled) {
-    background: var(--border);
-  }
-
-  .reset-btn:disabled {
-    opacity: 0.6;
-    cursor: default;
-  }
 </style>
