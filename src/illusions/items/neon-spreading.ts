@@ -2,7 +2,19 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/neon-spreading.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "White & Blue", colors: ["#ffffff", "#3366ff"] },
+  { name: "White & Red", colors: ["#ffffff", "#ff3333"] },
+  { name: "White & Green", colors: ["#ffffff", "#33cc44"] },
+  { name: "White & Amber", colors: ["#ffffff", "#ffaa22"] },
+  { name: "White & Violet", colors: ["#ffffff", "#aa44ff"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -60,24 +72,13 @@ const neonSpreading: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "White & Blue",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.lineColor,
-      params.neonColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.lineColor, params.neonColor]);
     const lc = new THREE.Color(c1);
     const nc = new THREE.Color(c2);
     material = new THREE.ShaderMaterial({
@@ -100,11 +101,7 @@ const neonSpreading: IllusionConfig = {
     material.uniforms.uGridSize.value = params.gridSize;
     material.uniforms.uLineWidth.value = params.lineWidth;
     material.uniforms.uArcRadius.value = params.arcRadius;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.lineColor,
-      params.neonColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.lineColor, params.neonColor]);
     const lc = new THREE.Color(c1);
     material.uniforms.uLineColor.value.set(lc.r, lc.g, lc.b);
     const nc = new THREE.Color(c2);

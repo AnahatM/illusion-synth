@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/spiral.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic B&W", colors: ["#000000", "#ffffff"] },
+  { name: "Deep Purple", colors: ["#110022", "#cc88ff"] },
+  { name: "Crimson Night", colors: ["#110000", "#ff4444"] },
+  { name: "Teal Flash", colors: ["#001111", "#44ffee"] },
+  { name: "Gold Night", colors: ["#080600", "#ffcc00"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -48,15 +60,8 @@ const hypnoticSpiral: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Classic B&W",
+      options: getPaletteOptions(PALETTES),
     },
     {
       key: "scale",
@@ -70,6 +75,7 @@ const hypnoticSpiral: IllusionConfig = {
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -78,8 +84,8 @@ const hypnoticSpiral: IllusionConfig = {
         uSpeed: { value: params.speed },
         uDirection: { value: params.direction === "CW" ? 1.0 : -1.0 },
         uArmCount: { value: params.armCount },
-        uColor1: { value: hexToVec3(params.color1) },
-        uColor2: { value: hexToVec3(params.color2) },
+        uColor1: { value: hexToVec3(c1) },
+        uColor2: { value: hexToVec3(c2) },
         uScale: { value: params.scale },
       },
       transparent: true,
@@ -95,11 +101,7 @@ const hypnoticSpiral: IllusionConfig = {
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uDirection.value = params.direction === "CW" ? 1.0 : -1.0;
     material.uniforms.uArmCount.value = params.armCount;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.color1,
-      params.color2,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     material.uniforms.uColor1.value = hexToVec3(c1);
     material.uniforms.uColor2.value = hexToVec3(c2);
     material.uniforms.uScale.value = params.scale;

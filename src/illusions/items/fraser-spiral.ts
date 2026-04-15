@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/fraser-spiral.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic", colors: ["#d9d9d9", "#262626"] },
+  { name: "Deep Contrast", colors: ["#111111", "#eeeeee"] },
+  { name: "Blue Tones", colors: ["#2244aa", "#88bbff"] },
+  { name: "Red Tones", colors: ["#882222", "#ffaaaa"] },
+  { name: "Gold Tones", colors: ["#664400", "#ffcc88"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -50,19 +62,13 @@ const fraserSpiral: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Classic",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -71,8 +77,8 @@ const fraserSpiral: IllusionConfig = {
         uRings: { value: params.rings },
         uTiltDensity: { value: params.tiltDensity },
         uSpeed: { value: params.speed },
-        uColor1: { value: hexToVec3(params.color1) },
-        uColor2: { value: hexToVec3(params.color2) },
+        uColor1: { value: hexToVec3(c1) },
+        uColor2: { value: hexToVec3(c2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -85,11 +91,7 @@ const fraserSpiral: IllusionConfig = {
     material.uniforms.uRings.value = params.rings;
     material.uniforms.uTiltDensity.value = params.tiltDensity;
     material.uniforms.uSpeed.value = params.speed;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.color1,
-      params.color2,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     material.uniforms.uColor1.value = hexToVec3(c1);
     material.uniforms.uColor2.value = hexToVec3(c2);
   },

@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/troxler-fading.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Purple", colors: ["#aa44cc"] },
+  { name: "Red", colors: ["#cc4444"] },
+  { name: "Blue", colors: ["#4466cc"] },
+  { name: "Teal", colors: ["#44aaaa"] },
+  { name: "Pink", colors: ["#dd44aa"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -54,19 +66,13 @@ const troxlerFading: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Purple",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.color]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -74,7 +80,7 @@ const troxlerFading: IllusionConfig = {
         uRingRadius: { value: params.ringRadius },
         uDotCount: { value: params.dotCount },
         uSoftness: { value: params.softness },
-        uColor: { value: hexToVec3(params.color as string) },
+        uColor: { value: hexToVec3(c1) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -86,8 +92,8 @@ const troxlerFading: IllusionConfig = {
     material.uniforms.uRingRadius.value = params.ringRadius;
     material.uniforms.uDotCount.value = params.dotCount;
     material.uniforms.uSoftness.value = params.softness;
-    const [c1] = resolvePalette(params.palette, params.color, params.color);
-    material.uniforms.uColor.value = hexToVec3(c1 as string);
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.color]);
+    material.uniforms.uColor.value = hexToVec3(c1);
   },
 
   dispose() {

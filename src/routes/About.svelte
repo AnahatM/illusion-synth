@@ -1,13 +1,4 @@
 <script lang="ts">
-  import { clearCache } from '../lib/thumbnail-cache';
-
-  let cacheCleared = $state(false);
-
-  function resetCache() {
-    clearCache();
-    cacheCleared = true;
-    setTimeout(() => (cacheCleared = false), 2000);
-  }
 </script>
 
 <div class="about">
@@ -78,13 +69,6 @@
     </p>
   </section>
 
-  <section>
-    <h2>Maintenance</h2>
-    <p>Clear the cached thumbnails so they are re-generated next time you browse.</p>
-    <button class="reset-btn" onclick={resetCache} disabled={cacheCleared}>
-      {cacheCleared ? 'Cache cleared!' : 'Reset thumbnail cache'}
-    </button>
-  </section>
 </div>
 
 <style>

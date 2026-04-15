@@ -2,6 +2,7 @@
   import Router from 'svelte-spa-router';
   import Browse from './routes/Browse.svelte';
   import About from './routes/About.svelte';
+  import Capture from './routes/Capture.svelte';
   import ThemeToggle from './components/ThemeToggle.svelte';
   import EpilepsyWarning from './components/EpilepsyWarning.svelte';
   import { theme } from './lib/theme';
@@ -9,6 +10,7 @@
   const routes = {
     '/': Browse,
     '/about': About,
+    '/capture': Capture,
     '/illusion/:id': Browse,
   };
 

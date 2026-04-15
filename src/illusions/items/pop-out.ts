@@ -2,7 +2,19 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/pop-out.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Blue & Red", colors: ["#3388ff", "#ff3333"] },
+  { name: "Navy & Orange", colors: ["#2244aa", "#ff8833"] },
+  { name: "Forest & Crimson", colors: ["#228844", "#cc2222"] },
+  { name: "Purple & Lime", colors: ["#8844cc", "#88ff44"] },
+  { name: "Steel & Gold", colors: ["#4466aa", "#ffcc00"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -58,24 +70,13 @@ const popOut: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Blue & Red",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.distractorColor,
-      params.targetColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.distractorColor, params.targetColor]);
     const dc = new THREE.Color(c1);
     const tc = new THREE.Color(c2);
     const typeMap: Record<string, number> = {
@@ -110,11 +111,7 @@ const popOut: IllusionConfig = {
     material.uniforms.uTargetType.value =
       typeMap[params.targetType as string] ?? 0;
     material.uniforms.uItemSize.value = params.itemSize;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.distractorColor,
-      params.targetColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.distractorColor, params.targetColor]);
     const dc = new THREE.Color(c1);
     material.uniforms.uDistractorColor.value.set(dc.r, dc.g, dc.b);
     const tc = new THREE.Color(c2);

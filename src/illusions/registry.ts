@@ -57,7 +57,7 @@ import bourdonIllusion from "./items/bourdon";
 import neonSpreading from "./items/neon-spreading";
 import tiltIllusion from "./items/tilt-illusion";
 import popOut from "./items/pop-out";
-// Batch 2 from michaelbach.de
+// Batch 2
 import tusiMotion from "./items/tusi-motion";
 import rotatoryMoire from "./items/rotatory-moire";
 import chromostereopsis from "./items/chromostereopsis";
@@ -68,7 +68,7 @@ import dottedLinesMotion from "./items/dotted-lines-motion";
 import colourFan from "./items/colour-fan";
 import stroboscopicMotion from "./items/stroboscopic-motion";
 import peripheralCurvedLines from "./items/peripheral-curved-lines";
-// Batch 3 – famous & high-ROI illusions
+// Batch 3
 import vanishingDots from "./items/vanishing-dots";
 import benhamTop from "./items/benham-top";
 import watercolorIllusion from "./items/watercolor";
@@ -137,7 +137,7 @@ export const illusions: IllusionConfig[] = [
   anomalousTiles,
   tiltedSquares,
   bulgingCheckerboard,
-  // New from michaelbach.de
+  // New
   machBands,
   mullerLyer,
   motionInducedBlindness,
@@ -150,7 +150,7 @@ export const illusions: IllusionConfig[] = [
   neonSpreading,
   tiltIllusion,
   popOut,
-  // Batch 2 from michaelbach.de
+  // Batch 2
   tusiMotion,
   rotatoryMoire,
   chromostereopsis,

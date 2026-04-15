@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/grid-moire.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "White", colors: ["#ffffff"] },
+  { name: "Blue Neon", colors: ["#44aaff"] },
+  { name: "Crimson", colors: ["#ff4444"] },
+  { name: "Lime", colors: ["#88ff44"] },
+  { name: "Amber", colors: ["#ffaa22"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -40,19 +52,13 @@ const gridMoire: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "White",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.color]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -60,7 +66,7 @@ const gridMoire: IllusionConfig = {
         uTime: { value: 0 },
         uSpeed: { value: params.speed },
         uDensity: { value: params.density },
-        uColor: { value: hexToVec3(params.color) },
+        uColor: { value: hexToVec3(c1) },
       },
       transparent: true,
     });
@@ -73,7 +79,7 @@ const gridMoire: IllusionConfig = {
     material.uniforms.uTime.value = time;
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uDensity.value = params.density;
-    const [c1] = resolvePalette(params.palette, params.color, params.color);
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.color]);
     material.uniforms.uColor.value = hexToVec3(c1);
   },
 

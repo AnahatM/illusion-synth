@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/muller-lyer.frag";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
-import { resolvePalette } from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic", colors: ["#e6e6e6", "#000000"] },
+  { name: "Blue Lines", colors: ["#4488ff", "#000011"] },
+  { name: "Red Lines", colors: ["#ff4444", "#110000"] },
+  { name: "Gold Lines", colors: ["#ffcc00", "#110800"] },
+  { name: "Cyan Lines", colors: ["#44ddcc", "#001111"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -61,19 +73,13 @@ const mullerLyer: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Classic",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.lineColor, params.bgColor]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -81,8 +87,8 @@ const mullerLyer: IllusionConfig = {
         uArrowSize: { value: params.arrowSize },
         uLineLength: { value: params.lineLength },
         uLineWidth: { value: params.lineWidth },
-        uLineColor: { value: hexToVec3(params.lineColor as string) },
-        uBgColor: { value: hexToVec3(params.bgColor as string) },
+        uLineColor: { value: hexToVec3(c1) },
+        uBgColor: { value: hexToVec3(c2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -94,11 +100,7 @@ const mullerLyer: IllusionConfig = {
     material.uniforms.uArrowSize.value = params.arrowSize;
     material.uniforms.uLineLength.value = params.lineLength;
     material.uniforms.uLineWidth.value = params.lineWidth;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.lineColor,
-      params.bgColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.lineColor, params.bgColor]);
     material.uniforms.uLineColor.value = hexToVec3(c1);
     material.uniforms.uBgColor.value = hexToVec3(c2);
   },

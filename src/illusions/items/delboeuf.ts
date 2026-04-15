@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/delboeuf.frag";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
-import { resolvePalette } from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Coral & Gray", colors: ["#e65a1a", "#b3b3b3", "#000000"] },
+  { name: "Red & Silver", colors: ["#cc2222", "#aaaaaa", "#000000"] },
+  { name: "Blue & Steel", colors: ["#3366ff", "#778899", "#000000"] },
+  { name: "Gold & Chrome", colors: ["#ffcc00", "#aaaaaa", "#111111"] },
+  { name: "Violet & Pearl", colors: ["#aa44ff", "#cccccc", "#000000"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -58,28 +70,22 @@ const delboeufIllusion: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Coral & Gray",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2, c3] = resolvePaletteColors(params.palette, PALETTES, [params.circleColor, params.ringColor, params.bgColor]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
       uniforms: {
         uRingSize: { value: params.ringSize },
         uCircleSize: { value: params.circleSize },
-        uCircleColor: { value: hexToVec3(params.circleColor as string) },
-        uRingColor: { value: hexToVec3(params.ringColor as string) },
-        uBgColor: { value: hexToVec3(params.bgColor as string) },
+        uCircleColor: { value: hexToVec3(c1) },
+        uRingColor: { value: hexToVec3(c2) },
+        uBgColor: { value: hexToVec3(c3) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -90,14 +96,10 @@ const delboeufIllusion: IllusionConfig = {
     if (!material) return;
     material.uniforms.uRingSize.value = params.ringSize;
     material.uniforms.uCircleSize.value = params.circleSize;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.circleColor,
-      params.ringColor,
-    );
+    const [c1, c2, c3] = resolvePaletteColors(params.palette, PALETTES, [params.circleColor, params.ringColor, params.bgColor]);
     material.uniforms.uCircleColor.value = hexToVec3(c1);
     material.uniforms.uRingColor.value = hexToVec3(c2);
-    material.uniforms.uBgColor.value = hexToVec3(params.bgColor as string);
+    material.uniforms.uBgColor.value = hexToVec3(c3);
   },
 
   dispose() {

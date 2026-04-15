@@ -3,8 +3,20 @@ import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/wireframe-sphere.frag";
 import { setupMouseRotation, type MouseRotation } from "../lib/mouse-rotation";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "White", colors: ["#ffffff"] },
+  { name: "Blue", colors: ["#4488ff"] },
+  { name: "Orange", colors: ["#ff8833"] },
+  { name: "Teal", colors: ["#44ddcc"] },
+  { name: "Violet", colors: ["#cc44ff"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -33,15 +45,8 @@ const wireframeSphere: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "White",
+      options: getPaletteOptions(PALETTES),
     },
     {
       key: "size",
@@ -70,13 +75,14 @@ const wireframeSphere: IllusionConfig = {
   ],
 
   setup(scene, _camera, params, canvas) {
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.color]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
       uniforms: {
         uTime: { value: 0 },
         uSpeed: { value: params.speed },
-        uColor: { value: hexToVec3(params.color) },
+        uColor: { value: hexToVec3(c1) },
         uSize: { value: params.size },
         uRings: { value: params.rings },
         uManual: { value: 0 },
@@ -94,7 +100,7 @@ const wireframeSphere: IllusionConfig = {
     if (!material) return;
     material.uniforms.uTime.value = time;
     material.uniforms.uSpeed.value = params.speed;
-    const [c1] = resolvePalette(params.palette, params.color, params.color);
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.color]);
     material.uniforms.uColor.value = hexToVec3(c1);
     material.uniforms.uSize.value = params.size;
     material.uniforms.uRings.value = params.rings;

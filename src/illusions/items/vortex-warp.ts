@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/vortex-warp.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic B&W", colors: ["#000000", "#ffffff"] },
+  { name: "Indigo Twist", colors: ["#000022", "#6644ff"] },
+  { name: "Red Vortex", colors: ["#220000", "#ff4422"] },
+  { name: "Teal Warp", colors: ["#001111", "#44ffdd"] },
+  { name: "Gold Flash", colors: ["#110600", "#ffcc00"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -41,19 +53,13 @@ const vortexWarp: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Classic B&W",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -61,8 +67,8 @@ const vortexWarp: IllusionConfig = {
         uTime: { value: 0 },
         uSpeed: { value: params.speed },
         uTwist: { value: params.twist },
-        uColor1: { value: hexToVec3(params.color1) },
-        uColor2: { value: hexToVec3(params.color2) },
+        uColor1: { value: hexToVec3(c1) },
+        uColor2: { value: hexToVec3(c2) },
       },
       transparent: true,
     });
@@ -75,11 +81,7 @@ const vortexWarp: IllusionConfig = {
     material.uniforms.uTime.value = time;
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uTwist.value = params.twist;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.color1,
-      params.color2,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     material.uniforms.uColor1.value = hexToVec3(c1);
     material.uniforms.uColor2.value = hexToVec3(c2);
   },

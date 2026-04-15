@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/ehrenstein.frag";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
-import { resolvePalette } from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic", colors: ["#000000", "#ffffff"] },
+  { name: "Indigo", colors: ["#330066", "#ffffff"] },
+  { name: "Crimson", colors: ["#660000", "#ffffff"] },
+  { name: "Forest", colors: ["#003300", "#ffffff"] },
+  { name: "Inverse", colors: ["#ffffff", "#000000"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -70,19 +82,13 @@ const ehrensteinIllusion: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Classic",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.lineColor, params.bgColor]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -91,8 +97,8 @@ const ehrensteinIllusion: IllusionConfig = {
         uGapSize: { value: params.gapSize },
         uLineWidth: { value: params.lineWidth },
         uGridSize: { value: params.gridSize },
-        uLineColor: { value: hexToVec3(params.lineColor as string) },
-        uBgColor: { value: hexToVec3(params.bgColor as string) },
+        uLineColor: { value: hexToVec3(c1) },
+        uBgColor: { value: hexToVec3(c2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -105,11 +111,7 @@ const ehrensteinIllusion: IllusionConfig = {
     material.uniforms.uGapSize.value = params.gapSize;
     material.uniforms.uLineWidth.value = params.lineWidth;
     material.uniforms.uGridSize.value = params.gridSize;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.lineColor,
-      params.bgColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.lineColor, params.bgColor]);
     material.uniforms.uLineColor.value = hexToVec3(c1);
     material.uniforms.uBgColor.value = hexToVec3(c2);
   },

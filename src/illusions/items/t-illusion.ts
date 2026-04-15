@@ -2,7 +2,19 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/t-illusion.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic B&W", colors: ["#ffffff", "#000000"] },
+  { name: "Blue Dark", colors: ["#4488ff", "#000011"] },
+  { name: "Gold Dark", colors: ["#ffcc00", "#110800"] },
+  { name: "Red Dark", colors: ["#ff4444", "#110000"] },
+  { name: "Cyan Dark", colors: ["#44ddcc", "#001111"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -60,24 +72,13 @@ const tIllusion: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Classic B&W",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.color,
-      params.bgColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color, params.bgColor]);
     const fg = new THREE.Color(c1);
     const bg = new THREE.Color(c2);
     material = new THREE.ShaderMaterial({
@@ -100,11 +101,7 @@ const tIllusion: IllusionConfig = {
     material.uniforms.uLineLength.value = params.lineLength;
     material.uniforms.uLineWidth.value = params.lineWidth;
     material.uniforms.uAngle.value = (params.rotation * Math.PI) / 180;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.color,
-      params.bgColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color, params.bgColor]);
     const fg = new THREE.Color(c1);
     material.uniforms.uColor.value.set(fg.r, fg.g, fg.b);
     const bg = new THREE.Color(c2);

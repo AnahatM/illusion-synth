@@ -2,7 +2,19 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/blind-spot.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Red & White", colors: ["#ff4444", "#ffffff"] },
+  { name: "Blue & White", colors: ["#4488ff", "#ffffff"] },
+  { name: "Gold & White", colors: ["#ffcc00", "#ffffff"] },
+  { name: "Cyan & White", colors: ["#44ddcc", "#ffffff"] },
+  { name: "Purple & White", colors: ["#cc44ff", "#ffffff"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -51,24 +63,13 @@ const blindSpot: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Red & White",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.dotColor,
-      params.crossColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.dotColor, params.crossColor]);
     const dc = new THREE.Color(c1);
     const cc = new THREE.Color(c2);
     material = new THREE.ShaderMaterial({
@@ -89,11 +90,7 @@ const blindSpot: IllusionConfig = {
     if (!material) return;
     material.uniforms.uSpacing.value = params.spacing;
     material.uniforms.uDotSize.value = params.dotSize;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.dotColor,
-      params.crossColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.dotColor, params.crossColor]);
     const dc = new THREE.Color(c1);
     material.uniforms.uDotColor.value.set(dc.r, dc.g, dc.b);
     const cc = new THREE.Color(c2);

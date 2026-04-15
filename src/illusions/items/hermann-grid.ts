@@ -2,7 +2,19 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/hermann-grid.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic", colors: ["#d9d9d9", "#0d0d0d"] },
+  { name: "Blue Ice", colors: ["#aaddff", "#001133"] },
+  { name: "Gold", colors: ["#ffcc44", "#110800"] },
+  { name: "Forest", colors: ["#88ffaa", "#001100"] },
+  { name: "Crimson", colors: ["#ff8888", "#200000"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -50,27 +62,21 @@ const hermannGrid: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Classic",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.lineColor, params.bgColor]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
       uniforms: {
         uGridSize: { value: params.gridSize },
         uLineWidth: { value: params.lineWidth },
-        uLineColor: { value: new THREE.Color(params.lineColor) },
-        uBgColor: { value: new THREE.Color(params.bgColor) },
+        uLineColor: { value: new THREE.Color(c1) },
+        uBgColor: { value: new THREE.Color(c2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -81,11 +87,7 @@ const hermannGrid: IllusionConfig = {
     if (!material) return;
     material.uniforms.uGridSize.value = params.gridSize;
     material.uniforms.uLineWidth.value = params.lineWidth;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.lineColor,
-      params.bgColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.lineColor, params.bgColor]);
     material.uniforms.uLineColor.value.set(c1);
     material.uniforms.uBgColor.value.set(c2);
   },

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { IllusionConfig } from '../illusions/types';
-  import { generateThumbnail, getThumbnail } from '../lib/thumbnail-cache';
+  import { generateThumbnail } from '../lib/thumbnail-cache';
 
   interface Props {
     illusion: IllusionConfig;
@@ -16,15 +16,9 @@
   const hasColorParam = $derived(illusion.params.some(p => p.type === 'color'));
   const needsTint = $derived(!hasColorParam || illusion.tintThumbnail === true);
 
-  // Check cache synchronously — use $derived to track illusion reactively
-  const cachedThumb = $derived(getThumbnail(illusion.id));
-
-  $effect(() => {
-    if (cachedThumb) {
-      thumbSrc = cachedThumb;
-      hasBeenVisible = true;
-    }
-  });
+  // Use a pre-generated static thumbnail if available, otherwise fall back to
+  // runtime WebGL generation (needed when thumbnails haven't been generated yet).
+  const staticUrl = $derived(`/thumbnails/${illusion.id}.webp`);
 
   $effect(() => {
     if (!cardEl || hasBeenVisible) return;
@@ -45,8 +39,21 @@
 
   $effect(() => {
     if (!hasBeenVisible || thumbSrc) return;
-    generateThumbnail(illusion).then((url) => {
-      thumbSrc = url;
+
+    // Try static file first via a HEAD request
+    fetch(staticUrl, { method: 'HEAD' }).then((res) => {
+      if (res.ok) {
+        thumbSrc = staticUrl;
+      } else {
+        // Fall back to runtime generation
+        generateThumbnail(illusion).then((url) => {
+          thumbSrc = url;
+        });
+      }
+    }).catch(() => {
+      generateThumbnail(illusion).then((url) => {
+        thumbSrc = url;
+      });
     });
   });
 </script>

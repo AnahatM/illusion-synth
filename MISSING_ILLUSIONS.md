@@ -1,6 +1,6 @@
-# Missing Illusions from michaelbach.de
+# Missing Illusions
 
-Illusions from [michaelbach.de/ot/](https://michaelbach.de/ot/) that are **not yet included** in this project.
+Illusions **not yet included** in this project.
 
 ---
 

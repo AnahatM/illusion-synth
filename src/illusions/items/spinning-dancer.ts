@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/spinning-dancer.frag";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
-import { resolvePalette } from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Silver", colors: ["#d9d9d9"] },
+  { name: "Blue", colors: ["#4488ff"] },
+  { name: "Gold", colors: ["#ffcc00"] },
+  { name: "Red", colors: ["#ff4444"] },
+  { name: "Violet", colors: ["#cc44ff"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -40,19 +52,13 @@ const spinningDancer: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Silver",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.color]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -60,7 +66,7 @@ const spinningDancer: IllusionConfig = {
         uTime: { value: 0 },
         uSpeed: { value: params.speed },
         uDetail: { value: params.detail },
-        uColor: { value: hexToVec3(params.color) },
+        uColor: { value: hexToVec3(c1) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -72,7 +78,7 @@ const spinningDancer: IllusionConfig = {
     material.uniforms.uTime.value = time;
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uDetail.value = params.detail;
-    const [c1] = resolvePalette(params.palette, params.color, params.color);
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.color]);
     material.uniforms.uColor.value = hexToVec3(c1);
   },
 

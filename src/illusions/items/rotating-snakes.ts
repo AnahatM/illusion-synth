@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/rotating-snakes.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic Drift", colors: ["#ffdd00", "#2244aa", "#333333"] },
+  { name: "Red Drift", colors: ["#ff4422", "#221188", "#222222"] },
+  { name: "Teal Drift", colors: ["#22ffdd", "#002244", "#111111"] },
+  { name: "Purple Drift", colors: ["#ffaaff", "#220044", "#222222"] },
+  { name: "Monochrome", colors: ["#ffffff", "#888888", "#000000"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -37,24 +49,18 @@ const rotatingSnakes: IllusionConfig = {
     },
     { key: "color1", label: "Bright Color", type: "color", default: "#ffdd00" },
     { key: "color2", label: "Dark Color", type: "color", default: "#2244aa" },
-    { key: "bgColor", label: "Background", type: "color", default: "#e8e8e8" },
+    { key: "bgColor", label: "Background", type: "color", default: "#333333" },
     {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Classic Drift",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2, c3] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2, params.bgColor]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -62,9 +68,9 @@ const rotatingSnakes: IllusionConfig = {
         uTime: { value: 0 },
         uRingCount: { value: params.ringCount },
         uDensity: { value: params.density },
-        uColor1: { value: hexToVec3(params.color1) },
-        uColor2: { value: hexToVec3(params.color2) },
-        uColor3: { value: hexToVec3(params.bgColor) },
+        uColor1: { value: hexToVec3(c1) },
+        uColor2: { value: hexToVec3(c2) },
+        uColor3: { value: hexToVec3(c3) },
       },
       transparent: true,
     });
@@ -76,14 +82,10 @@ const rotatingSnakes: IllusionConfig = {
     if (!material) return;
     material.uniforms.uRingCount.value = params.ringCount;
     material.uniforms.uDensity.value = params.density;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.color1,
-      params.color2,
-    );
+    const [c1, c2, c3] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2, params.bgColor]);
     material.uniforms.uColor1.value = hexToVec3(c1);
     material.uniforms.uColor2.value = hexToVec3(c2);
-    material.uniforms.uColor3.value = hexToVec3(params.bgColor);
+    material.uniforms.uColor3.value = hexToVec3(c3);
   },
 
   dispose() {

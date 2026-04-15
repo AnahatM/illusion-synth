@@ -2,6 +2,19 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/mccollough.frag";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Green & Red", colors: ["#00cc00", "#ff0000"] },
+  { name: "Cyan & Magenta", colors: ["#00cccc", "#cc00cc"] },
+  { name: "Blue & Orange", colors: ["#0044ff", "#ff8800"] },
+  { name: "Purple & Yellow", colors: ["#8800ff", "#ffcc00"] },
+  { name: "Teal & Red", colors: ["#00aaaa", "#cc2222"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -42,6 +55,13 @@ const mccolloughEffect: IllusionConfig = {
       default: "#ff0000",
     },
     {
+      key: "palette",
+      label: "Palette",
+      type: "select",
+      default: "Green & Red",
+      options: getPaletteOptions(PALETTES),
+    },
+    {
       key: "gratingFreq",
       label: "Grating Frequency",
       type: "slider",
@@ -59,6 +79,7 @@ const mccolloughEffect: IllusionConfig = {
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     const phaseMap: Record<string, number> = {
       Horizontal: 0,
       Vertical: 1,
@@ -69,8 +90,8 @@ const mccolloughEffect: IllusionConfig = {
       fragmentShader,
       uniforms: {
         uPhase: { value: phaseMap[params.phase] ?? 0 },
-        uColor1: { value: hexToVec3(params.color1) },
-        uColor2: { value: hexToVec3(params.color2) },
+        uColor1: { value: hexToVec3(c1) },
+        uColor2: { value: hexToVec3(c2) },
         uGratingFreq: { value: params.gratingFreq },
         uFullWidth: { value: params.fullWidth ? 1.0 : 0.0 },
       },
@@ -87,9 +108,10 @@ const mccolloughEffect: IllusionConfig = {
       Vertical: 1,
       "B/W Test": 2,
     };
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     material.uniforms.uPhase.value = phaseMap[params.phase] ?? 0;
-    material.uniforms.uColor1.value = hexToVec3(params.color1);
-    material.uniforms.uColor2.value = hexToVec3(params.color2);
+    material.uniforms.uColor1.value = hexToVec3(c1);
+    material.uniforms.uColor2.value = hexToVec3(c2);
     material.uniforms.uGratingFreq.value = params.gratingFreq;
     material.uniforms.uFullWidth.value = params.fullWidth ? 1.0 : 0.0;
     ctx?.setFillCanvas?.(!!params.fullWidth);

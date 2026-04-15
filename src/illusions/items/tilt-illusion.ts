@@ -2,7 +2,19 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/tilt-illusion.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic White", colors: ["#ffffff", "#ffffff"] },
+  { name: "Blue Tilt", colors: ["#4488ff", "#4488ff"] },
+  { name: "Gold Tilt", colors: ["#ffcc00", "#ffcc00"] },
+  { name: "Red Tilt", colors: ["#ff4444", "#ff4444"] },
+  { name: "Cyan Tilt", colors: ["#44ddcc", "#44ddcc"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -78,24 +90,13 @@ const tiltIllusion: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Classic White",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.centerColor,
-      params.surroundColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.centerColor, params.surroundColor]);
     const cc = new THREE.Color(c1);
     const sc = new THREE.Color(c2);
     material = new THREE.ShaderMaterial({
@@ -122,11 +123,7 @@ const tiltIllusion: IllusionConfig = {
     material.uniforms.uLineCount.value = params.lineCount;
     material.uniforms.uCenterSize.value = params.centerSize;
     material.uniforms.uBlur.value = params.blur;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.centerColor,
-      params.surroundColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.centerColor, params.surroundColor]);
     const cc = new THREE.Color(c1);
     material.uniforms.uCenterColor.value.set(cc.r, cc.g, cc.b);
     const sc = new THREE.Color(c2);

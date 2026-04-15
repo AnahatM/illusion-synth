@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/fibonacci-spiral.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic B&W", colors: ["#000000", "#ffffff"] },
+  { name: "Indigo Glow", colors: ["#080030", "#8844ff"] },
+  { name: "Crimson Night", colors: ["#110000", "#ff4444"] },
+  { name: "Forest", colors: ["#001100", "#44cc66"] },
+  { name: "Gold Night", colors: ["#080600", "#ffcc00"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -41,19 +53,13 @@ const fibonacciSpiral: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Classic B&W",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -61,8 +67,8 @@ const fibonacciSpiral: IllusionConfig = {
         uTime: { value: 0 },
         uSpeed: { value: params.speed },
         uZoom: { value: params.zoom },
-        uColor1: { value: hexToVec3(params.color1) },
-        uColor2: { value: hexToVec3(params.color2) },
+        uColor1: { value: hexToVec3(c1) },
+        uColor2: { value: hexToVec3(c2) },
       },
       transparent: true,
     });
@@ -75,11 +81,7 @@ const fibonacciSpiral: IllusionConfig = {
     material.uniforms.uTime.value = time;
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uZoom.value = params.zoom;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.color1,
-      params.color2,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     material.uniforms.uColor1.value = hexToVec3(c1);
     material.uniforms.uColor2.value = hexToVec3(c2);
   },

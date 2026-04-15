@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/kanizsa-triangle.frag";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
-import { resolvePalette } from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Gray", colors: ["#d9d9d9"] },
+  { name: "Blue", colors: ["#4488ff"] },
+  { name: "Orange", colors: ["#ff8833"] },
+  { name: "Lime", colors: ["#88ff44"] },
+  { name: "Pink", colors: ["#ff66aa"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -49,19 +61,13 @@ const kanizsaTriangle: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Gray",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.color]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -69,7 +75,7 @@ const kanizsaTriangle: IllusionConfig = {
         uRadius: { value: params.radius },
         uGap: { value: params.gap },
         uRotation: { value: params.rotation },
-        uColor: { value: hexToVec3(params.color) },
+        uColor: { value: hexToVec3(c1) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -81,7 +87,7 @@ const kanizsaTriangle: IllusionConfig = {
     material.uniforms.uRadius.value = params.radius;
     material.uniforms.uGap.value = params.gap;
     material.uniforms.uRotation.value = params.rotation;
-    const [c1] = resolvePalette(params.palette, params.color, params.color);
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.color]);
     material.uniforms.uColor.value = hexToVec3(c1);
   },
 

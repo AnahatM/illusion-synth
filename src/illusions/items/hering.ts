@@ -2,7 +2,19 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/hering.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "White", colors: ["#ffffff"] },
+  { name: "Blue", colors: ["#4488ff"] },
+  { name: "Gold", colors: ["#ffcc00"] },
+  { name: "Red", colors: ["#ff4444"] },
+  { name: "Cyan", colors: ["#44ddcc"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -35,26 +47,20 @@ const heringIllusion: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "White",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.lineColor]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
       uniforms: {
         uLineCount: { value: 2 },
         uRayCount: { value: params.rayCount },
-        uLineColor: { value: new THREE.Color(params.lineColor) },
+        uLineColor: { value: new THREE.Color(c1) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -64,11 +70,7 @@ const heringIllusion: IllusionConfig = {
   update(_time, params) {
     if (!material) return;
     material.uniforms.uRayCount.value = params.rayCount;
-    const [c1] = resolvePalette(
-      params.palette,
-      params.lineColor,
-      params.lineColor,
-    );
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.lineColor]);
     material.uniforms.uLineColor.value.set(c1);
   },
 

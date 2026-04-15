@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/zollner.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Gray Tones", colors: ["#cccccc", "#999999"] },
+  { name: "Blue Tones", colors: ["#4488cc", "#224488"] },
+  { name: "Red Tones", colors: ["#cc4444", "#882222"] },
+  { name: "Gold Tones", colors: ["#ccaa44", "#886622"] },
+  { name: "Teal Tones", colors: ["#44aaaa", "#226666"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -50,19 +62,13 @@ const zollnerIllusion: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Gray Tones",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -70,8 +76,8 @@ const zollnerIllusion: IllusionConfig = {
         uLineCount: { value: params.lineCount },
         uHatchAngle: { value: params.hatchAngle },
         uHatchDensity: { value: params.hatchDensity },
-        uColor1: { value: hexToVec3(params.color1) },
-        uColor2: { value: hexToVec3(params.color2) },
+        uColor1: { value: hexToVec3(c1) },
+        uColor2: { value: hexToVec3(c2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -83,11 +89,7 @@ const zollnerIllusion: IllusionConfig = {
     material.uniforms.uLineCount.value = params.lineCount;
     material.uniforms.uHatchAngle.value = params.hatchAngle;
     material.uniforms.uHatchDensity.value = params.hatchDensity;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.color1,
-      params.color2,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     material.uniforms.uColor1.value = hexToVec3(c1);
     material.uniforms.uColor2.value = hexToVec3(c2);
   },

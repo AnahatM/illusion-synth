@@ -2,7 +2,19 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/perspective-size.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Coral & Blue", colors: ["#d9664d", "#4d99d9"] },
+  { name: "Red & Navy", colors: ["#cc3322", "#223399"] },
+  { name: "Amber & Indigo", colors: ["#ffaa22", "#441188"] },
+  { name: "Orange & Teal", colors: ["#ff8833", "#33aa99"] },
+  { name: "Magenta & Cyan", colors: ["#cc22aa", "#22aacc"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -51,15 +63,8 @@ const perspectiveSize: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Coral & Blue",
+      options: getPaletteOptions(PALETTES),
     },
     {
       key: "showProof",
@@ -70,6 +75,7 @@ const perspectiveSize: IllusionConfig = {
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.nearColor, params.farColor]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -77,8 +83,8 @@ const perspectiveSize: IllusionConfig = {
         uGridSize: { value: params.gridSize },
         uObjPos: { value: params.objPos },
         uShowProof: { value: params.showProof ? 1.0 : 0.0 },
-        uNearColor: { value: new THREE.Color(params.nearColor) },
-        uFarColor: { value: new THREE.Color(params.farColor) },
+        uNearColor: { value: new THREE.Color(c1) },
+        uFarColor: { value: new THREE.Color(c2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -90,11 +96,7 @@ const perspectiveSize: IllusionConfig = {
     material.uniforms.uGridSize.value = params.gridSize;
     material.uniforms.uObjPos.value = params.objPos;
     material.uniforms.uShowProof.value = params.showProof ? 1.0 : 0.0;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.nearColor,
-      params.farColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.nearColor, params.farColor]);
     material.uniforms.uNearColor.value.set(c1);
     material.uniforms.uFarColor.value.set(c2);
   },

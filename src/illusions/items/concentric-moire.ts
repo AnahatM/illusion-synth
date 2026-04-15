@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/moire-circles.frag";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
-import { resolvePalette } from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "White", colors: ["#ffffff"] },
+  { name: "Blue", colors: ["#4488ff"] },
+  { name: "Gold", colors: ["#ffcc44"] },
+  { name: "Red", colors: ["#ff4444"] },
+  { name: "Green", colors: ["#44cc44"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -48,15 +60,8 @@ const concentricMoire: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "White",
+      options: getPaletteOptions(PALETTES),
     },
     {
       key: "scale",
@@ -70,6 +75,7 @@ const concentricMoire: IllusionConfig = {
   ],
 
   setup(scene, _camera, params) {
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.color]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -78,7 +84,7 @@ const concentricMoire: IllusionConfig = {
         uSpeed: { value: params.speed },
         uOffset: { value: params.offset },
         uThickness: { value: params.thickness },
-        uColor: { value: hexToVec3(params.color) },
+        uColor: { value: hexToVec3(c1) },
         uScale: { value: params.scale },
       },
       transparent: true,
@@ -94,7 +100,7 @@ const concentricMoire: IllusionConfig = {
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uOffset.value = params.offset;
     material.uniforms.uThickness.value = params.thickness;
-    const [c1] = resolvePalette(params.palette, params.color, params.color);
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.color]);
     material.uniforms.uColor.value = hexToVec3(c1);
     material.uniforms.uScale.value = params.scale;
   },

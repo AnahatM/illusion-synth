@@ -2,7 +2,19 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/poggendorff.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic", colors: ["#d9d9d9", "#595959"] },
+  { name: "Blue Steel", colors: ["#aaccff", "#334466"] },
+  { name: "Amber Wood", colors: ["#ffcc88", "#664422"] },
+  { name: "Forest Log", colors: ["#88ffaa", "#334433"] },
+  { name: "Crimson Stone", colors: ["#ffaaaa", "#663333"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -50,15 +62,8 @@ const poggendorffIllusion: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Classic",
+      options: getPaletteOptions(PALETTES),
     },
     {
       key: "hideRect",
@@ -69,14 +74,15 @@ const poggendorffIllusion: IllusionConfig = {
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.lineColor, params.rectColor]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
       uniforms: {
         uRectWidth: { value: params.rectWidth },
         uLineOffset: { value: params.lineOffset },
-        uLineColor: { value: new THREE.Color(params.lineColor) },
-        uRectColor: { value: new THREE.Color(params.rectColor) },
+        uLineColor: { value: new THREE.Color(c1) },
+        uRectColor: { value: new THREE.Color(c2) },
         uHideRect: { value: params.hideRect ? 1.0 : 0.0 },
       },
     });
@@ -88,11 +94,7 @@ const poggendorffIllusion: IllusionConfig = {
     if (!material) return;
     material.uniforms.uRectWidth.value = params.rectWidth;
     material.uniforms.uLineOffset.value = params.lineOffset;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.lineColor,
-      params.rectColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.lineColor, params.rectColor]);
     material.uniforms.uLineColor.value.set(c1);
     material.uniforms.uRectColor.value.set(c2);
     material.uniforms.uHideRect.value = params.hideRect ? 1.0 : 0.0;

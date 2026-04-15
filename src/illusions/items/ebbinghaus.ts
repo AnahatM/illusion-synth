@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/ebbinghaus.frag";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
-import { resolvePalette } from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Orange & Blue", colors: ["#ff8800", "#4488ff"] },
+  { name: "Red & Teal", colors: ["#ff3300", "#00aaaa"] },
+  { name: "Purple & Gold", colors: ["#aa44ff", "#ffcc00"] },
+  { name: "Green & Pink", colors: ["#44cc44", "#ff66aa"] },
+  { name: "Coral & Ice", colors: ["#ff7766", "#aaddff"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -50,27 +62,21 @@ const ebbinghausIllusion: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Orange & Blue",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.centerColor, params.surroundColor]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
       uniforms: {
         uSurroundSize: { value: params.surroundSize },
         uSurroundCount: { value: params.surroundCount },
-        uCenterColor: { value: hexToVec3(params.centerColor as string) },
-        uSurroundColor: { value: hexToVec3(params.surroundColor as string) },
+        uCenterColor: { value: hexToVec3(c1) },
+        uSurroundColor: { value: hexToVec3(c2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -81,11 +87,7 @@ const ebbinghausIllusion: IllusionConfig = {
     if (!material) return;
     material.uniforms.uSurroundSize.value = params.surroundSize;
     material.uniforms.uSurroundCount.value = params.surroundCount;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.centerColor,
-      params.surroundColor,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.centerColor, params.surroundColor]);
     material.uniforms.uCenterColor.value = hexToVec3(c1);
     material.uniforms.uSurroundColor.value = hexToVec3(c2);
   },

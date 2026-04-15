@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/cafe-wall.frag";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic B&W", colors: ["#000000", "#ffffff"] },
+  { name: "Slate", colors: ["#112233", "#aabbcc"] },
+  { name: "Wine", colors: ["#220011", "#ff8899"] },
+  { name: "Forest", colors: ["#001122", "#88ccaa"] },
+  { name: "Amber", colors: ["#110600", "#ffcc44"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -59,19 +71,16 @@ const cafeWall: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Classic B&W",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [
+      params.color1,
+      params.color2,
+    ]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -80,8 +89,8 @@ const cafeWall: IllusionConfig = {
         uRows: { value: params.rows },
         uTilesPerRow: { value: params.tilesPerRow },
         uMortarWidth: { value: params.mortarWidth },
-        uColor1: { value: hexToVec3(params.color1) },
-        uColor2: { value: hexToVec3(params.color2) },
+        uColor1: { value: hexToVec3(c1) },
+        uColor2: { value: hexToVec3(c2) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -94,11 +103,12 @@ const cafeWall: IllusionConfig = {
     material.uniforms.uRows.value = params.rows;
     material.uniforms.uTilesPerRow.value = params.tilesPerRow;
     material.uniforms.uMortarWidth.value = params.mortarWidth;
-    const [c1, c2] = resolvePalette(
-      params.palette,
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [
       params.color1,
       params.color2,
-    );
+    ]);
+    material.uniforms.uColor1.value = hexToVec3(c1);
+    material.uniforms.uColor2.value = hexToVec3(c2);
     material.uniforms.uColor1.value = hexToVec3(c1);
     material.uniforms.uColor2.value = hexToVec3(c2);
   },

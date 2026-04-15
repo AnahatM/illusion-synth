@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/phi-phenomenon.frag";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
-import { resolvePalette } from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "White", colors: ["#ffffff"] },
+  { name: "Blue", colors: ["#4488ff"] },
+  { name: "Red", colors: ["#ff4444"] },
+  { name: "Gold", colors: ["#ffcc00"] },
+  { name: "Cyan", colors: ["#44ddcc"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -49,19 +61,13 @@ const phiPhenomenon: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "White",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.color]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -70,7 +76,7 @@ const phiPhenomenon: IllusionConfig = {
         uSpeed: { value: params.speed },
         uDotCount: { value: params.dotCount },
         uSpacing: { value: params.spacing },
-        uColor: { value: hexToVec3(params.color) },
+        uColor: { value: hexToVec3(c1) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -83,7 +89,7 @@ const phiPhenomenon: IllusionConfig = {
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uDotCount.value = params.dotCount;
     material.uniforms.uSpacing.value = params.spacing;
-    const [c1] = resolvePalette(params.palette, params.color, params.color);
+    const [c1] = resolvePaletteColors(params.palette, PALETTES, [params.color]);
     material.uniforms.uColor.value = hexToVec3(c1);
   },
 

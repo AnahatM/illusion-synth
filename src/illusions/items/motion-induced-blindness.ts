@@ -2,8 +2,20 @@ import * as THREE from "three";
 import type { IllusionConfig } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/motion-induced-blindness.frag";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
 import { hexToVec3 } from "../lib/color-utils";
-import { resolvePalette } from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Classic", colors: ["#2640e6", "#ffe600", "#0d0d0d"] },
+  { name: "Forest & Sun", colors: ["#33cc44", "#ffcc00", "#0d0d0d"] },
+  { name: "Purple & Gold", colors: ["#aa22cc", "#ffcc00", "#0d0d0d"] },
+  { name: "Red & Lime", colors: ["#dd2222", "#88ff44", "#0d0d0d"] },
+  { name: "Steel & White", colors: ["#4488aa", "#ffffff", "#111111"] },
+];
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
@@ -99,19 +111,13 @@ const motionInducedBlindness: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Classic",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
   setup(scene, _camera, params) {
+    const [c1, c2, c3] = resolvePaletteColors(params.palette, PALETTES, [params.gridColor, params.dotColor, params.bgColor]);
     const gridModeVal = params.gridMode === "Lines" ? 0 : 1;
     const dotModeVal =
       params.dotMode === "Ring" ? 1 : params.dotMode === "Array" ? 2 : 0;
@@ -127,9 +133,9 @@ const motionInducedBlindness: IllusionConfig = {
         uDotMode: { value: dotModeVal },
         uCrossSize: { value: params.crossSize },
         uLineWidth: { value: params.lineWidth },
-        uGridColor: { value: hexToVec3(params.gridColor as string) },
-        uDotColor: { value: hexToVec3(params.dotColor as string) },
-        uBgColor: { value: hexToVec3(params.bgColor as string) },
+        uGridColor: { value: hexToVec3(c1) },
+        uDotColor: { value: hexToVec3(c2) },
+        uBgColor: { value: hexToVec3(c3) },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -147,14 +153,10 @@ const motionInducedBlindness: IllusionConfig = {
       params.dotMode === "Ring" ? 1 : params.dotMode === "Array" ? 2 : 0;
     material.uniforms.uCrossSize.value = params.crossSize;
     material.uniforms.uLineWidth.value = params.lineWidth;
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.gridColor,
-      params.dotColor,
-    );
+    const [c1, c2, c3] = resolvePaletteColors(params.palette, PALETTES, [params.gridColor, params.dotColor, params.bgColor]);
     material.uniforms.uGridColor.value = hexToVec3(c1);
     material.uniforms.uDotColor.value = hexToVec3(c2);
-    material.uniforms.uBgColor.value = hexToVec3(params.bgColor as string);
+    material.uniforms.uBgColor.value = hexToVec3(c3);
   },
 
   dispose() {

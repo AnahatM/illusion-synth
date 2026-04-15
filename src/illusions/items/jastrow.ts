@@ -1,6 +1,18 @@
 import * as THREE from "three";
 import type { IllusionConfig } from "../types";
-import { resolvePalette } from "../lib/palettes";
+import {
+  getPaletteOptions,
+  resolvePaletteColors,
+  type IllusionPalette,
+} from "../lib/palettes";
+
+const PALETTES: IllusionPalette[] = [
+  { name: "Teal & Coral", colors: ["#4d99d9", "#d9734d"] },
+  { name: "Blue & Red", colors: ["#3366ff", "#ff3333"] },
+  { name: "Purple & Gold", colors: ["#8833cc", "#ffcc00"] },
+  { name: "Green & Orange", colors: ["#33aa44", "#ff8833"] },
+  { name: "Classic B&W", colors: ["#dddddd", "#888888"] },
+];
 
 let group: THREE.Group;
 let matA: THREE.MeshBasicMaterial;
@@ -61,15 +73,8 @@ const jastrowIllusion: IllusionConfig = {
       key: "palette",
       label: "Palette",
       type: "select",
-      default: "Custom",
-      options: [
-        "Custom",
-        "B/W",
-        "Blue & Gold",
-        "Red & Cyan",
-        "Purple & Lime",
-        "Sunset",
-      ],
+      default: "Teal & Coral",
+      options: getPaletteOptions(PALETTES),
     },
   ],
 
@@ -84,17 +89,18 @@ const jastrowIllusion: IllusionConfig = {
     const tex = await loadSvgTexture();
     texture = tex;
 
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     matA = new THREE.MeshBasicMaterial({
       map: tex,
       transparent: true,
       alphaTest: 0.1,
-      color: new THREE.Color(params.color1 as string),
+      color: new THREE.Color(c1),
     });
     matB = new THREE.MeshBasicMaterial({
       map: tex,
       transparent: true,
       alphaTest: 0.1,
-      color: new THREE.Color(params.color2 as string),
+      color: new THREE.Color(c2),
     });
 
     meshA = new THREE.Mesh(geo, matA);
@@ -111,11 +117,7 @@ const jastrowIllusion: IllusionConfig = {
   update(_time, params) {
     if (!group) return;
 
-    const [c1, c2] = resolvePalette(
-      params.palette,
-      params.color1,
-      params.color2,
-    );
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
     matA.color.set(c1);
     matB.color.set(c2);
 
