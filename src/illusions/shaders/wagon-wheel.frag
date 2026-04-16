@@ -12,40 +12,25 @@ void main() {
   float r = length(uv);
   float angle = atan(uv.y, uv.x);
 
-  vec3 color = uBgColor;
-
   float rotAngle = angle + uTime * uSpeed;
 
-  // Outer rim (thick band)
-  float rimOuter = smoothstep(0.88, 0.87, r);
-  float rimInner = smoothstep(0.78, 0.79, r);
-  float rim = rimOuter * (1.0 - rimInner);
+  // Outer rim (ring band from r≈0.79 to r≈0.87)
+  float rim = smoothstep(0.88, 0.87, r) * smoothstep(0.78, 0.79, r);
 
-  // Inner rim edge highlight
-  float innerRimOuter = smoothstep(0.80, 0.79, r);
-  float innerRimInner = smoothstep(0.77, 0.78, r);
-  float innerRim = innerRimOuter * (1.0 - innerRimInner);
+  // Hub (ring from r≈0.09 to r≈0.13)
+  float hub = smoothstep(0.14, 0.13, r) * smoothstep(0.08, 0.09, r);
 
-  // Hub (ring, not filled)
-  float hubOuter = smoothstep(0.14, 0.13, r);
-  float hubInner = smoothstep(0.08, 0.09, r);
-  float hub = hubOuter * (1.0 - hubInner);
+  // Spokes — use cos to get distance from nearest spoke center
+  float spokePattern = abs(cos(rotAngle * uSpokeCount * 0.5));
+  // spokePattern is 1 on a spoke, 0 between spokes
+  // Threshold to make thin spokes
+  float spokeThickness = 0.96; // higher = thinner spokes
+  float spoke = smoothstep(spokeThickness, spokeThickness + 0.02, spokePattern);
+  spoke *= step(0.13, r) * step(r, 0.79); // only between hub and rim
 
-  // Spokes — thin lines from hub to rim
-  float spokeAngle = mod(rotAngle, 2.0 * PI / uSpokeCount);
-  float spokeCenter = PI / uSpokeCount;
-  // Spoke width varies slightly — thinner at rim, wider at hub
-  float spokeWidth = mix(0.04, 0.025, smoothstep(0.14, 0.78, r));
-  float spoke = 1.0 - smoothstep(0.0, spokeWidth, abs(spokeAngle - spokeCenter));
-  spoke *= step(0.13, r) * step(r, 0.79); // between hub and rim
-
-  // Combine all wheel parts
-  float wheel = clamp(rim + innerRim + hub + spoke, 0.0, 1.0);
-  color = mix(color, uSpokeColor, wheel);
-
-  // Outer circle mask
-  float discMask = smoothstep(0.92, 0.90, r);
-  color = mix(uBgColor, color, discMask);
+  // Combine — only wheel parts are drawn, background shows through gaps
+  float wheel = clamp(rim + hub + spoke, 0.0, 1.0);
+  vec3 color = mix(uBgColor, uSpokeColor, wheel);
 
   gl_FragColor = vec4(color, 1.0);
 }

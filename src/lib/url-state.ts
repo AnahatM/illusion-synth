@@ -49,7 +49,11 @@ export function applyDecodedParams(
       else if (def.type === "toggle") result[def.key] = raw === "true";
       else if (def.type === "startStop") result[def.key] = false;
       else if (def.type === "phaseList") {
-        try { result[def.key] = JSON.parse(raw); } catch { result[def.key] = def.default; }
+        try {
+          result[def.key] = JSON.parse(raw);
+        } catch {
+          result[def.key] = def.default;
+        }
       } else result[def.key] = raw;
     } else {
       result[def.key] = def.default;
