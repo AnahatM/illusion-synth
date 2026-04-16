@@ -4,10 +4,11 @@
 
   interface Props {
     illusion: IllusionConfig;
+    layout?: 'grid' | 'compact';
     onClick: () => void;
   }
 
-  let { illusion, onClick }: Props = $props();
+  let { illusion, layout = 'grid', onClick }: Props = $props();
 
   let cardEl: HTMLElement;
   let thumbSrc = $state('');
@@ -58,7 +59,7 @@
   });
 </script>
 
-<button class="card" bind:this={cardEl} onclick={onClick}>
+<button class="card" class:compact={layout === 'compact'} bind:this={cardEl} onclick={onClick}>
   <div class="thumbnail" class:tinted={needsTint}>
     {#if thumbSrc}
       <img src={thumbSrc} alt={illusion.name} width="320" height="320" />
@@ -161,6 +162,46 @@
 
   @keyframes spin {
     to { transform: rotate(360deg); }
+  }
+
+  .card.compact {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .card.compact .thumbnail {
+    aspect-ratio: 1 / 1;
+    width: 80px;
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+
+  .card.compact .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.4rem 0.75rem;
+    min-width: 0;
+  }
+
+  .card.compact h3 {
+    font-size: 0.85rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .card.compact .desc {
+    font-size: 0.72rem;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    margin-bottom: 0.25rem;
+  }
+
+  .card.compact .category {
+    font-size: 0.7rem;
+  }
+
+  .card.compact:hover {
+    transform: translateY(-2px);
   }
 
   @media (max-width: 600px) {
