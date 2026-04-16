@@ -1,14 +1,21 @@
 import type * as THREE from "three";
 
+export interface PhaseStep {
+  phase: string;
+  duration: number;
+}
+
 export interface ParamDef {
   key: string;
   label: string;
-  type: "slider" | "color" | "toggle" | "select";
-  default: number | string | boolean;
+  type: "slider" | "color" | "toggle" | "select" | "phaseList" | "startStop";
+  default: number | string | boolean | PhaseStep[];
   min?: number;
   max?: number;
   step?: number;
   options?: string[];
+  /** Available phase options for phaseList type */
+  phaseOptions?: string[];
 }
 
 export interface IllusionConfig {

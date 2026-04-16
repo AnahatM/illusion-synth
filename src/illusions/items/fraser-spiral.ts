@@ -33,18 +33,18 @@ const fraserSpiral: IllusionConfig = {
       key: "rings",
       label: "Ring Count",
       type: "slider",
-      default: 10,
-      min: 4,
-      max: 20,
+      default: 8,
+      min: 2,
+      max: 24,
       step: 1,
     },
     {
       key: "tiltDensity",
       label: "Tilt Density",
       type: "slider",
-      default: 8,
-      min: 2,
-      max: 20,
+      default: 3,
+      min: 1,
+      max: 12,
       step: 1,
     },
     {
@@ -68,7 +68,10 @@ const fraserSpiral: IllusionConfig = {
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [
+      params.color1,
+      params.color2,
+    ]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -91,7 +94,10 @@ const fraserSpiral: IllusionConfig = {
     material.uniforms.uRings.value = params.rings;
     material.uniforms.uTiltDensity.value = params.tiltDensity;
     material.uniforms.uSpeed.value = params.speed;
-    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [
+      params.color1,
+      params.color2,
+    ]);
     material.uniforms.uColor1.value = hexToVec3(c1);
     material.uniforms.uColor2.value = hexToVec3(c2);
   },

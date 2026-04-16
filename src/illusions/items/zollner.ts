@@ -33,27 +33,27 @@ const zollnerIllusion: IllusionConfig = {
       key: "lineCount",
       label: "Line Count",
       type: "slider",
-      default: 8,
-      min: 3,
-      max: 16,
+      default: 10,
+      min: 2,
+      max: 24,
       step: 1,
     },
     {
       key: "hatchAngle",
       label: "Hatch Angle (°)",
       type: "slider",
-      default: 40,
-      min: 10,
-      max: 80,
+      default: 50,
+      min: 5,
+      max: 90,
       step: 1,
     },
     {
       key: "hatchDensity",
       label: "Hatch Density",
       type: "slider",
-      default: 1,
-      min: 0.3,
-      max: 3,
+      default: 2,
+      min: 0.2,
+      max: 5,
       step: 0.1,
     },
     { key: "color1", label: "Line Color", type: "color", default: "#cccccc" },
@@ -68,7 +68,10 @@ const zollnerIllusion: IllusionConfig = {
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [
+      params.color1,
+      params.color2,
+    ]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -89,7 +92,10 @@ const zollnerIllusion: IllusionConfig = {
     material.uniforms.uLineCount.value = params.lineCount;
     material.uniforms.uHatchAngle.value = params.hatchAngle;
     material.uniforms.uHatchDensity.value = params.hatchDensity;
-    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [
+      params.color1,
+      params.color2,
+    ]);
     material.uniforms.uColor1.value = hexToVec3(c1);
     material.uniforms.uColor2.value = hexToVec3(c2);
   },

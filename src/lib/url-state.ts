@@ -6,9 +6,15 @@ export function encodeState(
 ): string {
   const searchParams = new URLSearchParams();
   for (const def of illusion.params) {
+    // Never persist startStop state (e.g. autoCycle) in URL
+    if (def.type === "startStop") continue;
     const val = params[def.key];
     if (val !== undefined && val !== def.default) {
-      searchParams.set(def.key, String(val));
+      if (def.type === "phaseList") {
+        searchParams.set(def.key, JSON.stringify(val));
+      } else {
+        searchParams.set(def.key, String(val));
+      }
     }
   }
   const qs = searchParams.toString();
@@ -41,7 +47,10 @@ export function applyDecodedParams(
       const raw = decoded[def.key];
       if (def.type === "slider") result[def.key] = parseFloat(raw);
       else if (def.type === "toggle") result[def.key] = raw === "true";
-      else result[def.key] = raw;
+      else if (def.type === "startStop") result[def.key] = false;
+      else if (def.type === "phaseList") {
+        try { result[def.key] = JSON.parse(raw); } catch { result[def.key] = def.default; }
+      } else result[def.key] = raw;
     } else {
       result[def.key] = def.default;
     }

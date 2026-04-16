@@ -9,6 +9,7 @@ uniform float uLineWidth;
 uniform vec3 uGridColor;
 uniform vec3 uDotColor;
 uniform vec3 uBgColor;
+uniform float uAlternatingFixation;
 varying vec2 vUv;
 
 #define PI 3.14159265359
@@ -83,9 +84,14 @@ void main() {
     }
   }
 
-  // Central fixation point (flashing red/green)
-  float flash = step(0.0, sin(uTime * 3.0));
-  vec3 fixCol = mix(vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), flash);
+  // Central fixation point
+  vec3 fixCol;
+  if (uAlternatingFixation > 0.5) {
+    float flash = step(0.0, sin(uTime * 3.0));
+    fixCol = mix(vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), flash);
+  } else {
+    fixCol = vec3(1.0);
+  }
   float fix = 1.0 - smoothstep(0.003, 0.006, length(uv));
   col = mix(col, fixCol, fix);
 

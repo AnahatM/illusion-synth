@@ -67,15 +67,18 @@ const hypnoticSpiral: IllusionConfig = {
       key: "scale",
       label: "Scale",
       type: "slider",
-      default: 4,
-      min: 1,
+      default: 1.5,
+      min: 0.5,
       max: 10,
-      step: 0.5,
+      step: 0.1,
     },
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [
+      params.color1,
+      params.color2,
+    ]);
     material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -101,7 +104,10 @@ const hypnoticSpiral: IllusionConfig = {
     material.uniforms.uSpeed.value = params.speed;
     material.uniforms.uDirection.value = params.direction === "CW" ? 1.0 : -1.0;
     material.uniforms.uArmCount.value = params.armCount;
-    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [
+      params.color1,
+      params.color2,
+    ]);
     material.uniforms.uColor1.value = hexToVec3(c1);
     material.uniforms.uColor2.value = hexToVec3(c2);
     material.uniforms.uScale.value = params.scale;

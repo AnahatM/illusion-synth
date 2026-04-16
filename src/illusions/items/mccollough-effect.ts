@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import type { IllusionConfig } from "../types";
+import type { IllusionConfig, PhaseStep } from "../types";
 import vertexShader from "../shaders/fullscreen.vert";
 import fragmentShader from "../shaders/mccollough.frag";
 import {
@@ -18,6 +18,19 @@ const PALETTES: IllusionPalette[] = [
 
 let mesh: THREE.Mesh;
 let material: THREE.ShaderMaterial;
+
+// Auto-cycle state
+let cycleStartTime = 0;
+let cycleRunning = false;
+let currentStepIndex = 0;
+let iterationCount = 0;
+
+const PHASE_OPTIONS = ["Horizontal", "Vertical", "B/W Test"];
+const DEFAULT_SEQUENCE: PhaseStep[] = [
+  { phase: "Horizontal", duration: 30 },
+  { phase: "Vertical", duration: 30 },
+  { phase: "B/W Test", duration: 10 },
+];
 
 function hexToVec3(hex: string): THREE.Vector3 {
   const c = new THREE.Color(hex);
@@ -76,10 +89,35 @@ const mccolloughEffect: IllusionConfig = {
       type: "toggle",
       default: false,
     },
+    {
+      key: "autoCycle",
+      label: "Auto Cycle",
+      type: "startStop",
+      default: false,
+    },
+    {
+      key: "autoCycleIterations",
+      label: "Iterations",
+      type: "slider",
+      default: 3,
+      min: 1,
+      max: 20,
+      step: 1,
+    },
+    {
+      key: "autoCycleSequence",
+      label: "Cycle Sequence",
+      type: "phaseList",
+      default: DEFAULT_SEQUENCE,
+      phaseOptions: PHASE_OPTIONS,
+    },
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [
+      params.color1,
+      params.color2,
+    ]);
     const phaseMap: Record<string, number> = {
       Horizontal: 0,
       Vertical: 1,
@@ -108,7 +146,50 @@ const mccolloughEffect: IllusionConfig = {
       Vertical: 1,
       "B/W Test": 2,
     };
-    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [params.color1, params.color2]);
+
+    // Auto-cycle logic
+    if (params.autoCycle) {
+      const sequence: PhaseStep[] =
+        params.autoCycleSequence ?? DEFAULT_SEQUENCE;
+      const maxIterations: number = params.autoCycleIterations ?? 3;
+
+      if (!cycleRunning) {
+        cycleRunning = true;
+        cycleStartTime = _time;
+        currentStepIndex = 0;
+        iterationCount = 0;
+      }
+
+      if (sequence.length > 0 && iterationCount < maxIterations) {
+        const elapsed = _time - cycleStartTime;
+        const currentStep = sequence[currentStepIndex];
+        const stepDuration = currentStep.duration;
+
+        if (elapsed >= stepDuration) {
+          cycleStartTime = _time;
+          currentStepIndex++;
+          if (currentStepIndex >= sequence.length) {
+            currentStepIndex = 0;
+            iterationCount++;
+          }
+        }
+
+        if (iterationCount < maxIterations) {
+          params.phase = sequence[currentStepIndex].phase;
+        } else {
+          // Done cycling — switch to B/W Test
+          params.phase = "B/W Test";
+          cycleRunning = false;
+        }
+      }
+    } else {
+      cycleRunning = false;
+    }
+
+    const [c1, c2] = resolvePaletteColors(params.palette, PALETTES, [
+      params.color1,
+      params.color2,
+    ]);
     material.uniforms.uPhase.value = phaseMap[params.phase] ?? 0;
     material.uniforms.uColor1.value = hexToVec3(c1);
     material.uniforms.uColor2.value = hexToVec3(c2);

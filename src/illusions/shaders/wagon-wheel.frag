@@ -14,27 +14,36 @@ void main() {
 
   vec3 color = uBgColor;
 
-  // Wheel rim
+  float rotAngle = angle + uTime * uSpeed;
+
+  // Outer rim (thick band)
   float rimOuter = smoothstep(0.88, 0.87, r);
-  float rimInner = smoothstep(0.82, 0.83, r);
+  float rimInner = smoothstep(0.78, 0.79, r);
   float rim = rimOuter * (1.0 - rimInner);
 
-  // Hub
-  float hub = 1.0 - smoothstep(0.06, 0.07, r);
+  // Inner rim edge highlight
+  float innerRimOuter = smoothstep(0.80, 0.79, r);
+  float innerRimInner = smoothstep(0.77, 0.78, r);
+  float innerRim = innerRimOuter * (1.0 - innerRimInner);
 
-  // Spokes
-  float rotAngle = angle + uTime * uSpeed;
+  // Hub (ring, not filled)
+  float hubOuter = smoothstep(0.14, 0.13, r);
+  float hubInner = smoothstep(0.08, 0.09, r);
+  float hub = hubOuter * (1.0 - hubInner);
+
+  // Spokes — thin lines from hub to rim
   float spokeAngle = mod(rotAngle, 2.0 * PI / uSpokeCount);
   float spokeCenter = PI / uSpokeCount;
-  float spokeWidth = 0.06;
+  // Spoke width varies slightly — thinner at rim, wider at hub
+  float spokeWidth = mix(0.04, 0.025, smoothstep(0.14, 0.78, r));
   float spoke = 1.0 - smoothstep(0.0, spokeWidth, abs(spokeAngle - spokeCenter));
-  spoke *= step(0.07, r) * step(r, 0.87);
+  spoke *= step(0.13, r) * step(r, 0.79); // between hub and rim
 
-  // Combine
-  float wheel = clamp(rim + hub + spoke, 0.0, 1.0);
+  // Combine all wheel parts
+  float wheel = clamp(rim + innerRim + hub + spoke, 0.0, 1.0);
   color = mix(color, uSpokeColor, wheel);
 
-  // Circle mask
+  // Outer circle mask
   float discMask = smoothstep(0.92, 0.90, r);
   color = mix(uBgColor, color, discMask);
 

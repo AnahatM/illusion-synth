@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ParamDef } from '../illusions/types';
+  import type { ParamDef, PhaseStep } from '../illusions/types';
   import ColorPicker from './ColorPicker.svelte';
 
   interface Props {
@@ -10,6 +10,24 @@
   }
 
   let { paramDefs, values, onChange, onReset }: Props = $props();
+
+  function addStep(key: string, phaseOptions: string[]) {
+    const current: PhaseStep[] = [...(values[key] ?? [])];
+    current.push({ phase: phaseOptions[0], duration: 30 });
+    onChange(key, current);
+  }
+
+  function removeStep(key: string, index: number) {
+    const current: PhaseStep[] = [...(values[key] ?? [])];
+    current.splice(index, 1);
+    onChange(key, current);
+  }
+
+  function updateStep(key: string, index: number, field: keyof PhaseStep, value: string | number) {
+    const current: PhaseStep[] = (values[key] ?? []).map((s: PhaseStep) => ({ ...s }));
+    (current[index] as any)[field] = value;
+    onChange(key, current);
+  }
 </script>
 
 <div class="control-panel">
@@ -39,6 +57,13 @@
           checked={values[param.key]}
           onchange={(e) => onChange(param.key, (e.target as HTMLInputElement).checked)}
         />
+      {:else if param.type === 'startStop'}
+        <button
+          id={param.key}
+          class="start-stop-btn"
+          class:running={values[param.key]}
+          onclick={() => onChange(param.key, !values[param.key])}
+        >{values[param.key] ? 'Stop' : 'Start'}</button>
       {:else if param.type === 'select'}
         <div class="segmented" id={param.key}>
           {#each param.options ?? [] as opt}
@@ -48,6 +73,32 @@
               onclick={() => onChange(param.key, opt)}
             >{opt}</button>
           {/each}
+        </div>
+      {:else if param.type === 'phaseList'}
+        <div class="phase-list" id={param.key}>
+          {#each (values[param.key] ?? []) as step, i}
+            <div class="phase-step">
+              <select
+                value={step.phase}
+                onchange={(e) => updateStep(param.key, i, 'phase', (e.target as HTMLSelectElement).value)}
+              >
+                {#each param.phaseOptions ?? [] as opt}
+                  <option value={opt}>{opt}</option>
+                {/each}
+              </select>
+              <input
+                type="number"
+                class="duration-input"
+                value={step.duration}
+                min="1"
+                max="300"
+                onchange={(e) => updateStep(param.key, i, 'duration', parseInt((e.target as HTMLInputElement).value) || 1)}
+              />
+              <span class="duration-unit">s</span>
+              <button class="step-remove-btn" onclick={() => removeStep(param.key, i)} title="Remove step">−</button>
+            </div>
+          {/each}
+          <button class="step-add-btn" onclick={() => addStep(param.key, param.phaseOptions ?? [])}>+ Add Step</button>
         </div>
       {/if}
     </div>
@@ -123,6 +174,35 @@
     height: 1.2rem;
   }
 
+  .start-stop-btn {
+    padding: 0.4rem 1rem;
+    background: transparent;
+    color: var(--accent, #ffffff);
+    border: 1px solid var(--accent, #ffffff);
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+
+  .start-stop-btn:hover {
+    background: var(--accent, #ffffff);
+    color: #000;
+  }
+
+  .start-stop-btn.running {
+    background: #cc2222;
+    color: #fff;
+    border-color: #cc2222;
+  }
+
+  .start-stop-btn.running:hover {
+    background: #aa1111;
+    border-color: #aa1111;
+  }
+
   .segmented {
     display: flex;
     flex-direction: column;
@@ -185,5 +265,78 @@
   .reset-btn:hover {
     background: var(--accent, #ffffff);
     color: #000;
+  }
+
+  .phase-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .phase-step {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .phase-step select {
+    flex: 1;
+    padding: 0.3rem 0.4rem;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    font-family: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+
+  .duration-input {
+    width: 3.5rem;
+    padding: 0.3rem 0.4rem;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    font-family: inherit;
+    font-size: 0.75rem;
+    text-align: right;
+  }
+
+  .duration-unit {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .step-remove-btn {
+    padding: 0.2rem 0.5rem;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    font-size: 0.85rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .step-remove-btn:hover {
+    background: #cc2222;
+    color: #fff;
+    border-color: #cc2222;
+  }
+
+  .step-add-btn {
+    padding: 0.35rem 0.5rem;
+    background: transparent;
+    color: var(--accent, #ffffff);
+    border: 1px dashed var(--border);
+    font-family: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .step-add-btn:hover {
+    background: var(--border);
+    color: var(--text);
   }
 </style>

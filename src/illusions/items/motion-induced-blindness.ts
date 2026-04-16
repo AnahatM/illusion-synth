@@ -34,10 +34,10 @@ const motionInducedBlindness: IllusionConfig = {
       key: "speed",
       label: "Rotation Speed",
       type: "slider",
-      default: 1,
-      min: 0.2,
-      max: 3,
-      step: 0.1,
+      default: 0.4,
+      min: 0.05,
+      max: 2,
+      step: 0.05,
     },
     {
       key: "dotSize",
@@ -52,9 +52,9 @@ const motionInducedBlindness: IllusionConfig = {
       key: "dotCount",
       label: "Dot Count (Ring)",
       type: "slider",
-      default: 3,
+      default: 7,
       min: 3,
-      max: 16,
+      max: 24,
       step: 1,
     },
     {
@@ -84,10 +84,10 @@ const motionInducedBlindness: IllusionConfig = {
       key: "lineWidth",
       label: "Line Width",
       type: "slider",
-      default: 1,
-      min: 0.3,
+      default: 0.3,
+      min: 0.1,
       max: 2,
-      step: 0.1,
+      step: 0.05,
     },
     {
       key: "gridColor",
@@ -114,10 +114,20 @@ const motionInducedBlindness: IllusionConfig = {
       default: "Classic",
       options: getPaletteOptions(PALETTES),
     },
+    {
+      key: "alternatingFixation",
+      label: "Alternating Fixation Color",
+      type: "toggle",
+      default: false,
+    },
   ],
 
   setup(scene, _camera, params) {
-    const [c1, c2, c3] = resolvePaletteColors(params.palette, PALETTES, [params.gridColor, params.dotColor, params.bgColor]);
+    const [c1, c2, c3] = resolvePaletteColors(params.palette, PALETTES, [
+      params.gridColor,
+      params.dotColor,
+      params.bgColor,
+    ]);
     const gridModeVal = params.gridMode === "Lines" ? 0 : 1;
     const dotModeVal =
       params.dotMode === "Ring" ? 1 : params.dotMode === "Array" ? 2 : 0;
@@ -136,6 +146,7 @@ const motionInducedBlindness: IllusionConfig = {
         uGridColor: { value: hexToVec3(c1) },
         uDotColor: { value: hexToVec3(c2) },
         uBgColor: { value: hexToVec3(c3) },
+        uAlternatingFixation: { value: params.alternatingFixation ? 1.0 : 0.0 },
       },
     });
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -153,10 +164,17 @@ const motionInducedBlindness: IllusionConfig = {
       params.dotMode === "Ring" ? 1 : params.dotMode === "Array" ? 2 : 0;
     material.uniforms.uCrossSize.value = params.crossSize;
     material.uniforms.uLineWidth.value = params.lineWidth;
-    const [c1, c2, c3] = resolvePaletteColors(params.palette, PALETTES, [params.gridColor, params.dotColor, params.bgColor]);
+    const [c1, c2, c3] = resolvePaletteColors(params.palette, PALETTES, [
+      params.gridColor,
+      params.dotColor,
+      params.bgColor,
+    ]);
     material.uniforms.uGridColor.value = hexToVec3(c1);
     material.uniforms.uDotColor.value = hexToVec3(c2);
     material.uniforms.uBgColor.value = hexToVec3(c3);
+    material.uniforms.uAlternatingFixation.value = params.alternatingFixation
+      ? 1.0
+      : 0.0;
   },
 
   dispose() {
